@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 requests = "*"
 pydantic = "*"
+pytest = "*"
+pytest-dotenv = "*"
 
 [dev-packages]
 pre-commit = "*"

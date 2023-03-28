@@ -33,7 +33,7 @@ class ORDMediascoutClient:
         self.auth = HTTPBasicAuth(self.config.username, self.config.password)
 
     def _call(self, method: str, url: str, obj: Optional[BaseModel] = None, **kwargs):
-        response = requests.request(method, f'{self.config.url}{url}', json=obj.dict(), auth=self.auth, **kwargs)
+        response = requests.request(method, f'{self.config.url}{url}', json=obj and obj.dict(), auth=self.auth, **kwargs)
         match response.status_code:
             case 400 | 401:
                 bad_response = BadRequestWebApiDto.parse_raw(response.text)
@@ -181,7 +181,7 @@ class ORDMediascoutClient:
     # PING
     def ping(self) -> bool:
         tmp_auth, self.auth = self.auth, None
-        self._call('get', '/webapi/PingAuth')
+        self._call('get', '/webapi/Ping')
         self.auth = tmp_auth
         return True
 
