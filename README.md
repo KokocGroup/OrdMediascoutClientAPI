@@ -14,7 +14,7 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
         url='http://localhost:5000',
         username='username',
         password='password',
-    )  
+    )
 
     api = MediaScoutClient(config)
 
@@ -34,4 +34,21 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
 
 ## Testing
 
+    pipenv install --dev
+    pipenv shell
+
+    # get credentials for accessing https://demo.mediascout.ru/
+    # and put them into .env file (see .env.example.env)
+
     pytest
+
+
+## Packaging
+
+    pipenv install --dev
+    pipenv shell
+
+    vi pyproject.toml # update version
+
+    python -m build
+    python -m twine upload dist/*
