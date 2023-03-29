@@ -41,3 +41,14 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
     # and put them into .env file (see .env.example.env)
 
     pytest
+
+
+## Packaging
+
+    pipenv install --dev
+    pipenv shell
+
+    vi pyproject.toml # update version
+
+    python -m build
+    python -m twine upload dist/*
