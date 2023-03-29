@@ -6,12 +6,13 @@ name = "pypi"
 [packages]
 requests = "*"
 pydantic = "*"
-pytest = "*"
-pytest-dotenv = "*"
+python-dotenv = "*"
 
 [dev-packages]
 pre-commit = "*"
 types-requests = "*"
+pytest = "*"
+pytest-dotenv = "*"
 
 [requires]
 python_version = "3.11"
