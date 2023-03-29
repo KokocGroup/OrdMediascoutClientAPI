@@ -13,6 +13,8 @@ pre-commit = "*"
 types-requests = "*"
 pytest = "*"
 pytest-dotenv = "*"
+twine = "*"
+build = "*"
 
 [requires]
 python_version = "3.11"
