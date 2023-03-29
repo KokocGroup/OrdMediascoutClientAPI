@@ -1,6 +1,7 @@
+import dotenv
 from pydantic.env_settings import BaseSettings
 from pydantic.fields import Field
-import dotenv
+
 dotenv.load_dotenv()
 
 

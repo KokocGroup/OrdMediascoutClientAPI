@@ -1023,9 +1023,7 @@ class InvoiceWebApiDto(BaseModel):
     endDate: Optional[date] = None
     finalContractId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
-    statisticsByPlatforms: Optional[
-        List[InvoiceStatisticsByPlatformsItemWebApiDto]
-    ] = None
+    statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
     id: Optional[str] = None
     status: Optional[InvoiceStatus] = None
 
@@ -1156,9 +1154,7 @@ class SupplementInvoiceWebApiDto(BaseModel):
 
     invoiceId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
-    statisticsByPlatforms: Optional[
-        List[InvoiceStatisticsByPlatformsItemWebApiDto]
-    ] = None
+    statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
 
 
 class UserCardDto(BaseModel):
@@ -1230,9 +1226,7 @@ class CreateInvoiceWebApiDto(BaseModel):
     endDate: Optional[date] = None
     finalContractId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
-    statisticsByPlatforms: Optional[
-        List[InvoiceStatisticsByPlatformsItemWebApiDto]
-    ] = None
+    statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
 
 
 class CreativesViewData(BaseModel):
@@ -1260,9 +1254,7 @@ class EditInvoiceStatisticsWebApiDto(BaseModel):
 
     id: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
-    statisticsByPlatforms: Optional[
-        List[InvoiceStatisticsByPlatformsItemWebApiDto]
-    ] = None
+    statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
 
 
 ContractCardDto.update_forward_refs()

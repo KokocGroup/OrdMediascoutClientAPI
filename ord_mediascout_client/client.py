@@ -1,19 +1,46 @@
-from typing import Optional
+from typing import Any, Optional
 
 import requests as requests
 from pydantic.main import BaseModel
 from pydantic.tools import parse_raw_as
 from requests.auth import HTTPBasicAuth
 
-from config import ORDMediascoutConfig
-from models import CreateClientWebApiDto, BadRequestWebApiDto, ClientWebApiDto, GetClientsWebApiDto, \
-    CreateInitialContractWebApiDto, InitialContractWebApiDto, EditInitialContractWebApiDto, \
-    GetInitialContractsWebApiDto, CreateFinalContractWebApiDto, FinalContractWebApiDto, EditFinalContractWebApiDto, \
-    GetFinalContractsWebApiDto, CreateOuterContractWebApiDto, OuterContractWebApiDto, EditOuterContractWebApiDto, \
-    GetOuterContractsWebApiDto, SelfPromotionContractWebApiDto, CreateCreativeWebApiDto, EntityIdWebApiDto, \
-    EditCreativeWebApiDto, CreativeWebApiDto, GetCreativesWebApiDto, CreateInvoiceWebApiDto, EditInvoiceDataWebApiDto, \
-    InvoiceWebApiDto, EditInvoiceStatisticsWebApiDto, ClearInvoiceDataWebApiDto, SupplementInvoiceWebApiDto, \
-    GetInvoicesWebApiDto, InvoiceSummaryWebApiDto, CreatePlatformWebApiDto, EditPlatformWebApiDto, PlatformCardWebApiDto
+from .config import ORDMediascoutConfig
+from .models import (
+    BadRequestWebApiDto,
+    ClearInvoiceDataWebApiDto,
+    ClientWebApiDto,
+    CreateClientWebApiDto,
+    CreateCreativeWebApiDto,
+    CreateFinalContractWebApiDto,
+    CreateInitialContractWebApiDto,
+    CreateInvoiceWebApiDto,
+    CreateOuterContractWebApiDto,
+    CreatePlatformWebApiDto,
+    CreativeWebApiDto,
+    EditCreativeWebApiDto,
+    EditFinalContractWebApiDto,
+    EditInitialContractWebApiDto,
+    EditInvoiceDataWebApiDto,
+    EditInvoiceStatisticsWebApiDto,
+    EditOuterContractWebApiDto,
+    EditPlatformWebApiDto,
+    EntityIdWebApiDto,
+    FinalContractWebApiDto,
+    GetClientsWebApiDto,
+    GetCreativesWebApiDto,
+    GetFinalContractsWebApiDto,
+    GetInitialContractsWebApiDto,
+    GetInvoicesWebApiDto,
+    GetOuterContractsWebApiDto,
+    InitialContractWebApiDto,
+    InvoiceSummaryWebApiDto,
+    InvoiceWebApiDto,
+    OuterContractWebApiDto,
+    PlatformCardWebApiDto,
+    SelfPromotionContractWebApiDto,
+    SupplementInvoiceWebApiDto,
+)
 
 
 class APIError(Exception):
@@ -32,13 +59,11 @@ class ORDMediascoutClient:
         self.config = config
         self.auth = HTTPBasicAuth(self.config.username, self.config.password)
 
-    def _call(self, method: str, url: str, obj: Optional[BaseModel] = None, **kwargs):
+    def _call(
+        self, method: str, url: str, obj: Optional[BaseModel] = None, **kwargs: dict[str, Any]
+    ) -> requests.Response:
         response = requests.request(
-            method,
-            f'{self.config.url}{url}',
-            json=obj and obj.dict(),
-            auth=self.auth,
-            **kwargs
+            method, f'{self.config.url}{url}', json=obj and obj.dict(), auth=self.auth, **kwargs
         )
         match response.status_code:
             case 400 | 401:
@@ -107,16 +132,18 @@ class ORDMediascoutClient:
         contracts: list[OuterContractWebApiDto] = parse_raw_as(list[OuterContractWebApiDto], response.text)
         return contracts
 
-    def create_self_promotion_contract(self, contract: SelfPromotionContractWebApiDto) -> \
-            SelfPromotionContractWebApiDto:
+    def create_self_promotion_contract(
+        self, contract: SelfPromotionContractWebApiDto
+    ) -> SelfPromotionContractWebApiDto:
         response = self._call('post', '/webapi/Contracts/CreateSelfPromotionContract', contract)
         contract = SelfPromotionContractWebApiDto.parse_raw(response.text)
         return contract
 
     def get_self_promotion_contracts(self) -> list[SelfPromotionContractWebApiDto]:
         response = self._call('post', '/webapi/Contracts/GetSelfPromotionContracts')
-        contracts: list[SelfPromotionContractWebApiDto] = \
-            parse_raw_as(list[SelfPromotionContractWebApiDto], response.text)
+        contracts: list[SelfPromotionContractWebApiDto] = parse_raw_as(
+            list[SelfPromotionContractWebApiDto], response.text
+        )
         return contracts
 
     # Creatives
@@ -146,10 +173,10 @@ class ORDMediascoutClient:
         invoice = InvoiceWebApiDto.parse_raw(response.text)
         return invoice
 
-    def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto):
+    def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto) -> None:
         self._call('post', '/webapi/Invoices/OverwriteInvoice', invoice)
 
-    def clear_invoice(self, invoice: ClearInvoiceDataWebApiDto):
+    def clear_invoice(self, invoice: ClearInvoiceDataWebApiDto) -> None:
         self._call('post', '/webapi/Invoices/ClearInvoice', invoice)
 
     def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdWebApiDto:
@@ -167,10 +194,10 @@ class ORDMediascoutClient:
         invoice_summary = InvoiceSummaryWebApiDto.parse_raw(response.text)
         return invoice_summary
 
-    def confirm_invoice(self, entity: EntityIdWebApiDto):
+    def confirm_invoice(self, entity: EntityIdWebApiDto) -> None:
         self._call('post', '/webapi/Invoices/ConfirmInvoice', entity)
 
-    def delete_invoice(self, entity: EntityIdWebApiDto):
+    def delete_invoice(self, entity: EntityIdWebApiDto) -> None:
         self._call('post', '/webapi/Invoices/DeleteInvoices', entity)
 
     # WebApiPlatform
