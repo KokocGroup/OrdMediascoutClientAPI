@@ -63,7 +63,7 @@ class ORDMediascoutClient:
         self, method: str, url: str, obj: Optional[BaseModel] = None, **kwargs: dict[str, Any]
     ) -> requests.Response:
         response = requests.request(
-            method, f'{self.config.url}{url}', json=obj and obj.dict(), auth=self.auth, **kwargs
+            method, f'{self.config.url}{url}', json=obj and obj.json(), auth=self.auth, **kwargs
         )
         match response.status_code:
             case 400 | 401:
