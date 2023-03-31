@@ -11,9 +11,14 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Extra
 
 
+def capitalize(s: str) -> str:
+    return s[0].upper() + s[1:]
+
+
 class AgenciesViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     canCreateAgency: Optional[bool] = None
     canRegisterAgency: Optional[bool] = None
@@ -22,6 +27,7 @@ class AgenciesViewData(BaseModel):
 class AgencyGroupListItemDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     contract: Optional[str] = None
@@ -39,6 +45,7 @@ class AgencyGroupUserRole(Enum):
 class AgencyGroupUsersViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     canCreateUser: Optional[bool] = None
     canEditUser: Optional[bool] = None
@@ -48,6 +55,7 @@ class AgencyGroupUsersViewData(BaseModel):
 class AgencyGroupsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     canCreateAgencyGroups: Optional[bool] = None
     canEditAgencyGroups: Optional[bool] = None
@@ -58,6 +66,7 @@ class AgencyGroupsViewData(BaseModel):
 class AgencyUserPermissionDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     agencyId: Optional[str] = None
     isAllowWrite: Optional[bool] = None
@@ -70,6 +79,7 @@ class AgencyUserPermissionDto(BaseModel):
 class ClearInvoiceDataWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
 
@@ -124,6 +134,7 @@ class CreativeForm(Enum):
 class CreativeMediaDataItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     fileName: Optional[str] = None
     fileContentBase64: Optional[str] = None
@@ -135,6 +146,7 @@ class CreativeMediaDataItemWebApiDto(BaseModel):
 class CreativeMediaListItemDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     creativeId: Optional[str] = None
@@ -155,6 +167,7 @@ class CreativeStatus(Enum):
 class CreativeTextDataItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     textData: Optional[str] = None
 
@@ -169,6 +182,7 @@ class CreativeType(Enum):
 class CreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -191,6 +205,7 @@ class CreativeWebApiDto(BaseModel):
 class DelayedCreativeMediaWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     srcUrl: Optional[str] = None
     fileName: Optional[str] = None
@@ -200,6 +215,7 @@ class DelayedCreativeMediaWebApiDto(BaseModel):
 class EditCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     creativeGroupId: Optional[str] = None
@@ -210,6 +226,7 @@ class EditCreativeWebApiDto(BaseModel):
 class EntityIdWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
 
@@ -217,6 +234,7 @@ class EntityIdWebApiDto(BaseModel):
 class Filter(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     value: Optional[str] = None
@@ -225,6 +243,7 @@ class Filter(BaseModel):
 class GetClientsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     inn: Optional[str] = None
@@ -234,6 +253,7 @@ class GetClientsWebApiDto(BaseModel):
 class GetCreativesBulkWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
 
@@ -241,6 +261,7 @@ class GetCreativesBulkWebApiDto(BaseModel):
 class GetCreativesWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     creativeId: Optional[str] = None
     erid: Optional[str] = None
@@ -254,6 +275,7 @@ class GetCreativesWebApiDto(BaseModel):
 class GetFinalContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     finalContractId: Optional[str] = None
     clientId: Optional[str] = None
@@ -263,6 +285,7 @@ class GetFinalContractsWebApiDto(BaseModel):
 class GetInitialContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     initialContractId: Optional[str] = None
     finalContractId: Optional[str] = None
@@ -278,6 +301,7 @@ class GetInitialContractsWebApiDto(BaseModel):
 class GetOuterContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     outerContractId: Optional[str] = None
     status: Optional[ContractStatus] = None
@@ -288,6 +312,7 @@ class GetOuterContractsWebApiDto(BaseModel):
 class InvoiceInitialContractItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     initialContractId: Optional[str] = None
     amount: Optional[float] = None
@@ -313,6 +338,7 @@ class InvoiceStatus(Enum):
 class InvoiceSummaryDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     status: Optional[InvoiceStatus] = None
@@ -329,6 +355,7 @@ class InvoiceSummaryDto(BaseModel):
 class InvoiceSummaryWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     status: Optional[InvoiceStatus] = None
@@ -370,6 +397,7 @@ class MediationContractSubjectType(Enum):
 class NavigationParams(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     agencyGroupId: Optional[str] = None
     agencyId: Optional[str] = None
@@ -390,6 +418,7 @@ class NavigationParams(BaseModel):
 class OuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -414,6 +443,7 @@ class PlatformType(Enum):
 class SelfPromotionContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -435,14 +465,15 @@ class ServiceAgreementSubjectType(Enum):
 
 
 class Severity(Enum):
-    Error = 'Error'
-    Warning = 'Warning'
-    Info = 'Info'
+    Error = 0
+    Warning = 1
+    Info = 2
 
 
 class UserBaseDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[int] = None
     login: Optional[str] = None
@@ -466,6 +497,7 @@ class UserRole(Enum):
 class ValidationFailure(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     propertyName: Optional[str] = None
     errorMessage: Optional[str] = None
@@ -479,6 +511,7 @@ class ValidationFailure(BaseModel):
 class AgencyCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     type: Optional[CounterpartyType] = None
@@ -503,6 +536,7 @@ class AgencyCardDto(BaseModel):
 class AgencyGroupUserCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[int] = None
     login: Optional[str] = None
@@ -524,6 +558,7 @@ class AgencyGroupUserCardDto(BaseModel):
 class BadRequestWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     errorType: Optional[str] = None
     errorItems: Optional[List[ValidationFailure]] = None
@@ -532,6 +567,7 @@ class BadRequestWebApiDto(BaseModel):
 class ClientCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     type: Optional[CounterpartyType] = None
@@ -552,6 +588,7 @@ class ClientCardDto(BaseModel):
 class ClientWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     createMode: Optional[ClientRelationshipType] = None
     legalForm: Optional[LegalForm] = None
@@ -568,6 +605,7 @@ class ClientWebApiDto(BaseModel):
 class ContractCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     agencyId: Optional[str] = None
@@ -594,6 +632,8 @@ class ContractCardDto(BaseModel):
 class CreateClientWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
 
     createMode: Optional[ClientRelationshipType] = None
     legalForm: Optional[LegalForm] = None
@@ -608,6 +648,7 @@ class CreateClientWebApiDto(BaseModel):
 class CreateCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -627,6 +668,7 @@ class CreateCreativeWebApiDto(BaseModel):
 class CreateDelayedCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -647,6 +689,7 @@ class CreateDelayedCreativeWebApiDto(BaseModel):
 class CreateFinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -663,6 +706,7 @@ class CreateFinalContractWebApiDto(BaseModel):
 class CreateInitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -681,6 +725,7 @@ class CreateInitialContractWebApiDto(BaseModel):
 class CreateOuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -697,6 +742,7 @@ class CreateOuterContractWebApiDto(BaseModel):
 class CreatePlatformWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -707,6 +753,7 @@ class CreatePlatformWebApiDto(BaseModel):
 class CreativeCardView(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     creativeGroupId: Optional[str] = None
@@ -734,6 +781,7 @@ class CreativeCardView(BaseModel):
 class Crumbs(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     title: Optional[str] = None
     controller: Optional[str] = None
@@ -746,6 +794,7 @@ class Crumbs(BaseModel):
 class DelayedCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     creativeId: Optional[str] = None
     creativesDto: Optional[CreateDelayedCreativeWebApiDto] = None
@@ -757,6 +806,7 @@ class DelayedCreativeWebApiDto(BaseModel):
 class EditFinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -774,6 +824,7 @@ class EditFinalContractWebApiDto(BaseModel):
 class EditInitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -793,6 +844,7 @@ class EditInitialContractWebApiDto(BaseModel):
 class EditInvoiceDataWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     number: Optional[str] = None
@@ -809,6 +861,7 @@ class EditInvoiceDataWebApiDto(BaseModel):
 class EditOuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -826,6 +879,7 @@ class EditOuterContractWebApiDto(BaseModel):
 class EditPlatformWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -837,6 +891,7 @@ class EditPlatformWebApiDto(BaseModel):
 class FinalContractCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     agencyId: Optional[str] = None
@@ -864,6 +919,7 @@ class FinalContractCardDto(BaseModel):
 class FinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -882,6 +938,7 @@ class FinalContractWebApiDto(BaseModel):
 class FinalContractsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateContract: Optional[bool] = None
@@ -894,6 +951,7 @@ class FinalContractsViewData(BaseModel):
 class GetInvoicesWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     invoiceId: Optional[str] = None
     number: Optional[str] = None
@@ -906,6 +964,7 @@ class GetInvoicesWebApiDto(BaseModel):
 class InitialContractCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     agencyId: Optional[str] = None
@@ -933,6 +992,7 @@ class InitialContractCardDto(BaseModel):
 class InitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -957,6 +1017,7 @@ class InitialContractWebApiDto(BaseModel):
 class InitialContractsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateContracts: Optional[bool] = None
@@ -969,6 +1030,7 @@ class InitialContractsViewData(BaseModel):
 class InvoiceCardView(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     topLevelAgencyId: Optional[str] = None
@@ -991,6 +1053,7 @@ class InvoiceCardView(BaseModel):
 class InvoiceStatisticsByPlatformsItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     initialContractId: Optional[str] = None
     erid: Optional[str] = None
@@ -1012,6 +1075,7 @@ class InvoiceStatisticsByPlatformsItemWebApiDto(BaseModel):
 class InvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -1031,6 +1095,7 @@ class InvoiceWebApiDto(BaseModel):
 class InvoicesViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateInvoice: Optional[bool] = None
@@ -1047,6 +1112,7 @@ class InvoicesViewData(BaseModel):
 class OuterContractCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     agencyId: Optional[str] = None
@@ -1074,6 +1140,7 @@ class OuterContractCardDto(BaseModel):
 class OuterContractsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateContracts: Optional[bool] = None
@@ -1085,6 +1152,7 @@ class OuterContractsViewData(BaseModel):
 class PlatformCardWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -1096,6 +1164,7 @@ class PlatformCardWebApiDto(BaseModel):
 class PlatformsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreatePlatform: Optional[bool] = None
@@ -1106,6 +1175,7 @@ class PlatformsViewData(BaseModel):
 class RoleDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[UserRole] = None
     description: Optional[str] = None
@@ -1114,6 +1184,7 @@ class RoleDto(BaseModel):
 class SelfPromotionContractCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     agencyId: Optional[str] = None
@@ -1140,6 +1211,7 @@ class SelfPromotionContractCardDto(BaseModel):
 class SelfPromotionContractsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateContracts: Optional[bool] = None
@@ -1151,6 +1223,7 @@ class SelfPromotionContractsViewData(BaseModel):
 class SupplementInvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     invoiceId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
@@ -1160,6 +1233,7 @@ class SupplementInvoiceWebApiDto(BaseModel):
 class UserCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[int] = None
     login: Optional[str] = None
@@ -1183,6 +1257,7 @@ class UserCardDto(BaseModel):
 class AgencyGroupCardDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     contract: Optional[str] = None
@@ -1197,6 +1272,7 @@ class AgencyGroupCardDto(BaseModel):
 class ClientsViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateClient: Optional[bool] = None
@@ -1208,6 +1284,7 @@ class ClientsViewData(BaseModel):
 class CreateCreativeBulkWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     creatives: Optional[List[CreateDelayedCreativeWebApiDto]] = None
 
@@ -1215,6 +1292,7 @@ class CreateCreativeBulkWebApiDto(BaseModel):
 class CreateInvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -1232,6 +1310,7 @@ class CreateInvoiceWebApiDto(BaseModel):
 class CreativesViewData(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     crumbs: Optional[List[Crumbs]] = None
     canCreateCreative: Optional[bool] = None
@@ -1244,6 +1323,7 @@ class CreativesViewData(BaseModel):
 class DelayedCreativeBatchInfoWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     creatives: Optional[List[DelayedCreativeWebApiDto]] = None
 
@@ -1251,6 +1331,7 @@ class DelayedCreativeBatchInfoWebApiDto(BaseModel):
 class EditInvoiceStatisticsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
+        alias_generator = capitalize
 
     id: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
