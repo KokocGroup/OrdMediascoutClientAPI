@@ -1,6 +1,7 @@
-from typing import Any, Optional
+from typing import Any, Optional, Type
 
 import requests as requests
+from pydantic.error_wrappers import ValidationError
 from pydantic.main import BaseModel
 from pydantic.tools import parse_raw_as
 from requests.auth import HTTPBasicAuth
@@ -47,11 +48,17 @@ class APIError(Exception):
     pass
 
 
-class BadResponse(APIError):
-    def __init__(self, status_code: int, error: Optional[BadRequestWebApiDto] = None):
-        super().__init__(error and error.errorType or f'Bad response from API: {status_code}')
-        self.status_code = status_code
+class BadResponseError(APIError):
+    def __init__(self, response: requests.Response, error: Optional[BadRequestWebApiDto] = None):
+        super().__init__(error and error.errorType or f'Bad response from API: {response.status_code}')
+        self.response = response
         self.error = error
+
+
+class UnexpectedResponseError(APIError):
+    def __init__(self, response: requests.Response):
+        super().__init__(f'Unexpected response with STATUS_CODE: {response.status_code}')
+        self.response = response
 
 
 class ORDMediascoutClient:
@@ -60,117 +67,121 @@ class ORDMediascoutClient:
         self.auth = HTTPBasicAuth(self.config.username, self.config.password)
 
     def _call(
-        self, method: str, url: str, obj: Optional[BaseModel] = None, **kwargs: dict[str, Any]
-    ) -> requests.Response:
+        self,
+        method: str,
+        url: str,
+        obj: Optional[BaseModel] = None,
+        return_type: Optional[Type[Any]] = None,
+        **kwargs: dict[str, Any],
+    ) -> Any:
         response = requests.request(
-            method, f'{self.config.url}{url}', json=obj and obj.dict(), auth=self.auth, **kwargs
+            method,
+            f'{self.config.url}{url}',
+            data=obj and obj.json(),
+            auth=self.auth,
+            headers={'Content-Type': 'application/json-patch+json'},
+            **kwargs,
         )
         match response.status_code:
             case 400 | 401:
-                bad_response = BadRequestWebApiDto.parse_raw(response.text)
-                raise BadResponse(response.status_code, bad_response)
+                try:
+                    bad_response = BadRequestWebApiDto.parse_raw(response.text)
+                except ValidationError as e:
+                    raise UnexpectedResponseError(response) from e
+                raise BadResponseError(response, bad_response)
             case 500:
-                raise BadResponse(response.status_code)
+                raise BadResponseError(response)
             case 200 | 201:
-                return response
-        raise BadResponse(response.status_code)
+                if return_type is not None:
+                    try:
+                        return parse_raw_as(return_type, response.text)
+                    except ValidationError as e:
+                        raise UnexpectedResponseError(response) from e
+            case _:
+                raise UnexpectedResponseError(response)
 
     # Clients
     def create_client(self, client: CreateClientWebApiDto) -> ClientWebApiDto:
-        response = self._call('post', '/webapi/Clients/CreateClient', client)
-        client = ClientWebApiDto.parse_raw(response.text)
+        client = self._call('post', '/webapi/Clients/CreateClient', client, ClientWebApiDto)
         return client
 
     def get_clients(self, parameters: GetClientsWebApiDto) -> list[ClientWebApiDto]:
-        response = self._call('post', '/webapi/Clients/GetClients', parameters)
-        clients: list[ClientWebApiDto] = parse_raw_as(list[ClientWebApiDto], response.text)
+        clients = self._call('post', '/webapi/Clients/GetClients', parameters, list[ClientWebApiDto])
         return clients
 
     # Contracts
     def create_initial_contract(self, contract: CreateInitialContractWebApiDto) -> InitialContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/CreateInitialContract', contract)
-        contract = InitialContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/CreateInitialContract', contract, InitialContractWebApiDto)
         return contract
 
     def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/EditInitialContract', contract)
-        contract = InitialContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/EditInitialContract', contract, InitialContractWebApiDto)
         return contract
 
     def get_initial_contracts(self, parameters: GetInitialContractsWebApiDto) -> list[InitialContractWebApiDto]:
-        response = self._call('post', '/webapi/Contracts/GetInitialContracts', parameters)
-        contracts: list[InitialContractWebApiDto] = parse_raw_as(list[InitialContractWebApiDto], response.text)
+        contracts = self._call(
+            'post', '/webapi/Contracts/GetInitialContracts', parameters, list[InitialContractWebApiDto]
+        )
         return contracts
 
     def create_final_contract(self, contract: CreateFinalContractWebApiDto) -> FinalContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/CreateFinalContract', contract)
-        contract = FinalContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/CreateFinalContract', contract, FinalContractWebApiDto)
         return contract
 
     def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/EditFinalContract', contract)
-        contract = FinalContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/EditFinalContract', contract, FinalContractWebApiDto)
         return contract
 
     def get_final_contracts(self, parameters: GetFinalContractsWebApiDto) -> list[FinalContractWebApiDto]:
-        response = self._call('post', '/webapi/Contracts/GetFinalContracts', parameters)
-        contracts: list[FinalContractWebApiDto] = parse_raw_as(list[FinalContractWebApiDto], response.text)
+        contracts = self._call('post', '/webapi/Contracts/GetFinalContracts', parameters, list[FinalContractWebApiDto])
         return contracts
 
     def create_outer_contract(self, contract: CreateOuterContractWebApiDto) -> OuterContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/CreateOuterContract', contract)
-        contract = OuterContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/CreateOuterContract', contract, OuterContractWebApiDto)
         return contract
 
     def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/EditOuterContract', contract)
-        contract = OuterContractWebApiDto.parse_raw(response.text)
+        contract = self._call('post', '/webapi/Contracts/EditOuterContract', contract, OuterContractWebApiDto)
         return contract
 
     def get_outer_contracts(self, parameters: GetOuterContractsWebApiDto) -> list[OuterContractWebApiDto]:
-        response = self._call('post', '/webapi/Contracts/GetOuterContracts', parameters)
-        contracts: list[OuterContractWebApiDto] = parse_raw_as(list[OuterContractWebApiDto], response.text)
+        contracts = self._call('post', '/webapi/Contracts/GetOuterContracts', parameters, list[OuterContractWebApiDto])
         return contracts
 
     def create_self_promotion_contract(
         self, contract: SelfPromotionContractWebApiDto
     ) -> SelfPromotionContractWebApiDto:
-        response = self._call('post', '/webapi/Contracts/CreateSelfPromotionContract', contract)
-        contract = SelfPromotionContractWebApiDto.parse_raw(response.text)
+        contract = self._call(
+            'post', '/webapi/Contracts/CreateSelfPromotionContract', contract, SelfPromotionContractWebApiDto
+        )
         return contract
 
     def get_self_promotion_contracts(self) -> list[SelfPromotionContractWebApiDto]:
-        response = self._call('post', '/webapi/Contracts/GetSelfPromotionContracts')
-        contracts: list[SelfPromotionContractWebApiDto] = parse_raw_as(
-            list[SelfPromotionContractWebApiDto], response.text
+        contracts = self._call(
+            'post', '/webapi/Contracts/GetSelfPromotionContracts', None, list[SelfPromotionContractWebApiDto]
         )
         return contracts
 
     # Creatives
     def create_creative(self, creative: CreateCreativeWebApiDto) -> EntityIdWebApiDto:
-        response = self._call('post', '/webapi/creatives/CreateCreative', creative)
-        entity = EntityIdWebApiDto.parse_raw(response.text)
+        entity = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
         return entity
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
-        response = self._call('post', '/webapi/creatives/EditCreative', creative)
-        contract = CreativeWebApiDto.parse_raw(response.text)
-        return contract
+        updated_creative = self._call('post', '/webapi/creatives/EditCreative', creative, CreativeWebApiDto)
+        return updated_creative
 
     def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeWebApiDto]:
-        response = self._call('post', '/webapi/creatives/GetCreatives', parameters)
-        clients: list[CreativeWebApiDto] = parse_raw_as(list[CreativeWebApiDto], response.text)
-        return clients
+        creatives = self._call('post', '/webapi/creatives/GetCreatives', parameters, list[CreativeWebApiDto])
+        return creatives
 
     # Invoices
     def create_invoice(self, invoice: CreateInvoiceWebApiDto) -> EntityIdWebApiDto:
-        response = self._call('post', '/webapi/Invoices/CreateInvoice', invoice)
-        entity = EntityIdWebApiDto.parse_raw(response.text)
+        entity = self._call('post', '/webapi/Invoices/CreateInvoice', invoice, EntityIdWebApiDto)
         return entity
 
     def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceWebApiDto:
-        response = self._call('post', '/webapi/Invoices/EditInvoice', invoice)
-        invoice = InvoiceWebApiDto.parse_raw(response.text)
+        invoice = self._call('post', '/webapi/Invoices/EditInvoice', invoice, InvoiceWebApiDto)
         return invoice
 
     def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto) -> None:
@@ -180,18 +191,15 @@ class ORDMediascoutClient:
         self._call('post', '/webapi/Invoices/ClearInvoice', invoice)
 
     def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdWebApiDto:
-        response = self._call('post', '/webapi/Invoices/SupplementInvoice', invoice)
-        entity = EntityIdWebApiDto.parse_raw(response.text)
+        entity = self._call('post', '/webapi/Invoices/SupplementInvoice', invoice, EntityIdWebApiDto)
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceWebApiDto]:
-        response = self._call('post', '/webapi/Invoices/GetInvoices', parameters)
-        invoices: list[InvoiceWebApiDto] = parse_raw_as(list[InvoiceWebApiDto], response.text)
+        invoices = self._call('post', '/webapi/Invoices/GetInvoices', parameters, list[InvoiceWebApiDto])
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdWebApiDto) -> InvoiceSummaryWebApiDto:
-        response = self._call('post', '/webapi/Invoices/GetInvoiceSummary', entity)
-        invoice_summary = InvoiceSummaryWebApiDto.parse_raw(response.text)
+        invoice_summary = self._call('post', '/webapi/Invoices/GetInvoiceSummary', entity, InvoiceSummaryWebApiDto)
         return invoice_summary
 
     def confirm_invoice(self, entity: EntityIdWebApiDto) -> None:
@@ -202,14 +210,12 @@ class ORDMediascoutClient:
 
     # WebApiPlatform
     def create_platform(self, platform: CreatePlatformWebApiDto) -> EntityIdWebApiDto:
-        response = self._call('post', '/webapi/Platforms/CreatePlatform', platform)
-        entity = EntityIdWebApiDto.parse_raw(response.text)
+        entity = self._call('post', '/webapi/Platforms/CreatePlatform', platform, EntityIdWebApiDto)
         return entity
 
     def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformCardWebApiDto:
-        response = self._call('post', '/webapi/Platforms/EditPlatform', platform)
-        platform = PlatformCardWebApiDto.parse_raw(response.text)
-        return platform
+        updated_platform = self._call('post', '/webapi/Platforms/EditPlatform', platform, PlatformCardWebApiDto)
+        return updated_platform
 
     # PING
     def ping(self) -> bool:

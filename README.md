@@ -8,7 +8,10 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
 
 ## Usage
 
-    from ord_mediascout_client import ORDMediascoutClient, ORDMediascoutConfig, Client
+    from ord_mediascout_client import ORDMediascoutClient, \
+        ORDMediascoutConfig, CreateClientWebApiDto, \
+        ClientRelationshipType, LegalForm
+    from ord_mediascout_client.client import APIError
 
     config = ORDMediascoutConfig(
         url='http://localhost:5000',
@@ -16,20 +19,20 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
         password='password',
     )
 
-    api = MediaScoutClient(config)
+    api = ORDMediascoutClient(config)
 
-    client = Client(
-        name="Test Client",
+    client = CreateClientWebApiDto(
+        createMode=ClientRelationshipType.DirectClient,
+        legalForm=LegalForm.JuridicalPerson,
         inn="1234567890",
-        ...
+        name="Test Client",
+        mobilePhone="1234567890",
+        epayNumber=None,
+        regNumber=None,
+        oksmNumber=None
     )
 
-    try:
-        client = api.register_client(client)
-    except ClientAlreadyExists:
-        pass
-    except ORDMediascoutError as e:
-        print(e.response.code)
+    client = api.create_client(client)
 
 
 ## Testing
