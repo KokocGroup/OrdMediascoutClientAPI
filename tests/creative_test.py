@@ -1,16 +1,15 @@
 import pytest
 
-
 from ord_mediascout_client import (
-    ORDMediascoutConfig,
-    ORDMediascoutClient,
     CreateCreativeWebApiDto,
-    GetCreativesWebApiDto,
+    CreativeForm,
     CreativeMediaDataItemWebApiDto,
+    CreativeStatus,
     CreativeTextDataItemWebApiDto,
     CreativeType,
-    CreativeForm,
-    CreativeStatus,
+    GetCreativesWebApiDto,
+    ORDMediascoutClient,
+    ORDMediascoutConfig,
 )
 
 
@@ -26,25 +25,19 @@ def test_create_mediadata_creative(client: ORDMediascoutClient) -> None:
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
         type=CreativeType.CPM,
         form=CreativeForm.Banner,
-        advertiserUrls=[
-            'https://clisite1.ru/',
-            'https://clisite2.ru/',
-        ],
+        advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test mediadata creative 1',
         targetAudience='',
         isNative=False,
         isSocial=False,
-        okvedCodes=[
-            '01.02',
-            '01.03',
-        ],
+        okvedCodes=['01.02', '01.03'],
         mediaData=[
             CreativeMediaDataItemWebApiDto(
                 fileName='logo.svg',
                 # fileContentBase64="string",
-                srcUrl="https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg",
+                srcUrl='https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
                 description='Тестовый баннер 1',
-                isArchive=False
+                isArchive=False,
             )
         ],
     )
@@ -65,14 +58,8 @@ def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
         targetAudience='',
         isNative=False,
         isSocial=False,
-        okvedCodes=[
-            '01.05',
-        ],
-        textData=[
-            CreativeTextDataItemWebApiDto(
-                textData='Creative 1 text data test'
-            ),
-        ]
+        okvedCodes=['01.05'],
+        textData=[CreativeTextDataItemWebApiDto(textData='Creative 1 text data test')],
     )
 
     response_data = client.create_creative(request_data)
@@ -81,9 +68,7 @@ def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
 
 
 def test_get_creatives(client: ORDMediascoutClient) -> None:
-    request_data = GetCreativesWebApiDto(
-        status=CreativeStatus.Active
-    )
+    request_data = GetCreativesWebApiDto(status=CreativeStatus.Active)
 
     response_data = client.get_creatives(request_data)
 

@@ -1,6 +1,6 @@
 from typing import Any, Optional, Type
 
-import requests as requests
+import requests
 from pydantic.error_wrappers import ValidationError
 from pydantic.main import BaseModel
 from pydantic.tools import parse_raw_as

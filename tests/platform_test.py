@@ -1,13 +1,8 @@
-import pytest
 import random
 
+import pytest
 
-from ord_mediascout_client import (
-    ORDMediascoutConfig,
-    ORDMediascoutClient,
-    CreatePlatformWebApiDto,
-    PlatformType,
-)
+from ord_mediascout_client import CreatePlatformWebApiDto, ORDMediascoutClient, ORDMediascoutConfig, PlatformType
 
 
 @pytest.fixture
@@ -23,10 +18,9 @@ def test_create_platform(client: ORDMediascoutClient) -> None:
         name='Test Platform {}'.format(rnd),
         type=PlatformType.Site,
         url='http://www.testplatform{}.ru/'.format(rnd),
-        isOwner=False
+        isOwner=False,
     )
 
     response_data = client.create_platform(request_data)
 
     assert response_data.id is not None
-

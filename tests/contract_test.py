@@ -1,20 +1,17 @@
 import pytest
 
-
 from ord_mediascout_client import (
-    ORDMediascoutConfig,
-    ORDMediascoutClient,
-    CreateInitialContractWebApiDto,
-    CreateFinalContractWebApiDto,
-    CreateOuterContractWebApiDto,
-    SelfPromotionContractWebApiDto,
-    GetInitialContractsWebApiDto,
-    GetFinalContractsWebApiDto,
-    GetOuterContractsWebApiDto,
-    ContractType,
     ContractStatus,
     ContractSubjectTypeWebApi,
-    MediationActionType,
+    ContractType,
+    CreateFinalContractWebApiDto,
+    CreateInitialContractWebApiDto,
+    CreateOuterContractWebApiDto,
+    GetFinalContractsWebApiDto,
+    GetInitialContractsWebApiDto,
+    GetOuterContractsWebApiDto,
+    ORDMediascoutClient,
+    ORDMediascoutConfig,
 )
 
 
@@ -55,9 +52,7 @@ def test_create_final_contract(client: ORDMediascoutClient) -> None:
 
 
 def test_get_final_contracts(client: ORDMediascoutClient) -> None:
-    request_data = GetFinalContractsWebApiDto(
-        status=ContractStatus.Active
-    )
+    request_data = GetFinalContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_final_contracts(request_data)
 
@@ -100,9 +95,7 @@ def test_create_initial_contract(client: ORDMediascoutClient) -> None:
 
 
 def test_get_initial_contracts(client: ORDMediascoutClient) -> None:
-    request_data = GetInitialContractsWebApiDto(
-        status=ContractStatus.Active
-    )
+    request_data = GetInitialContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_initial_contracts(request_data)
 
@@ -141,14 +134,13 @@ def test_create_outer_contract(client: ORDMediascoutClient) -> None:
 
 
 def test_get_outer_contracts(client: ORDMediascoutClient) -> None:
-    request_data = GetOuterContractsWebApiDto(
-        status=ContractStatus.Active
-    )
+    request_data = GetOuterContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_outer_contracts(request_data)
 
     for outer_contract in response_data:
         assert outer_contract.id is not None
+
 
 """
 ! ОТКЛЮЧЕНО

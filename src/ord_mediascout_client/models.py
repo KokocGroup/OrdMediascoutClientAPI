@@ -876,13 +876,13 @@ class EditInvoiceDataWebApiDto(BaseModel):
 
     id: Optional[str] = None
     number: Optional[str] = None
-    date: Optional[date] = None
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
     startDate: Optional[date] = None
     endDate: Optional[date] = None
+    date: Optional[date] = None
     finalContractId: Optional[str] = None
 
 
@@ -1069,7 +1069,6 @@ class InvoiceCardView(BaseModel):
     topLevelAgencyId: Optional[str] = None
     finalContractId: Optional[str] = None
     number: Optional[str] = None
-    date: Optional[date] = None
     status: Optional[InvoiceStatus] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
@@ -1081,6 +1080,7 @@ class InvoiceCardView(BaseModel):
     createDt: Optional[datetime] = None
     changeDt: Optional[datetime] = None
     invoiceSummary: Optional[InvoiceSummaryDto] = None
+    date: Optional[date] = None
 
 
 class InvoiceStatisticsByPlatformsItemWebApiDto(BaseModel):
@@ -1113,7 +1113,6 @@ class InvoiceWebApiDto(BaseModel):
         allow_population_by_field_name = True
 
     number: Optional[str] = None
-    date: Optional[date] = None
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = None
@@ -1125,6 +1124,7 @@ class InvoiceWebApiDto(BaseModel):
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
     id: Optional[str] = None
     status: Optional[InvoiceStatus] = None
+    date: Optional[date] = None
 
 
 class InvoicesViewData(BaseModel):
@@ -1155,7 +1155,6 @@ class OuterContractCardDto(BaseModel):
     type: Optional[ContractType] = None
     status: Optional[ContractStatus] = None
     number: Optional[str] = None
-    date: Optional[date] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
     isAgentActingForPublisher: Optional[bool] = None
@@ -1170,6 +1169,7 @@ class OuterContractCardDto(BaseModel):
     parentMainContract: Optional[ContractCardDto] = None
     isAutoRegister: Optional[bool] = None
     isRegReport: Optional[bool] = None
+    date: Optional[date] = None
 
 
 class OuterContractsViewData(BaseModel):
@@ -1334,7 +1334,6 @@ class CreateInvoiceWebApiDto(BaseModel):
         allow_population_by_field_name = True
 
     number: Optional[str] = None
-    date: Optional[date] = None
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = None
@@ -1344,6 +1343,7 @@ class CreateInvoiceWebApiDto(BaseModel):
     finalContractId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
+    date: Optional[date] = None
 
 
 class CreativesViewData(BaseModel):

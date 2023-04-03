@@ -1,14 +1,13 @@
 import pytest
 
 from ord_mediascout_client import (
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
     ClientRelationshipType,
     CounterpartyStatus,
     CreateClientWebApiDto,
     GetClientsWebApiDto,
     LegalForm,
-    CounterpartyStatus,
+    ORDMediascoutClient,
+    ORDMediascoutConfig,
 )
 
 
@@ -45,9 +44,7 @@ def test_create_client(client: ORDMediascoutClient) -> None:
 
 
 def test_get_clients(client: ORDMediascoutClient) -> None:
-    request_data = GetClientsWebApiDto(
-        status=CounterpartyStatus.Active
-    )
+    request_data = GetClientsWebApiDto(status=CounterpartyStatus.Active)
 
     response_data = client.get_clients(request_data)
 

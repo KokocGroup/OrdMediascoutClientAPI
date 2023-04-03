@@ -1,15 +1,16 @@
-import pytest
 import random
 
+import pytest
+
 from ord_mediascout_client import (
-    ORDMediascoutConfig,
-    ORDMediascoutClient,
     CreateInvoiceWebApiDto,
     GetInvoicesWebApiDto,
-    InvoicePartyRole,
-    InvoiceStatus,
     InvoiceInitialContractItemWebApiDto,
+    InvoicePartyRole,
     InvoiceStatisticsByPlatformsItemWebApiDto,
+    InvoiceStatus,
+    ORDMediascoutClient,
+    ORDMediascoutConfig,
     PlatformType,
 )
 
@@ -18,6 +19,7 @@ from ord_mediascout_client import (
 def client() -> ORDMediascoutClient:
     config = ORDMediascoutConfig()
     return ORDMediascoutClient(config)
+
 
 # НЕ работает в режиме "get or create", только "create" с новым номером, потому number генерится
 def test_create_invoice(client: ORDMediascoutClient) -> None:
@@ -33,10 +35,8 @@ def test_create_invoice(client: ORDMediascoutClient) -> None:
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractsData=[
             InvoiceInitialContractItemWebApiDto(
-                initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-                amount=1000.00,
-                vatIncluded=True
-            ),
+                initialContractId='CTKLAzsvgYREmK0unGXLsCTg', amount=1000.00, vatIncluded=True
+            )
         ],
         statisticsByPlatforms=[
             InvoiceStatisticsByPlatformsItemWebApiDto(
@@ -54,9 +54,9 @@ def test_create_invoice(client: ORDMediascoutClient) -> None:
                 endDateFact='2023-04-03',
                 amount=1000.00,
                 price=0.5,
-                vatIncluded=True
-            ),
-        ]
+                vatIncluded=True,
+            )
+        ],
     )
 
     response_data = client.create_invoice(request_data)
@@ -65,9 +65,7 @@ def test_create_invoice(client: ORDMediascoutClient) -> None:
 
 
 def test_get_invoices(client: ORDMediascoutClient) -> None:
-    request_data = GetInvoicesWebApiDto(
-        status=InvoiceStatus.Active
-    )
+    request_data = GetInvoicesWebApiDto(status=InvoiceStatus.Active)
 
     response_data = client.get_invoices(request_data)
 
