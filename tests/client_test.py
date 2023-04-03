@@ -15,7 +15,6 @@ from ord_mediascout_client import (
 @pytest.fixture
 def client() -> ORDMediascoutClient:
     config = ORDMediascoutConfig()
-    config.username = 'M0000034'  # *****
     return ORDMediascoutClient(config)
 
 
