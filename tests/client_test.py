@@ -1,18 +1,21 @@
 import pytest
 
 from ord_mediascout_client import (
+    ORDMediascoutClient,
+    ORDMediascoutConfig,
     ClientRelationshipType,
     CounterpartyStatus,
     CreateClientWebApiDto,
+    GetClientsWebApiDto,
     LegalForm,
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
+    CounterpartyStatus,
 )
 
 
 @pytest.fixture
 def client() -> ORDMediascoutClient:
     config = ORDMediascoutConfig()
+    config.username = 'M0000034'  # *****
     return ORDMediascoutClient(config)
 
 
@@ -20,17 +23,15 @@ def test_create_client(client: ORDMediascoutClient) -> None:
     request_data = CreateClientWebApiDto(
         createMode=ClientRelationshipType.DirectClient,
         legalForm=LegalForm.JuridicalPerson,
-        inn='4401116480',
-        name='Совкомбанк',
-        mobilePhone='111222333',
-        epayNumber='1234',
-        regNumber='1234',
-        oksmNumber='1234',
+        inn='7720805643',
+        name='Тест клиент2',
+        mobilePhone='0950991234',
+        epayNumber='12333',
+        regNumber='54556',
+        oksmNumber='44563',
     )
 
     response_data = client.create_client(request_data)
-
-    print(response_data)
 
     assert request_data.name == response_data.name
     assert request_data.inn == response_data.inn
@@ -42,3 +43,14 @@ def test_create_client(client: ORDMediascoutClient) -> None:
     assert request_data.legalForm == response_data.legalForm
     assert response_data.id is not None
     assert response_data.status == CounterpartyStatus.Active
+
+
+def test_get_clients(client: ORDMediascoutClient) -> None:
+    request_data = GetClientsWebApiDto(
+        status=CounterpartyStatus.Active
+    )
+
+    response_data = client.get_clients(request_data)
+
+    for cli in response_data:
+        assert cli.id is not None

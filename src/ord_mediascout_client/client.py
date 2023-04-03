@@ -82,6 +82,15 @@ class ORDMediascoutClient:
             headers={'Content-Type': 'application/json-patch+json'},
             **kwargs,
         )
+
+        print('reqest:')
+        print(method)
+        print(f'{self.config.url}{url}')
+        print(obj and obj.json())
+        print('response:')
+        print(response.json())
+        print(response.status_code)
+
         match response.status_code:
             case 400 | 401:
                 try:

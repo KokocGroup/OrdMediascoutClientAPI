@@ -80,6 +80,7 @@ class ClearInvoiceDataWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
 
@@ -135,6 +136,7 @@ class CreativeMediaDataItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     fileName: Optional[str] = None
     fileContentBase64: Optional[str] = None
@@ -168,6 +170,7 @@ class CreativeTextDataItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     textData: Optional[str] = None
 
@@ -183,6 +186,7 @@ class CreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -206,6 +210,7 @@ class DelayedCreativeMediaWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     srcUrl: Optional[str] = None
     fileName: Optional[str] = None
@@ -216,6 +221,7 @@ class EditCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
     creativeGroupId: Optional[str] = None
@@ -227,6 +233,7 @@ class EntityIdWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
 
@@ -244,6 +251,7 @@ class GetClientsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
     inn: Optional[str] = None
@@ -254,6 +262,7 @@ class GetCreativesBulkWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
 
@@ -262,6 +271,7 @@ class GetCreativesWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     creativeId: Optional[str] = None
     erid: Optional[str] = None
@@ -276,6 +286,7 @@ class GetFinalContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     finalContractId: Optional[str] = None
     clientId: Optional[str] = None
@@ -286,6 +297,7 @@ class GetInitialContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     initialContractId: Optional[str] = None
     finalContractId: Optional[str] = None
@@ -302,6 +314,7 @@ class GetOuterContractsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     outerContractId: Optional[str] = None
     status: Optional[ContractStatus] = None
@@ -313,6 +326,7 @@ class InvoiceInitialContractItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     initialContractId: Optional[str] = None
     amount: Optional[float] = None
@@ -356,6 +370,7 @@ class InvoiceSummaryWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
     status: Optional[InvoiceStatus] = None
@@ -419,6 +434,7 @@ class OuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -444,6 +460,7 @@ class SelfPromotionContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -589,6 +606,7 @@ class ClientWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     createMode: Optional[ClientRelationshipType] = None
     legalForm: Optional[LegalForm] = None
@@ -649,6 +667,7 @@ class CreateCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -669,6 +688,7 @@ class CreateDelayedCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     finalContractId: Optional[str] = None
     initialContractId: Optional[str] = None
@@ -690,6 +710,7 @@ class CreateFinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -707,6 +728,7 @@ class CreateInitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -726,6 +748,7 @@ class CreateOuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -743,6 +766,7 @@ class CreatePlatformWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -795,6 +819,7 @@ class DelayedCreativeWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     creativeId: Optional[str] = None
     creativesDto: Optional[CreateDelayedCreativeWebApiDto] = None
@@ -807,6 +832,7 @@ class EditFinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -825,6 +851,7 @@ class EditInitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -845,6 +872,7 @@ class EditInvoiceDataWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
     number: Optional[str] = None
@@ -862,6 +890,7 @@ class EditOuterContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -880,6 +909,7 @@ class EditPlatformWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -920,6 +950,7 @@ class FinalContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -952,6 +983,7 @@ class GetInvoicesWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     invoiceId: Optional[str] = None
     number: Optional[str] = None
@@ -993,6 +1025,7 @@ class InitialContractWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -1054,6 +1087,7 @@ class InvoiceStatisticsByPlatformsItemWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     initialContractId: Optional[str] = None
     erid: Optional[str] = None
@@ -1076,6 +1110,7 @@ class InvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -1153,6 +1188,7 @@ class PlatformCardWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     name: Optional[str] = None
     type: Optional[PlatformType] = None
@@ -1224,6 +1260,7 @@ class SupplementInvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     invoiceId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
@@ -1285,6 +1322,7 @@ class CreateCreativeBulkWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     creatives: Optional[List[CreateDelayedCreativeWebApiDto]] = None
 
@@ -1293,6 +1331,7 @@ class CreateInvoiceWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     number: Optional[str] = None
     date: Optional[date] = None
@@ -1324,6 +1363,7 @@ class DelayedCreativeBatchInfoWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     creatives: Optional[List[DelayedCreativeWebApiDto]] = None
 
@@ -1332,6 +1372,7 @@ class EditInvoiceStatisticsWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
+        allow_population_by_field_name = True
 
     id: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
