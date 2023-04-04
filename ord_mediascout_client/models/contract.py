@@ -1,12 +1,13 @@
+from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from dataclasses import dataclass
 
-from enums import ContractType, ContractSubjectType, ContractStatus
+from enums import ContractStatus, ContractSubjectType, ContractType
 from enums.contract_action_type import ContractActionType
 
 
-class Contract(dataclass):
+@dataclass
+class Contract:
     number: str
     date: date
     amount: Decimal

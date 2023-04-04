@@ -3,7 +3,8 @@ from dataclasses import dataclass
 from enums import ClientRelationshipType, LegalForm
 
 
-class Client(dataclass):
+@dataclass
+class Client:
     create_mode: ClientRelationshipType
     legal_form: LegalForm
     inn: str

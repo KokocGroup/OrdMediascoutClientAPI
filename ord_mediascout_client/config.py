@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
 
-class ORDMediascoutConfig(dataclass):
+@dataclass
+class ORDMediascoutConfig:
     url: str
     username: str
     password: str
