@@ -1072,8 +1072,8 @@ class InvoiceCardView(BaseModel):
     status: Optional[InvoiceStatus] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
-    startDate: Optional[date] = None
-    endDate: Optional[date] = None
+    startDate: Optional[date] = None  # type: ignore
+    endDate: Optional[date] = None  # type: ignore
     agencyRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     registerDt: Optional[datetime] = None
@@ -1117,8 +1117,8 @@ class InvoiceWebApiDto(BaseModel):
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
-    startDate: Optional[date] = None
-    endDate: Optional[date] = None
+    startDate: Optional[date] = None  # type: ignore
+    endDate: Optional[date] = None  # type: ignore
     finalContractId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
@@ -1338,12 +1338,11 @@ class CreateInvoiceWebApiDto(BaseModel):
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = None
     vatIncluded: Optional[bool] = None
-    startDate: Optional[date] = None
-    endDate: Optional[date] = None
+    startDate: Optional[date] = None  # type: ignore
+    endDate: Optional[date] = None  # type: ignore
     finalContractId: Optional[str] = None
     initialContractsData: Optional[List[InvoiceInitialContractItemWebApiDto]] = None
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItemWebApiDto]] = None
-    date: Optional[date] = None
 
 
 class CreativesViewData(BaseModel):

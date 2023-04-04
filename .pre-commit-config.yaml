@@ -27,9 +27,10 @@ repos:
     rev: 'v1.1.1'
     hooks:
     -   id: mypy
-        args: [--no-strict-optional, --ignore-missing-imports]
+        args: [--no-strict-optional, --ignore-missing-imports, --config-file=setup.cfg]
 
 -   repo: https://github.com/pycqa/flake8
     rev: 6.0.0
     hooks:
     -   id: flake8
+        args: [--config=setup.cfg]
