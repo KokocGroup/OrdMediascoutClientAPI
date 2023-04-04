@@ -8,7 +8,10 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
 
 ## Usage
 
-    from ord_mediascout_client import ORDMediascoutClient, ORDMediascoutConfig, Client
+    from ord_mediascout_client import ORDMediascoutClient, \
+        ORDMediascoutConfig, CreateClientWebApiDto, \
+        ClientRelationshipType, LegalForm
+    from ord_mediascout_client.client import APIError
 
     config = ORDMediascoutConfig(
         url='http://localhost:5000',
@@ -24,14 +27,39 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
         ...
     )
 
-    try:
-        client = api.register_client(client)
-    except ClientAlreadyExists:
-        pass
-    except ORDMediascoutError as e:
-        print(e.response.code)
+    api = ORDMediascoutClient(config)
+
+    client = CreateClientWebApiDto(
+        createMode=ClientRelationshipType.DirectClient,
+        legalForm=LegalForm.JuridicalPerson,
+        inn="1234567890",
+        name="Test Client",
+        mobilePhone="1234567890",
+        epayNumber=None,
+        regNumber=None,
+        oksmNumber=None
+    )
+
+    client = api.create_client(client)
 
 
 ## Testing
 
+    pipenv install --dev
+    pipenv shell
+
+    # get credentials for accessing https://demo.mediascout.ru/
+    # and put them into .env file (see .env.example.env)
+
     pytest
+
+
+## Packaging
+
+    pipenv install --dev
+    pipenv shell
+
+    vi pyproject.toml # update version
+
+    python -m build
+    python -m twine upload dist/*
