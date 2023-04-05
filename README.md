@@ -19,6 +19,14 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
         password='password',
     )
 
+    api = MediaScoutClient(config)
+
+    client = Client(
+        name="Test Client",
+        inn="1234567890",
+        ...
+    )
+
     api = ORDMediascoutClient(config)
 
     client = CreateClientWebApiDto(

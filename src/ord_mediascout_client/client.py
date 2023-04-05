@@ -1,6 +1,6 @@
 from typing import Any, Optional, Type
 
-import requests as requests
+import requests
 from pydantic.error_wrappers import ValidationError
 from pydantic.main import BaseModel
 from pydantic.tools import parse_raw_as
@@ -82,6 +82,7 @@ class ORDMediascoutClient:
             headers={'Content-Type': 'application/json-patch+json'},
             **kwargs,
         )
+
         match response.status_code:
             case 400 | 401:
                 try:
@@ -102,86 +103,108 @@ class ORDMediascoutClient:
 
     # Clients
     def create_client(self, client: CreateClientWebApiDto) -> ClientWebApiDto:
-        client = self._call('post', '/webapi/Clients/CreateClient', client, ClientWebApiDto)
+        client: ClientWebApiDto = self._call('post', '/webapi/Clients/CreateClient', client, ClientWebApiDto)
         return client
 
     def get_clients(self, parameters: GetClientsWebApiDto) -> list[ClientWebApiDto]:
-        clients = self._call('post', '/webapi/Clients/GetClients', parameters, list[ClientWebApiDto])
+        clients: list[ClientWebApiDto] = self._call(
+            'post', '/webapi/Clients/GetClients', parameters, list[ClientWebApiDto]
+        )
         return clients
 
     # Contracts
     def create_initial_contract(self, contract: CreateInitialContractWebApiDto) -> InitialContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/CreateInitialContract', contract, InitialContractWebApiDto)
+        contract: InitialContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/CreateInitialContract', contract, InitialContractWebApiDto
+        )
         return contract
 
     def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/EditInitialContract', contract, InitialContractWebApiDto)
+        contract: InitialContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/EditInitialContract', contract, InitialContractWebApiDto
+        )
         return contract
 
     def get_initial_contracts(self, parameters: GetInitialContractsWebApiDto) -> list[InitialContractWebApiDto]:
-        contracts = self._call(
+        contracts: list[InitialContractWebApiDto] = self._call(
             'post', '/webapi/Contracts/GetInitialContracts', parameters, list[InitialContractWebApiDto]
         )
         return contracts
 
     def create_final_contract(self, contract: CreateFinalContractWebApiDto) -> FinalContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/CreateFinalContract', contract, FinalContractWebApiDto)
+        contract: FinalContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/CreateFinalContract', contract, FinalContractWebApiDto
+        )
         return contract
 
     def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/EditFinalContract', contract, FinalContractWebApiDto)
+        contract: FinalContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/EditFinalContract', contract, FinalContractWebApiDto
+        )
         return contract
 
     def get_final_contracts(self, parameters: GetFinalContractsWebApiDto) -> list[FinalContractWebApiDto]:
-        contracts = self._call('post', '/webapi/Contracts/GetFinalContracts', parameters, list[FinalContractWebApiDto])
+        contracts: list[FinalContractWebApiDto] = self._call(
+            'post', '/webapi/Contracts/GetFinalContracts', parameters, list[FinalContractWebApiDto]
+        )
         return contracts
 
     def create_outer_contract(self, contract: CreateOuterContractWebApiDto) -> OuterContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/CreateOuterContract', contract, OuterContractWebApiDto)
+        contract: OuterContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/CreateOuterContract', contract, OuterContractWebApiDto
+        )
         return contract
 
     def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractWebApiDto:
-        contract = self._call('post', '/webapi/Contracts/EditOuterContract', contract, OuterContractWebApiDto)
+        contract: OuterContractWebApiDto = self._call(
+            'post', '/webapi/Contracts/EditOuterContract', contract, OuterContractWebApiDto
+        )
         return contract
 
     def get_outer_contracts(self, parameters: GetOuterContractsWebApiDto) -> list[OuterContractWebApiDto]:
-        contracts = self._call('post', '/webapi/Contracts/GetOuterContracts', parameters, list[OuterContractWebApiDto])
+        contracts: list[OuterContractWebApiDto] = self._call(
+            'post', '/webapi/Contracts/GetOuterContracts', parameters, list[OuterContractWebApiDto]
+        )
         return contracts
 
     def create_self_promotion_contract(
         self, contract: SelfPromotionContractWebApiDto
     ) -> SelfPromotionContractWebApiDto:
-        contract = self._call(
+        contract: SelfPromotionContractWebApiDto = self._call(
             'post', '/webapi/Contracts/CreateSelfPromotionContract', contract, SelfPromotionContractWebApiDto
         )
         return contract
 
     def get_self_promotion_contracts(self) -> list[SelfPromotionContractWebApiDto]:
-        contracts = self._call(
+        contracts: list[SelfPromotionContractWebApiDto] = self._call(
             'post', '/webapi/Contracts/GetSelfPromotionContracts', None, list[SelfPromotionContractWebApiDto]
         )
         return contracts
 
     # Creatives
     def create_creative(self, creative: CreateCreativeWebApiDto) -> EntityIdWebApiDto:
-        entity = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
+        entity: EntityIdWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
         return entity
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
-        updated_creative = self._call('post', '/webapi/creatives/EditCreative', creative, CreativeWebApiDto)
+        updated_creative: CreativeWebApiDto = self._call(
+            'post', '/webapi/creatives/EditCreative', creative, CreativeWebApiDto
+        )
         return updated_creative
 
     def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeWebApiDto]:
-        creatives = self._call('post', '/webapi/creatives/GetCreatives', parameters, list[CreativeWebApiDto])
+        creatives: list[CreativeWebApiDto] = self._call(
+            'post', '/webapi/creatives/GetCreatives', parameters, list[CreativeWebApiDto]
+        )
         return creatives
 
     # Invoices
     def create_invoice(self, invoice: CreateInvoiceWebApiDto) -> EntityIdWebApiDto:
-        entity = self._call('post', '/webapi/Invoices/CreateInvoice', invoice, EntityIdWebApiDto)
+        entity: EntityIdWebApiDto = self._call('post', '/webapi/Invoices/CreateInvoice', invoice, EntityIdWebApiDto)
         return entity
 
     def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceWebApiDto:
-        invoice = self._call('post', '/webapi/Invoices/EditInvoice', invoice, InvoiceWebApiDto)
+        invoice: InvoiceWebApiDto = self._call('post', '/webapi/Invoices/EditInvoice', invoice, InvoiceWebApiDto)
         return invoice
 
     def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto) -> None:
@@ -191,15 +214,19 @@ class ORDMediascoutClient:
         self._call('post', '/webapi/Invoices/ClearInvoice', invoice)
 
     def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdWebApiDto:
-        entity = self._call('post', '/webapi/Invoices/SupplementInvoice', invoice, EntityIdWebApiDto)
+        entity: EntityIdWebApiDto = self._call('post', '/webapi/Invoices/SupplementInvoice', invoice, EntityIdWebApiDto)
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceWebApiDto]:
-        invoices = self._call('post', '/webapi/Invoices/GetInvoices', parameters, list[InvoiceWebApiDto])
+        invoices: list[InvoiceWebApiDto] = self._call(
+            'post', '/webapi/Invoices/GetInvoices', parameters, list[InvoiceWebApiDto]
+        )
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdWebApiDto) -> InvoiceSummaryWebApiDto:
-        invoice_summary = self._call('post', '/webapi/Invoices/GetInvoiceSummary', entity, InvoiceSummaryWebApiDto)
+        invoice_summary: InvoiceSummaryWebApiDto = self._call(
+            'post', '/webapi/Invoices/GetInvoiceSummary', entity, InvoiceSummaryWebApiDto
+        )
         return invoice_summary
 
     def confirm_invoice(self, entity: EntityIdWebApiDto) -> None:
@@ -210,11 +237,13 @@ class ORDMediascoutClient:
 
     # WebApiPlatform
     def create_platform(self, platform: CreatePlatformWebApiDto) -> EntityIdWebApiDto:
-        entity = self._call('post', '/webapi/Platforms/CreatePlatform', platform, EntityIdWebApiDto)
+        entity: EntityIdWebApiDto = self._call('post', '/webapi/Platforms/CreatePlatform', platform, EntityIdWebApiDto)
         return entity
 
     def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformCardWebApiDto:
-        updated_platform = self._call('post', '/webapi/Platforms/EditPlatform', platform, PlatformCardWebApiDto)
+        updated_platform: PlatformCardWebApiDto = self._call(
+            'post', '/webapi/Platforms/EditPlatform', platform, PlatformCardWebApiDto
+        )
         return updated_platform
 
     # PING
