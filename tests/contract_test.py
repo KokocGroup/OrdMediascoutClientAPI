@@ -15,6 +15,13 @@ from ord_mediascout_client import (
 )
 
 
+# Setup test data
+_clientId = 'CLoEdAGEwv6EufqiTlkEeIAg' # «Совкомбанк»
+_initial_contract_clientId = 'CLb0sZrPj5Y0KafIDU8ECPIw' # «Рога и Копыта»
+_contractorId = 'CLcnt4AYTax0aLQfxuRZjG_Q' # «ООО Рафинад»
+_finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg'
+
+
 @pytest.fixture
 def client() -> ORDMediascoutClient:
     config = ORDMediascoutConfig()
@@ -32,7 +39,7 @@ def test_create_final_contract(client: ORDMediascoutClient) -> None:
         subjectType=ContractSubjectTypeWebApi.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId='',
-        clientId='CLoEdAGEwv6EufqiTlkEeIAg',
+        clientId=_clientId,
     )
 
     response_data = client.create_final_contract(request_data)
@@ -62,18 +69,18 @@ def test_get_final_contracts(client: ORDMediascoutClient) -> None:
 
 def test_create_initial_contract(client: ORDMediascoutClient) -> None:
     request_data = CreateInitialContractWebApiDto(
-        number='AB234567890987654321C',
-        date='2023-03-07',
-        amount=145000.00,
+        number='ABC-12345',
+        date='2023-04-07',
+        amount=155000.00,
         vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
         subjectType=ContractSubjectTypeWebApi.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId=None,
-        contractorId='CLcnt4AYTax0aLQfxuRZjG_Q',
-        clientId='CLoEdAGEwv6EufqiTlkEeIAg',
-        finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
+        contractorId=_contractorId,
+        clientId=_initial_contract_clientId,
+        finalContractId=_finalContractId,
     )
 
     response_data = client.create_initial_contract(request_data)
@@ -114,7 +121,7 @@ def test_create_outer_contract(client: ORDMediascoutClient) -> None:
         subjectType=ContractSubjectTypeWebApi.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId='',
-        contractorId='CLoEdAGEwv6EufqiTlkEeIAg',
+        contractorId=_clientId,
     )
 
     response_data = client.create_outer_contract(request_data)

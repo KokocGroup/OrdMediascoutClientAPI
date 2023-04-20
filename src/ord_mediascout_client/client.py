@@ -183,8 +183,10 @@ class ORDMediascoutClient:
 
     # Creatives
     def create_creative(self, creative: CreateCreativeWebApiDto) -> EntityIdWebApiDto:
-        entity: EntityIdWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
-        return entity
+        # entity: EntityIdWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
+        creative: CreativeWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, CreativeWebApiDto)
+        # return entity
+        return creative
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
         updated_creative: CreativeWebApiDto = self._call(
