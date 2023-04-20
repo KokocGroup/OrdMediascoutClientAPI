@@ -13,5 +13,7 @@ https://docs.pydantic.dev/datamodel_code_generator/
 ## Как
 
     cd $PROJECT_ROOT
-    docker run -v (pwd)/ord_mediascout_client/dtos/:/tmp/gen koxudaxi/datamodel-code-generator \
+    docker run -v (pwd)/src/ord_mediascout_client/:/tmp/gen koxudaxi/datamodel-code-generator \
         --url https://demo.mediascout.ru/swagger/v1/swagger.json --output /tmp/gen/dtos.py
+
+    diff src/ord_mediascout_client/dtos.py src/ord_mediascout_client/models.py
