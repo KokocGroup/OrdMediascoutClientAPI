@@ -10,5 +10,5 @@ class ORDMediascoutConfig(BaseSettings):
         case_sensitive = True
 
     url: str = Field(..., env='URL')
-    username: str = Field(..., env='USERNAME')
-    password: str = Field(..., env='PASSWORD')
+    username: str = Field(..., env='MEDIASCOUT_USERNAME')
+    password: str = Field(..., env='MEDIASCOUT_PASSWORD')

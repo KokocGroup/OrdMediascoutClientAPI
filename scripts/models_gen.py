@@ -2,10 +2,14 @@ import os
 import re
 from pathlib import Path
 from urllib.parse import urlparse
+from dotenv import load_dotenv
 from datamodel_code_generator import generate, InputFileType
 
 
-JSON_API_URL = 'https://demo.mediascout.ru/swagger/v1/swagger.json'
+load_dotenv('.env')
+
+API_SWAGGER_JSON_URL=str(os.getenv('API_SWAGGER_JSON_URL'))
+
 src_dir = os.path.dirname(os.path.abspath("."))+"/src/ord_mediascout_client"
 
 add_func: str = """
@@ -27,7 +31,7 @@ def main() -> None:
     output = Path(f'{src_dir}/new_models.py')
 
     generate(
-        urlparse(JSON_API_URL),
+        urlparse(API_SWAGGER_JSON_URL),
         input_file_type=InputFileType.OpenAPI,
         output=output,
     )

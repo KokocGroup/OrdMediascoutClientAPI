@@ -128,6 +128,7 @@ class CreativeWebApiDto(BaseModel):
     initialContractId: Optional[str] = None
     type: Optional[CreativeType] = None
     form: Optional[CreativeForm] = None
+    advertiserUrl: Optional[str] = None
     advertiserUrls: Optional[List[str]] = None
     description: Optional[str] = None
     targetAudience: Optional[str] = None
