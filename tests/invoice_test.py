@@ -27,7 +27,7 @@ def test_create_invoice(client: ORDMediascoutClient) -> None:
         number='INV-{}'.format(random.randrange(11111111, 99999999)),
         date='2023-03-20',
         contractorRole=InvoicePartyRole.Rr,
-        clientRole=InvoicePartyRole.Rd,
+        clientRole=InvoicePartyRole.Ra,
         amount=20000.00,
         vatIncluded=True,
         startDate='2023-03-23',
