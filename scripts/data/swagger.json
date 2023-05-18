@@ -6139,6 +6139,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/CounterpartyStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
@@ -6146,7 +6149,10 @@
       "ContractStatus": {
         "enum": [
           "Created",
+          "RegistrationRequired",
+          "Registering",
           "Active",
+          "RegistrationError",
           "Testing",
           "Deleted"
         ],
@@ -6175,7 +6181,10 @@
       "CounterpartyStatus": {
         "enum": [
           "Created",
-          "Active"
+          "RegistrationRequired",
+          "Registering",
+          "Active",
+          "RegistrationError"
         ],
         "type": "string"
       },
@@ -6601,7 +6610,10 @@
       "CreativeStatus": {
         "enum": [
           "Created",
-          "Active"
+          "RegistrationRequired",
+          "Registering",
+          "Active",
+          "RegistrationError"
         ],
         "type": "string"
       },
@@ -6707,6 +6719,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/CreativeStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
@@ -6994,6 +7009,32 @@
         },
         "additionalProperties": false
       },
+      "ErirRequestType": {
+        "enum": [
+          "First",
+          "Second"
+        ],
+        "type": "string"
+      },
+      "ErirValidationErrorWebApiDto": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "$ref": "#/components/schemas/ErirRequestType"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "responseDt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "FinalContractWebApiDto": {
         "type": "object",
         "properties": {
@@ -7037,6 +7078,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/ContractStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
@@ -7289,6 +7333,9 @@
           "status": {
             "$ref": "#/components/schemas/ContractStatus"
           },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
+          },
           "contractorInn": {
             "type": "string"
           },
@@ -7395,10 +7442,11 @@
         "enum": [
           "Creating",
           "Created",
-          "Deleted",
-          "Registering",
           "RegistrationRequired",
-          "Active"
+          "Registering",
+          "Active",
+          "RegistrationError",
+          "Deleted"
         ],
         "type": "string"
       },
@@ -7449,6 +7497,9 @@
       "InvoiceWebApiDto": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string"
+          },
           "number": {
             "type": "string"
           },
@@ -7480,25 +7531,11 @@
           "finalContractId": {
             "type": "string"
           },
-          "initialContractsData": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InvoiceInitialContractItemWebApiDto"
-            },
-            "nullable": true
-          },
-          "statisticsByPlatforms": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/InvoiceStatisticsByPlatformsItemWebApiDto"
-            },
-            "nullable": true
-          },
-          "id": {
-            "type": "string"
-          },
           "status": {
             "$ref": "#/components/schemas/InvoiceStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
@@ -7565,6 +7602,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/ContractStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
@@ -7639,6 +7679,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/ContractStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
           }
         },
         "additionalProperties": false
