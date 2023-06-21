@@ -11,11 +11,12 @@ from .models import (
     BadRequestWebApiDto,
     ClearInvoiceDataWebApiDto,
     ClientWebApiDto,
-    CreatedCreativeWebApiDto,
     CreateClientWebApiDto,
     CreateCreativeWebApiDto,
+    CreatedCreativeWebApiDto,
     CreateFinalContractWebApiDto,
     CreateInitialContractWebApiDto,
+    CreateInvoicelessStatisticsWebApiDto,
     CreateInvoiceWebApiDto,
     CreateOuterContractWebApiDto,
     CreatePlatformWebApiDto,
@@ -33,19 +34,18 @@ from .models import (
     GetCreativesWebApiDto,
     GetFinalContractsWebApiDto,
     GetInitialContractsWebApiDto,
+    GetInvoicelessPeriodsWebApiDto,
     GetInvoicesWebApiDto,
     GetOuterContractsWebApiDto,
+    IActionResult,
     InitialContractWebApiDto,
+    InvoicelessStatisticsWebApiDto,
     InvoiceSummaryWebApiDto,
     InvoiceWebApiDto,
     OuterContractWebApiDto,
     PlatformCardWebApiDto,
     SelfPromotionContractWebApiDto,
     SupplementInvoiceWebApiDto,
-    CreateInvoicelessStatisticsWebApiDto,
-    InvoicelessStatisticsWebApiDto,
-    GetInvoicelessPeriodsWebApiDto,
-    IActionResult,
 )
 
 
@@ -100,7 +100,7 @@ class ORDMediascoutClient:
             case 200 | 201:
                 if return_type is not None:
                     try:
-                        return parse_raw_as(return_type, response.text)
+                        return parse_raw_as(return_type, response.text or '{}')
                     except ValidationError as e:
                         raise UnexpectedResponseError(response) from e
             case _:
@@ -188,7 +188,9 @@ class ORDMediascoutClient:
 
     # Creatives
     def create_creative(self, creative: CreateCreativeWebApiDto) -> CreatedCreativeWebApiDto:
-        creative: CreatedCreativeWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, CreatedCreativeWebApiDto)
+        creative: CreatedCreativeWebApiDto = self._call(
+            'post', '/webapi/creatives/CreateCreative', creative, CreatedCreativeWebApiDto
+        )
         return creative
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
@@ -253,11 +255,13 @@ class ORDMediascoutClient:
 
     # Statistics
     def create_statistics(self, statistics: CreateInvoicelessStatisticsWebApiDto) -> IActionResult:
-        statistics: IActionResult = self._call('post', '/webapi/Statistics/CreateStatistics', statistics)
+        statistics: IActionResult = self._call('post', '/webapi/Statistics/CreateStatistics', statistics, IActionResult)
         return statistics
 
     def get_statistics(self, parameters: GetInvoicelessPeriodsWebApiDto) -> list[InvoicelessStatisticsWebApiDto]:
-        statistics: list[InvoicelessStatisticsWebApiDto] = self._call('post', '/webapi/Statistics/GetStatistics', parameters, list[InvoicelessStatisticsWebApiDto])
+        statistics: list[InvoicelessStatisticsWebApiDto] = self._call(
+            'post', '/webapi/Statistics/GetStatistics', parameters, list[InvoicelessStatisticsWebApiDto]
+        )
         return statistics
 
     # PING
