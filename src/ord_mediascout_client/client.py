@@ -11,6 +11,7 @@ from .models import (
     BadRequestWebApiDto,
     ClearInvoiceDataWebApiDto,
     ClientWebApiDto,
+    CreatedCreativeWebApiDto,
     CreateClientWebApiDto,
     CreateCreativeWebApiDto,
     CreateFinalContractWebApiDto,
@@ -41,6 +42,10 @@ from .models import (
     PlatformCardWebApiDto,
     SelfPromotionContractWebApiDto,
     SupplementInvoiceWebApiDto,
+    CreateInvoicelessStatisticsWebApiDto,
+    InvoicelessStatisticsWebApiDto,
+    GetInvoicelessPeriodsWebApiDto,
+    IActionResult,
 )
 
 
@@ -182,10 +187,8 @@ class ORDMediascoutClient:
         return contracts
 
     # Creatives
-    def create_creative(self, creative: CreateCreativeWebApiDto) -> EntityIdWebApiDto:
-        # entity: EntityIdWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, EntityIdWebApiDto)
-        creative: CreativeWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, CreativeWebApiDto)
-        # return entity
+    def create_creative(self, creative: CreateCreativeWebApiDto) -> CreatedCreativeWebApiDto:
+        creative: CreatedCreativeWebApiDto = self._call('post', '/webapi/creatives/CreateCreative', creative, CreatedCreativeWebApiDto)
         return creative
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
@@ -247,6 +250,15 @@ class ORDMediascoutClient:
             'post', '/webapi/Platforms/EditPlatform', platform, PlatformCardWebApiDto
         )
         return updated_platform
+
+    # Statistics
+    def create_statistics(self, statistics: CreateInvoicelessStatisticsWebApiDto) -> IActionResult:
+        statistics: IActionResult = self._call('post', '/webapi/Statistics/CreateStatistics', statistics)
+        return statistics
+
+    def get_statistics(self, parameters: GetInvoicelessPeriodsWebApiDto) -> list[InvoicelessStatisticsWebApiDto]:
+        statistics: list[InvoicelessStatisticsWebApiDto] = self._call('post', '/webapi/Statistics/GetStatistics', parameters, list[InvoicelessStatisticsWebApiDto])
+        return statistics
 
     # PING
     def ping(self) -> bool:

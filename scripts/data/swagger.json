@@ -1448,7 +1448,7 @@
         }
       }
     },
-    "/webapi/creatives/CreateCreative": {
+    "/webapi/Creatives/CreateCreative": {
       "post": {
         "tags": [
           "Creative"
@@ -1573,7 +1573,7 @@
         }
       }
     },
-    "/webapi/creatives/EditCreative": {
+    "/webapi/Creatives/EditCreative": {
       "post": {
         "tags": [
           "Creative"
@@ -1678,7 +1678,7 @@
         }
       }
     },
-    "/webapi/creatives/EditCreativeGroup": {
+    "/webapi/Creatives/EditCreativeGroup": {
       "post": {
         "tags": [
           "Creative"
@@ -1783,7 +1783,7 @@
         }
       }
     },
-    "/webapi/creatives/GetCreativeGroups": {
+    "/webapi/Creatives/GetCreativeGroups": {
       "post": {
         "tags": [
           "Creative"
@@ -1897,7 +1897,7 @@
         }
       }
     },
-    "/webapi/creatives/GetCreatives": {
+    "/webapi/Creatives/GetCreatives": {
       "post": {
         "tags": [
           "Creative"
@@ -1960,6 +1960,96 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/CreativeWebApiDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/webapi/Fias/GetFiasObjects": {
+      "post": {
+        "tags": [
+          "Fias"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
                   }
                 }
               }
@@ -3139,6 +3229,225 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PlatformCardWebApiDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/webapi/Statistics/CreateStatistics": {
+      "post": {
+        "tags": [
+          "Statistics"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/webapi/Statistics/GetStatistics": {
+      "post": {
+        "tags": [
+          "Statistics"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
                 }
               }
             }
@@ -5032,6 +5341,87 @@
         }
       }
     },
+    "/webapi/v1/Fias/GetFiasObjects": {
+      "post": {
+        "tags": [
+          "Fias"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiasObjectWebApiDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/webapi/v1/Invoices/ClearInvoice": {
       "post": {
         "tags": [
@@ -6068,6 +6458,207 @@
           }
         }
       }
+    },
+    "/webapi/v1/Statistics/CreateStatistics": {
+      "post": {
+        "tags": [
+          "Statistics"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoicelessStatisticsWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IActionResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/webapi/v1/Statistics/GetStatistics": {
+      "post": {
+        "tags": [
+          "Statistics"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetInvoicelessPeriodsWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InvoicelessStatisticsWebApiDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -6267,6 +6858,9 @@
           "description": {
             "type": "string"
           },
+          "targetAudienceParams": {
+            "$ref": "#/components/schemas/TargetAudienceParamsWebApiDto"
+          },
           "targetAudience": {
             "type": "string",
             "nullable": true
@@ -6440,6 +7034,19 @@
         },
         "additionalProperties": false
       },
+      "CreateInvoicelessStatisticsWebApiDto": {
+        "type": "object",
+        "properties": {
+          "statistics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoicelessStatisticsByPlatformsItemWebApiDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateOuterContractWebApiDto": {
         "type": "object",
         "properties": {
@@ -6569,6 +7176,9 @@
           "isNative": {
             "type": "boolean"
           },
+          "targetAudienceParams": {
+            "$ref": "#/components/schemas/TargetAudienceParamsWebApiDto"
+          },
           "targetAudience": {
             "type": "string",
             "nullable": true
@@ -6679,6 +7289,9 @@
           },
           "description": {
             "type": "string"
+          },
+          "targetAudienceParams": {
+            "$ref": "#/components/schemas/TargetAudienceParamsWebApiDto"
           },
           "targetAudience": {
             "type": "string",
@@ -7035,6 +7648,29 @@
         },
         "additionalProperties": false
       },
+      "FiasObjectWebApiDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "objectGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "FinalContractWebApiDto": {
         "type": "object",
         "properties": {
@@ -7231,6 +7867,25 @@
         },
         "additionalProperties": false
       },
+      "GetInvoicelessPeriodsWebApiDto": {
+        "type": "object",
+        "properties": {
+          "dateStart": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateEnd": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/InvoicelessPeriodStatus"
+          }
+        },
+        "additionalProperties": false
+      },
       "GetInvoicesWebApiDto": {
         "type": "object",
         "properties": {
@@ -7281,6 +7936,10 @@
             "nullable": true
           }
         },
+        "additionalProperties": false
+      },
+      "IActionResult": {
+        "type": "object",
         "additionalProperties": false
       },
       "InitialContractWebApiDto": {
@@ -7379,9 +8038,6 @@
       "InvoiceStatisticsByPlatformsItemWebApiDto": {
         "type": "object",
         "properties": {
-          "initialContractId": {
-            "type": "string"
-          },
           "erid": {
             "type": "string"
           },
@@ -7434,6 +8090,9 @@
           },
           "vatIncluded": {
             "type": "boolean"
+          },
+          "initialContractId": {
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -7536,6 +8195,118 @@
           },
           "erirValidationError": {
             "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvoicelessPeriodStatus": {
+        "enum": [
+          "Creating",
+          "RegistrationRequired",
+          "Registering",
+          "Active",
+          "RegistrationError"
+        ],
+        "type": "string"
+      },
+      "InvoicelessStatisticsByPlatformsItemWebApiDto": {
+        "type": "object",
+        "properties": {
+          "erid": {
+            "type": "string"
+          },
+          "platformUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "platformName": {
+            "type": "string",
+            "nullable": true
+          },
+          "platformType": {
+            "$ref": "#/components/schemas/PlatformType"
+          },
+          "platformOwnedByAgency": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "impsPlan": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impsFact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startDatePlan": {
+            "type": "string",
+            "format": "date"
+          },
+          "startDateFact": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDatePlan": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDateFact": {
+            "type": "string",
+            "format": "date"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "vatIncluded": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvoicelessStatisticsWebApiDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InvoicelessPeriodStatus"
+          },
+          "erirValidationError": {
+            "$ref": "#/components/schemas/ErirValidationErrorWebApiDto"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "creativesCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "platformsCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "impsFactCount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "impsPlanCount": {
+            "type": "integer",
+            "format": "int64"
           }
         },
         "additionalProperties": false
@@ -7713,6 +8484,18 @@
               "$ref": "#/components/schemas/InvoiceStatisticsByPlatformsItemWebApiDto"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TargetAudienceParamsWebApiDto": {
+        "type": "object",
+        "properties": {
+          "geo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "additionalProperties": false
