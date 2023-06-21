@@ -54,6 +54,11 @@ __all__ = [
     'Severity',
     'SupplementInvoiceWebApiDto',
     'ValidationFailure',
+    'IActionResult',
+    'GetInvoicelessPeriodsWebApiDto',
+    'InvoicelessStatisticsWebApiDto',
+    'InvoicelessStatisticsByPlatformsItemWebApiDto',
+    'CreateInvoicelessStatisticsWebApiDto',
 ]
 
 from .client import ORDMediascoutClient
@@ -114,4 +119,9 @@ from .models import (
     Severity,
     SupplementInvoiceWebApiDto,
     ValidationFailure,
+    IActionResult,
+    GetInvoicelessPeriodsWebApiDto,
+    InvoicelessStatisticsWebApiDto,
+    InvoicelessStatisticsByPlatformsItemWebApiDto,
+    CreateInvoicelessStatisticsWebApiDto,
 )
