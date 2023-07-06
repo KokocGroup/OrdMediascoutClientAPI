@@ -23,7 +23,7 @@ def test_create_client(client: ORDMediascoutClient) -> None:
         legalForm=LegalForm.JuridicalPerson,
         inn='7720805643',
         name='Тест клиент2',
-        mobilePhone='0950991234',
+        mobilePhone='+79161234567',
         epayNumber='12333',
         regNumber='54556',
         oksmNumber='44563',
