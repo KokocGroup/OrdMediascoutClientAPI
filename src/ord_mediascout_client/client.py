@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Optional, Type
 
 import requests
@@ -70,6 +71,8 @@ class ORDMediascoutClient:
     def __init__(self, config: ORDMediascoutConfig):
         self.config = config
         self.auth = HTTPBasicAuth(self.config.username, self.config.password)
+        self.headers = {'Content-Type': 'application/json-patch+json'}
+        self.logger = logging.getLogger('ord_mediascout_client')
 
     def _call(
         self,
@@ -80,12 +83,15 @@ class ORDMediascoutClient:
         **kwargs: dict[str, Any],
     ) -> Any:
         response = requests.request(
-            method,
-            f'{self.config.url}{url}',
-            data=obj and obj.json(),
-            auth=self.auth,
-            headers={'Content-Type': 'application/json-patch+json'},
-            **kwargs,
+            method, f'{self.config.url}{url}', data=obj and obj.json(), auth=self.auth, headers=self.headers, **kwargs
+        )
+
+        self.logger.debug(
+            f'API call: {method} {url}\n'
+            f'Headers: {self.headers}\n'
+            f'Body: {obj and obj.json(indent=4)}\n'
+            f'Response: {response.status_code}\n'
+            f'{response.text}'
         )
 
         match response.status_code:
