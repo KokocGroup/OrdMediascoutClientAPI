@@ -12,3 +12,4 @@ class ORDMediascoutConfig(BaseSettings):
     url: str = Field(..., env='URL')
     username: str = Field(..., env='MEDIASCOUT_USERNAME')
     password: str = Field(..., env='MEDIASCOUT_PASSWORD')
+    api_url_prefix: str = Field(..., env='API_URL_PREFIX')

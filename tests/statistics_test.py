@@ -55,7 +55,7 @@ def test_create_statistics(client: ORDMediascoutClient) -> None:
 
     response_data = client.create_statistics(request_data)
 
-    assert response_data is not None
+    assert response_data is None
 
 
 def test_get_statistics(client: ORDMediascoutClient) -> None:
