@@ -6,7 +6,7 @@ from ord_mediascout_client import (
     CreativeMediaDataItemWebApiDto,
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
-    CreativeType,
+    CampaignType,
     GetCreativesWebApiDto,
     ORDMediascoutClient,
     ORDMediascoutConfig,
@@ -23,7 +23,7 @@ def test_create_mediadata_creative(client: ORDMediascoutClient) -> None:
     request_data = CreateCreativeWebApiDto(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-        type=CreativeType.CPM,
+        type=CampaignType.CPM,
         form=CreativeForm.Banner,
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test mediadata creative 333',
@@ -51,7 +51,7 @@ def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
     request_data = CreateCreativeWebApiDto(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-        type=CreativeType.CPM,
+        type=CampaignType.CPM,
         form=CreativeForm.Banner,
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test textdata creative 555',

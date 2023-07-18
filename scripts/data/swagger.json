@@ -2011,6 +2011,111 @@
         }
       }
     },
+    "/webapi/Creatives/SimpleEditCreative": {
+      "post": {
+        "tags": [
+          "Creative"
+        ],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/webapi/Fias/GetFiasObjects": {
       "post": {
         "tags": [
@@ -3319,24 +3424,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              }
-            }
+            "description": "Success"
           },
           "400": {
             "description": "Bad Request",
@@ -5341,6 +5429,102 @@
         }
       }
     },
+    "/webapi/v1/creatives/SimpleEditCreative": {
+      "post": {
+        "tags": [
+          "Creative"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleEditCreativeWebApiDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreativeWebApiDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestWebApiDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
     "/webapi/v1/Fias/GetFiasObjects": {
       "post": {
         "tags": [
@@ -6490,24 +6674,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IActionResult"
-                }
-              }
-            }
+            "description": "Success"
           },
           "400": {
             "description": "Bad Request",
@@ -6678,6 +6845,15 @@
         },
         "additionalProperties": false
       },
+      "CampaignType": {
+        "enum": [
+          "CPM",
+          "CPC",
+          "CPA",
+          "Other"
+        ],
+        "type": "string"
+      },
       "ClearInvoiceDataWebApiDto": {
         "type": "object",
         "properties": {
@@ -6816,6 +6992,10 @@
       "CreateCreativeWebApiDto": {
         "type": "object",
         "properties": {
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
           "creativeGroupId": {
             "type": "string",
             "nullable": true
@@ -6843,7 +7023,7 @@
             "nullable": true
           },
           "type": {
-            "$ref": "#/components/schemas/CreativeType"
+            "$ref": "#/components/schemas/CampaignType"
           },
           "form": {
             "$ref": "#/components/schemas/CreativeForm"
@@ -6899,7 +7079,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -6940,7 +7121,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -6987,7 +7169,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7051,7 +7234,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7113,6 +7297,10 @@
           "id": {
             "type": "string"
           },
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
           "erid": {
             "type": "string"
           },
@@ -7165,7 +7353,7 @@
             "nullable": true
           },
           "type": {
-            "$ref": "#/components/schemas/CreativeType"
+            "$ref": "#/components/schemas/CampaignType"
           },
           "form": {
             "$ref": "#/components/schemas/CreativeForm"
@@ -7219,6 +7407,7 @@
       },
       "CreativeStatus": {
         "enum": [
+          "Creating",
           "Created",
           "RegistrationRequired",
           "Registering",
@@ -7236,18 +7425,13 @@
         },
         "additionalProperties": false
       },
-      "CreativeType": {
-        "enum": [
-          "CPM",
-          "CPC",
-          "CPA",
-          "Other"
-        ],
-        "type": "string"
-      },
       "CreativeWebApiDto": {
         "type": "object",
         "properties": {
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
           "creativeGroupId": {
             "type": "string",
             "nullable": true
@@ -7275,7 +7459,7 @@
             "nullable": true
           },
           "type": {
-            "$ref": "#/components/schemas/CreativeType"
+            "$ref": "#/components/schemas/CampaignType"
           },
           "form": {
             "$ref": "#/components/schemas/CreativeForm"
@@ -7346,6 +7530,10 @@
             "type": "string",
             "nullable": true
           },
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
           "erid": {
             "type": "string",
             "nullable": true
@@ -7395,7 +7583,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7439,7 +7628,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7492,7 +7682,8 @@
             "type": "string"
           },
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7551,7 +7742,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7675,7 +7867,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -7769,6 +7962,10 @@
       "GetCreativesWebApiDto": {
         "type": "object",
         "properties": {
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
           "creativeId": {
             "type": "string",
             "nullable": true
@@ -7938,15 +8135,12 @@
         },
         "additionalProperties": false
       },
-      "IActionResult": {
-        "type": "object",
-        "additionalProperties": false
-      },
       "InitialContractWebApiDto": {
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -8160,7 +8354,8 @@
             "type": "string"
           },
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -8334,7 +8529,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -8414,7 +8610,8 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "date": {
             "type": "string",
@@ -8464,6 +8661,91 @@
           "Info"
         ],
         "type": "string"
+      },
+      "SimpleEditCreativeWebApiDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "nativeCustomerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "erid": {
+            "type": "string",
+            "nullable": true
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "finalContractId": {
+            "type": "string"
+          },
+          "initialContractId": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/CampaignType"
+          },
+          "form": {
+            "$ref": "#/components/schemas/CreativeForm"
+          },
+          "advertiserUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "targetAudienceParams": {
+            "$ref": "#/components/schemas/TargetAudienceParamsWebApiDto"
+          },
+          "targetAudience": {
+            "type": "string",
+            "nullable": true
+          },
+          "isNative": {
+            "type": "boolean"
+          },
+          "isSocial": {
+            "type": "boolean"
+          },
+          "okvedCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "mediaData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreativeMediaDataItemWebApiDto"
+            },
+            "nullable": true
+          },
+          "textData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreativeTextDataItemWebApiDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "SupplementInvoiceWebApiDto": {
         "type": "object",
