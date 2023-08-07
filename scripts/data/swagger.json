@@ -7113,6 +7113,10 @@
           },
           "clientId": {
             "type": "string"
+          },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7268,6 +7272,13 @@
           },
           "contractorId": {
             "type": "string"
+          },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRegReport": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -7618,6 +7629,10 @@
           "clientId": {
             "type": "string"
           },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string"
           }
@@ -7777,6 +7792,13 @@
           "contractorId": {
             "type": "string"
           },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRegReport": {
+            "type": "boolean"
+          },
           "id": {
             "type": "string"
           }
@@ -7901,6 +7923,10 @@
           },
           "clientId": {
             "type": "string"
+          },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "string"
@@ -8563,6 +8589,13 @@
           },
           "contractorId": {
             "type": "string"
+          },
+          "partnerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isRegReport": {
+            "type": "boolean"
           },
           "id": {
             "type": "string"
