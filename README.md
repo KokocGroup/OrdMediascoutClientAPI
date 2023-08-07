@@ -59,7 +59,14 @@ Unofficial python client for [ORD Mediascout API](https://demo.mediascout.ru/swa
     pipenv install --dev
     pipenv shell
 
-    vi pyproject.toml # update version
+    # update version
+    vi pyproject.toml
 
+    # clean up files from dist/* before deploy not to upload old ones
+    # rm dist/*
+
+    # create new build
     python -m build
+
+    # upload fresh build
     python -m twine upload dist/*
