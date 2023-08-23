@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Extra
 
-from .models import CreativeForm, CreativeType, capitalize
+from .models import CampaignType, CreativeForm, capitalize
 
 
 class ErirRequestType(Enum):
@@ -46,7 +46,7 @@ class CreateContainerWebApiDto(BaseModel):
     initialContractId: Optional[str] = None
     name: Optional[str] = None
     nativeCustomerId: Optional[str] = None
-    type: Optional[CreativeType] = None
+    type: Optional[CampaignType] = None
     form: Optional[CreativeForm] = None
     targetAudience: Optional[str] = None
     targetAudienceParams: Optional[TargetAudienceParamsWebApiDto] = None
