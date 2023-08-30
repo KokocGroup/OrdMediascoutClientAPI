@@ -264,7 +264,7 @@ class ORDMediascoutClient:
     # Feeds
     def create_container(self, container: CreateContainerWebApiDto) -> ResponseContainerWebApiDto:
         container: ResponseContainerWebApiDto = self._call(
-            'post', '/webapi/creatives/CreateContainer', container, CreateContainerWebApiDto
+            'post', '/webapi/creatives/CreateContainer', container, ResponseContainerWebApiDto
         )
         return container
 
