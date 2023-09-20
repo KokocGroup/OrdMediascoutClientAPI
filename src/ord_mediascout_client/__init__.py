@@ -1,4 +1,6 @@
 __all__ = [
+    'ORDMediascoutClient',
+    'ORDMediascoutConfig',
     'BadRequestWebApiDto',
     'ClearInvoiceDataWebApiDto',
     'ClientRelationshipType',
