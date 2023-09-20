@@ -110,7 +110,6 @@ class ORDMediascoutClient:
             f'Response: {response.status_code}\n'
             f'{response.text}'
         )
-        print(f'DBG API Response: {response.text=}')
         match response.status_code:
             case 400 | 401:
                 try:

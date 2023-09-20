@@ -14,12 +14,11 @@ from ord_mediascout_client import (
     ORDMediascoutConfig,
 )
 
-
 # Setup test data
-_clientId = 'CLoEdAGEwv6EufqiTlkEeIAg' # «Совкомбанк»
-_initial_contract_clientId = 'CLb0sZrPj5Y0KafIDU8ECPIw' # «Рога и Копыта»
-_contractorId = 'CLcnt4AYTax0aLQfxuRZjG_Q' # «ООО Рафинад»
-_finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg'
+_clientId = 'CLoEdAGEwv6EufqiTlkEeIAg'  # «Совкомбанк»
+_initial_contract_clientId = 'CLb0sZrPj5Y0KafIDU8ECPIw'  # «Рога и Копыта»
+_contractorId = 'CLcnt4AYTax0aLQfxuRZjG_Q'  # «ООО Рафинад»
+_finalContractId = 'CTiwhIpoQ_F0OEPpKj8vWKGg'
 
 
 @pytest.fixture
@@ -122,6 +121,7 @@ def test_create_outer_contract(client: ORDMediascoutClient) -> None:
         # actionType=MediationActionType.Contracting,
         parentMainContractId='',
         contractorId=_clientId,
+        isRegReport=True,
     )
 
     response_data = client.create_outer_contract(request_data)
