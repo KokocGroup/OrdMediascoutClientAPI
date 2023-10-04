@@ -169,6 +169,7 @@ class ResponseFeedElementsWebApiDto(BaseModel):
     description: Optional[str] = None
     advertiserUrls: Optional[List[str]] = None
     erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    clickId: Optional[str] = None
 
 
 class EditFeedElementWebApiDto(BaseModel):
