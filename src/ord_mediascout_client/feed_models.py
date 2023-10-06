@@ -231,6 +231,7 @@ class ResponseGetFeedElementsWebApiDto(BaseModel):
     advertiserUrls: Optional[List[str]] = None
     status: Optional[str] = None
     erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    clickId: Optional[str] = None
 
 
 class CreateFeedElementsBulkWebApiDto(BaseModel):
