@@ -57,6 +57,11 @@ class CreateContainerWebApiDto(BaseModel):
 
 
 class ResponseContainerWebApiDto(CreateContainerWebApiDto):
+    class Config(CreateContainerWebApiDto.Config):
+        extra = Extra.allow
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
     id: Optional[str] = None
     erid: Optional[str] = None
     feedName: Optional[str] = None
