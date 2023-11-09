@@ -91,7 +91,7 @@ class ResponseGetContainerWebApiDto(BaseModel):
     nativeCustomerId: Optional[str] = None
     erid: Optional[str] = None
     name: Optional[str] = None
-    deedId: Optional[str] = None
+    feedId: Optional[str] = None
     feedNativeCustomerId: Optional[str] = None
     feedName: Optional[str] = None
     finalContractId: Optional[str] = None
@@ -104,7 +104,7 @@ class ResponseGetContainerWebApiDto(BaseModel):
     description: Optional[str] = None
     isNative: Optional[str] = None
     isSocial: Optional[str] = None
-    okvedCodes: Optional[str] = None
+    okvedCodes: Optional[list[str]] = None
 
 
 class FeedElementMediaDataItem(BaseModel):
