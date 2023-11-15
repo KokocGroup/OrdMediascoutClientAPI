@@ -1,12 +1,12 @@
 import pytest
 
 from ord_mediascout_client import (
+    CampaignType,
     CreateCreativeWebApiDto,
     CreativeForm,
     CreativeMediaDataItemWebApiDto,
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
-    CampaignType,
     GetCreativesWebApiDto,
     ORDMediascoutClient,
     ORDMediascoutConfig,
@@ -28,6 +28,7 @@ def test_create_mediadata_creative(client: ORDMediascoutClient) -> None:
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test mediadata creative 333',
         targetAudience='',
+        isSelfPromotion=False,
         isNative=False,
         isSocial=False,
         okvedCodes=['01.02', '01.03'],
@@ -56,6 +57,7 @@ def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test textdata creative 555',
         targetAudience='',
+        isSelfPromotion=False,
         isNative=False,
         isSocial=False,
         okvedCodes=['01.05'],

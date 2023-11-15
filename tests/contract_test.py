@@ -147,23 +147,3 @@ def test_get_outer_contracts(client: ORDMediascoutClient) -> None:
 
     for outer_contract in response_data:
         assert outer_contract.id is not None
-
-
-"""
-! ОТКЛЮЧЕНО
-! СОЗДАЕТСЯ ТОЛЬКО ОДИН РАЗ, ПОСЛЕ ЧЕГО СОЗДАТЬ НОВЫЙ НЕ ДАЕТ
-def test_create_self_promotion_contract(client: ORDMediascoutClient) -> None:
-    request_data = SelfPromotionContractWebApiDto()
-
-    response_data = client.create_self_promotion_contract(request_data)
-
-    assert response_data.id is not None
-    assert response_data.status == ContractStatus.Created or ContractStatus.Active
-"""
-
-
-def test_get_self_promotion_contract(client: ORDMediascoutClient) -> None:
-    response_data = client.get_self_promotion_contracts()
-
-    for self_promotion_contract in response_data:
-        assert self_promotion_contract.id is not None

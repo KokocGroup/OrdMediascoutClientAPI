@@ -62,7 +62,6 @@ from .models import (
     InvoiceWebApiDto,
     OuterContractWebApiDto,
     PlatformCardWebApiDto,
-    SelfPromotionContractWebApiDto,
     SupplementInvoiceWebApiDto,
 )
 
@@ -202,26 +201,6 @@ class ORDMediascoutClient:
             f'{self.config.api_url_prefix}/Contracts/GetOuterContracts',
             parameters,
             list[OuterContractWebApiDto],
-        )
-        return contracts
-
-    def create_self_promotion_contract(
-        self, contract: SelfPromotionContractWebApiDto
-    ) -> SelfPromotionContractWebApiDto:
-        contract: SelfPromotionContractWebApiDto = self._call(
-            'post',
-            f'{self.config.api_url_prefix}/Contracts/CreateSelfPromotionContract',
-            contract,
-            SelfPromotionContractWebApiDto,
-        )
-        return contract
-
-    def get_self_promotion_contracts(self) -> list[SelfPromotionContractWebApiDto]:
-        contracts: list[SelfPromotionContractWebApiDto] = self._call(
-            'post',
-            f'{self.config.api_url_prefix}/Contracts/GetSelfPromotionContracts',
-            None,
-            list[SelfPromotionContractWebApiDto],
         )
         return contracts
 
