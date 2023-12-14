@@ -130,33 +130,33 @@ class ORDMediascoutClient:
     # Clients
     def create_client(self, client: CreateClientWebApiDto) -> ClientWebApiDto:
         client: ClientWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Clients/CreateClient', client, ClientWebApiDto
+            'post', f'{self.config.api_url_prefix}/clients/createclient', client, ClientWebApiDto
         )
         return client
 
     def get_clients(self, parameters: GetClientsWebApiDto) -> list[ClientWebApiDto]:
         clients: list[ClientWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/Clients/GetClients', parameters, list[ClientWebApiDto]
+            'post', f'{self.config.api_url_prefix}/clients/getclients', parameters, list[ClientWebApiDto]
         )
         return clients
 
     # Contracts
     def create_initial_contract(self, contract: CreateInitialContractWebApiDto) -> InitialContractWebApiDto:
         contract: InitialContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/CreateInitialContract', contract, InitialContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/createinitialcontract', contract, InitialContractWebApiDto
         )
         return contract
 
     def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractWebApiDto:
         contract: InitialContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/EditInitialContract', contract, InitialContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/editinitialcontract', contract, InitialContractWebApiDto
         )
         return contract
 
     def get_initial_contracts(self, parameters: GetInitialContractsWebApiDto) -> list[InitialContractWebApiDto]:
         contracts: list[InitialContractWebApiDto] = self._call(
             'post',
-            f'{self.config.api_url_prefix}/Contracts/GetInitialContracts',
+            f'{self.config.api_url_prefix}/contracts/getinitialcontracts',
             parameters,
             list[InitialContractWebApiDto],
         )
@@ -164,20 +164,20 @@ class ORDMediascoutClient:
 
     def create_final_contract(self, contract: CreateFinalContractWebApiDto) -> FinalContractWebApiDto:
         contract: FinalContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/CreateFinalContract', contract, FinalContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/createfinalcontract', contract, FinalContractWebApiDto
         )
         return contract
 
     def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractWebApiDto:
         contract: FinalContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/EditFinalContract', contract, FinalContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/editfinalcontract', contract, FinalContractWebApiDto
         )
         return contract
 
     def get_final_contracts(self, parameters: GetFinalContractsWebApiDto) -> list[FinalContractWebApiDto]:
         contracts: list[FinalContractWebApiDto] = self._call(
             'post',
-            f'{self.config.api_url_prefix}/Contracts/GetFinalContracts',
+            f'{self.config.api_url_prefix}/contracts/getfinalcontracts',
             parameters,
             list[FinalContractWebApiDto],
         )
@@ -185,20 +185,20 @@ class ORDMediascoutClient:
 
     def create_outer_contract(self, contract: CreateOuterContractWebApiDto) -> OuterContractWebApiDto:
         contract: OuterContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/CreateOuterContract', contract, OuterContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/createoutercontract', contract, OuterContractWebApiDto
         )
         return contract
 
     def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractWebApiDto:
         contract: OuterContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Contracts/EditOuterContract', contract, OuterContractWebApiDto
+            'post', f'{self.config.api_url_prefix}/contracts/editoutercontract', contract, OuterContractWebApiDto
         )
         return contract
 
     def get_outer_contracts(self, parameters: GetOuterContractsWebApiDto) -> list[OuterContractWebApiDto]:
         contracts: list[OuterContractWebApiDto] = self._call(
             'post',
-            f'{self.config.api_url_prefix}/Contracts/GetOuterContracts',
+            f'{self.config.api_url_prefix}/contracts/getoutercontracts',
             parameters,
             list[OuterContractWebApiDto],
         )
@@ -207,33 +207,33 @@ class ORDMediascoutClient:
     # Creatives
     def create_creative(self, creative: CreateCreativeWebApiDto) -> CreatedCreativeWebApiDto:
         creative: CreatedCreativeWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/CreateCreative', creative, CreatedCreativeWebApiDto
+            'post', f'{self.config.api_url_prefix}/creatives/createcreative', creative, CreatedCreativeWebApiDto
         )
         return creative
 
     def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
         updated_creative: CreativeWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/EditCreative', creative, CreativeWebApiDto
+            'post', f'{self.config.api_url_prefix}/creatives/editcreative', creative, CreativeWebApiDto
         )
         return updated_creative
 
     def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeWebApiDto]:
         creatives: list[CreativeWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/GetCreatives', parameters, list[CreativeWebApiDto]
+            'post', f'{self.config.api_url_prefix}/creatives/getcreatives', parameters, list[CreativeWebApiDto]
         )
         return creatives
 
     # Creative Group
     def edit_creative_group(self, creative_group: CreativeGroupWebApiDto) -> CreativeGroupWebApiDto:
         updated_creative_group: CreativeGroupWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/EditCreativeGroup', creative_group, CreativeGroupWebApiDto
+            'post', f'{self.config.api_url_prefix}/creatives/editcreativegroup', creative_group, CreativeGroupWebApiDto
         )
         return updated_creative_group
 
     def get_creative_groups(self, parameters: GetCreativeGroupsWebApiDto) -> list[CreativeGroupWebApiDto]:
         creative_groups: list[CreativeGroupWebApiDto] = self._call(
             'post',
-            f'{self.config.api_url_prefix}/creatives/GetCreativeGroups',
+            f'{self.config.api_url_prefix}/creatives/getcreativegroups',
             parameters,
             list[CreativeGroupWebApiDto],
         )
@@ -242,31 +242,31 @@ class ORDMediascoutClient:
     # Feeds
     def create_container(self, container: CreateContainerWebApiDto) -> ResponseContainerWebApiDto:
         container: ResponseContainerWebApiDto = self._call(
-            'post', '/webapi/creatives/CreateContainer', container, ResponseContainerWebApiDto
+            'post', '/webapi/creatives/createcontainer', container, ResponseContainerWebApiDto
         )
         return container
 
     def get_containers(self, parameters: GetContainerWebApiDto) -> list[ResponseGetContainerWebApiDto]:
         containers: list[ResponseGetContainerWebApiDto] = self._call(
-            'post', '/webapi/creatives/GetContainers', parameters, list[ResponseGetContainerWebApiDto]
+            'post', '/webapi/creatives/getcontainers', parameters, list[ResponseGetContainerWebApiDto]
         )
         return containers
 
     def create_feed_elements(self, feed_elements: CreateFeedElementsWebApiDto) -> list[ResponseFeedElementsWebApiDto]:
         feed_elements: list[ResponseFeedElementsWebApiDto] = self._call(
-            'post', '/webapi/creatives/CreateFeedElements', feed_elements, list[ResponseFeedElementsWebApiDto]
+            'post', '/webapi/creatives/createfeedelements', feed_elements, list[ResponseFeedElementsWebApiDto]
         )
         return feed_elements
 
     def edit_feed_element(self, feed_element: EditFeedElementWebApiDto) -> ResponseEditFeedElementWebApiDto:
         feed_element: ResponseEditFeedElementWebApiDto = self._call(
-            'post', '/webapi/creatives/EditFeedElement', feed_element, ResponseEditFeedElementWebApiDto
+            'post', '/webapi/creatives/editfeedelement', feed_element, ResponseEditFeedElementWebApiDto
         )
         return feed_element
 
     def get_feed_elements(self, parameters: GetFeedElementsWebApiDto) -> list[ResponseGetFeedElementsWebApiDto]:
         feed_elements: list[ResponseGetFeedElementsWebApiDto] = self._call(
-            'post', '/webapi/creatives/GetFeedElements', parameters, list[ResponseGetFeedElementsWebApiDto]
+            'post', '/webapi/creatives/getfeedelements', parameters, list[ResponseGetFeedElementsWebApiDto]
         )
         return feed_elements
 
@@ -275,7 +275,7 @@ class ORDMediascoutClient:
     ) -> ResponseCreateFeedElementsBulkWebApiDto:
         feed_elements_bulk: ResponseCreateFeedElementsBulkWebApiDto = self._call(
             'post',
-            '/webapi/creatives/CreateFeedElementsBulk',
+            '/webapi/creatives/createfeedelementsbulk',
             feed_elements_bulk,
             ResponseCreateFeedElementsBulkWebApiDto,
         )
@@ -286,7 +286,7 @@ class ORDMediascoutClient:
     ) -> ResponseGetFeedElementsBulkInfo:
         feed_elements_bulk_info: ResponseGetFeedElementsBulkInfo = self._call(
             'post',
-            '/webapi/creatives/GetFeedElementsBulkInfo',
+            '/webapi/creatives/getfeedelementsbulkinfo',
             feed_elements_bulk_info,
             ResponseGetFeedElementsBulkInfo,
         )
@@ -295,70 +295,70 @@ class ORDMediascoutClient:
     # Invoices
     def create_invoice(self, invoice: CreateInvoiceWebApiDto) -> EntityIdWebApiDto:
         entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Invoices/CreateInvoice', invoice, EntityIdWebApiDto
+            'post', f'{self.config.api_url_prefix}/invoices/createinvoice', invoice, EntityIdWebApiDto
         )
         return entity
 
     def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceWebApiDto:
         invoice: InvoiceWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Invoices/EditInvoice', invoice, InvoiceWebApiDto
+            'post', f'{self.config.api_url_prefix}/invoices/editinvoice', invoice, InvoiceWebApiDto
         )
         return invoice
 
     def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto) -> None:
-        self._call('post', f'{self.config.api_url_prefix}/Invoices/OverwriteInvoice', invoice)
+        self._call('post', f'{self.config.api_url_prefix}/invoices/overwriteinvoice', invoice)
 
     def clear_invoice(self, invoice: ClearInvoiceDataWebApiDto) -> None:
-        self._call('post', f'{self.config.api_url_prefix}/Invoices/ClearInvoice', invoice)
+        self._call('post', f'{self.config.api_url_prefix}/invoices/clearinvoice', invoice)
 
     def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdWebApiDto:
         entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Invoices/SupplementInvoice', invoice, EntityIdWebApiDto
+            'post', f'{self.config.api_url_prefix}/invoices/supplementinvoice', invoice, EntityIdWebApiDto
         )
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceWebApiDto]:
         invoices: list[InvoiceWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/Invoices/GetInvoices', parameters, list[InvoiceWebApiDto]
+            'post', f'{self.config.api_url_prefix}/invoices/getinvoices', parameters, list[InvoiceWebApiDto]
         )
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdWebApiDto) -> InvoiceSummaryWebApiDto:
         invoice_summary: InvoiceSummaryWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Invoices/GetInvoiceSummary', entity, InvoiceSummaryWebApiDto
+            'post', f'{self.config.api_url_prefix}/invoices/getinvoicesummary', entity, InvoiceSummaryWebApiDto
         )
         return invoice_summary
 
     def confirm_invoice(self, entity: EntityIdWebApiDto) -> None:
-        self._call('post', f'{self.config.api_url_prefix}/Invoices/ConfirmInvoice', entity)
+        self._call('post', f'{self.config.api_url_prefix}/invoices/confirminvoice', entity)
 
     def delete_invoice(self, entity: EntityIdWebApiDto) -> None:
-        self._call('post', f'{self.config.api_url_prefix}/Invoices/DeleteInvoices', entity)
+        self._call('post', f'{self.config.api_url_prefix}/invoices/deleteinvoices', entity)
 
     # WebApiPlatform
     def create_platform(self, platform: CreatePlatformWebApiDto) -> EntityIdWebApiDto:
         entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Platforms/CreatePlatform', platform, EntityIdWebApiDto
+            'post', f'{self.config.api_url_prefix}/platforms/createplatform', platform, EntityIdWebApiDto
         )
         return entity
 
     def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformCardWebApiDto:
         updated_platform: PlatformCardWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/Platforms/EditPlatform', platform, PlatformCardWebApiDto
+            'post', f'{self.config.api_url_prefix}/platforms/editplatform', platform, PlatformCardWebApiDto
         )
         return updated_platform
 
     # Statistics
     def create_statistics(self, statistics: CreateInvoicelessStatisticsWebApiDto) -> None:
         statistics: None = self._call(
-            'post', f'{self.config.api_url_prefix}/Statistics/CreateStatistics', statistics, None
+            'post', f'{self.config.api_url_prefix}/statistics/createstatistics', statistics, None
         )
         return statistics
 
     def get_statistics(self, parameters: GetInvoicelessPeriodsWebApiDto) -> list[InvoicelessStatisticsWebApiDto]:
         statistics: list[InvoicelessStatisticsWebApiDto] = self._call(
             'post',
-            f'{self.config.api_url_prefix}/Statistics/GetStatistics',
+            f'{self.config.api_url_prefix}/statistics/getstatistics',
             parameters,
             list[InvoicelessStatisticsWebApiDto],
         )
@@ -367,10 +367,10 @@ class ORDMediascoutClient:
     # PING
     def ping(self) -> bool:
         tmp_auth, self.auth = self.auth, None
-        self._call('get', '/webapi/Ping')
+        self._call('get', '/webapi/ping')
         self.auth = tmp_auth
         return True
 
     def ping_auth(self) -> bool:
-        self._call('get', '/webapi/PingAuth')
+        self._call('get', '/webapi/pingauth')
         return True
