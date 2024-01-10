@@ -4,11 +4,10 @@ from ord_mediascout_client import (
     CreateClientWebApiDto,
     GetClientsWebApiDto,
     LegalForm,
-    ORDMediascoutClient,
 )
 
 
-def test_create_client(client) -> None:
+def test_create_client(client):
     request_data = CreateClientWebApiDto(
         createMode=ClientRelationshipType.DirectClient,
         legalForm=LegalForm.JuridicalPerson,
@@ -34,7 +33,7 @@ def test_create_client(client) -> None:
     assert response_data.status == CounterpartyStatus.Active
 
 
-def test_get_clients(client: ORDMediascoutClient) -> None:
+def test_get_clients(client):
     request_data = GetClientsWebApiDto(status=CounterpartyStatus.Active)
 
     response_data = client.get_clients(request_data)

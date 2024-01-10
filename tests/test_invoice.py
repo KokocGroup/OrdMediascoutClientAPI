@@ -1,7 +1,5 @@
 import random
 
-import pytest
-
 from ord_mediascout_client import (
     CreateInvoiceWebApiDto,
     GetInvoicesWebApiDto,
@@ -9,20 +7,12 @@ from ord_mediascout_client import (
     InvoicePartyRole,
     InvoiceStatisticsByPlatformsItemWebApiDto,
     InvoiceStatus,
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
     PlatformType,
 )
 
 
-@pytest.fixture
-def client() -> ORDMediascoutClient:
-    config = ORDMediascoutConfig()
-    return ORDMediascoutClient(config)
-
-
 # НЕ работает в режиме "get or create", только "create" с новым номером, потому number генерится
-def test_create_invoice(client: ORDMediascoutClient) -> None:
+def test_create_invoice(client):
     request_data = CreateInvoiceWebApiDto(
         number='INV-{}'.format(random.randrange(11111111, 99999999)),
         date='2023-03-20',
@@ -64,7 +54,7 @@ def test_create_invoice(client: ORDMediascoutClient) -> None:
     assert response_data.id is not None
 
 
-def test_get_invoices(client: ORDMediascoutClient) -> None:
+def test_get_invoices(client):
     request_data = GetInvoicesWebApiDto(status=InvoiceStatus.Active)
 
     response_data = client.get_invoices(request_data)
