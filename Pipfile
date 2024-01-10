@@ -8,6 +8,7 @@ requests = "*"
 pydantic = "*"
 python-dotenv = "*"
 rich = "*"
+ord-mediascout-client = {editable = true, path = "."}
 
 [dev-packages]
 pre-commit = "*"
