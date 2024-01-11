@@ -5,10 +5,9 @@ name = "pypi"
 
 [packages]
 requests = "*"
-pydantic = "*"
+pydantic = ">=1.0, <2.0"
 python-dotenv = "*"
 rich = "*"
-ord-mediascout-client = {editable = true, path = "."}
 
 [dev-packages]
 pre-commit = "*"
@@ -21,6 +20,8 @@ mypy = "*"
 chardet = "*"
 isort = "*"
 datamodel-code-generator = {extras = ["http"], version = "*"}
+ord-mediascout-client = {editable = true, path = "."}
+faker = "*"
 
 [requires]
 python_version = "3.11"
