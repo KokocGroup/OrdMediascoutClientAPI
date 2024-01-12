@@ -5,24 +5,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Extra
 
-from .models import CampaignType, CreativeForm, capitalize
-
-
-class ErirRequestType(Enum):
-    First = 'First'
-    Second = 'Second'
-
-
-class ErirValidationErrorWebApiDto(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    stage: Optional[ErirRequestType] = None
-    code: Optional[str] = None
-    message: Optional[str] = None
-    responseDt: Optional[str] = None
+from .models import CampaignType, CreativeForm, ErirValidationErrorWebApiDto, capitalize
 
 
 class TargetAudienceParamsWebApiDto(BaseModel):
@@ -212,7 +195,7 @@ class GetFeedElementsWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
+    ids: Optional[list[str]] = None
     nativeCustomerId: Optional[str] = None
     feedNativeCustomerId: Optional[str] = None
     status: Optional[str] = None
@@ -257,8 +240,26 @@ class ResponseCreateFeedElementsBulkWebApiDto(BaseModel):
     id: Optional[str] = None
 
 
-class GetFeedElementsBulkInfo(ResponseCreateFeedElementsBulkWebApiDto):
-    pass
+class ElementFeedStatusEnum(Enum):
+    Pending = 'Pending'  # Добавлен в очередь и ожидает загрузки внешних файлов
+    Downloading = 'Downloading'  # Внешние файлы скачиваются
+    Downloaded = 'Downloaded'  # Добавление медиаданных к элементам фидов в ОРД
+    Failed = 'Failed'  # Ошибка создания
+    WaitingForRetry = 'WaitingForRetry'  # Ожидает повторной отправки
+    RegistrationRequired = 'RegistrationRequired'  # ожидает регистрации в ЕРИР
+    Registering = 'Registering'  # в процессе регистрации в ЕРИР
+    Active = 'Active'  # активный. Зарегистрирован в ЕРИР
+    RegistrationError = 'RegistrationError'  # ошибка регистрации в ЕРИР
+
+
+class GetFeedElementsBulkInfo(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    id: Optional[str] = None
+    status: Optional[ElementFeedStatusEnum] = None
 
 
 class FeedElementMediaWebApiDto(BaseModel):
@@ -272,11 +273,31 @@ class FeedElementMediaWebApiDto(BaseModel):
     mediaDownloadError: Optional[str] = None
 
 
+class FeedElementDto(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedId: Optional[str] = None
+    feedNativeCustomerId: Optional[str] = None
+    feedName: Optional[str] = None
+    nativeCustomerId: Optional[str] = None
+    description: Optional[str] = None
+    advertiserUrls: Optional[List[str]] = None
+    mediaData: Optional[List[FeedElementMediaDataItem]] = None
+    textData: Optional[List[FeedElementTextDataItem]] = None
+
+
 class BulkFeedElementWebApiDto(FeedElementWebApiDto):
     feedElementId: Optional[str] = None
-    feedElementStatus: Optional[str] = None
-    feedElementDto: Optional[CreateFeedElementsBulkWebApiDto] = None
-    status: Optional[str] = None
+    feedElementNativeCustomerId: Optional[str] = None
+    feedId: Optional[str] = None
+    feedNativeCustomerId: Optional[str] = None
+    erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    feedElementDto: Optional[FeedElementDto] = None
+    status: Optional[ElementFeedStatusEnum] = None
+    failedDownloadAttemptCount: Optional[int] = None
     feedElementCreatingErrors: Optional[List[str]] = None
     feedElementMedias: Optional[List[FeedElementMediaWebApiDto]] = None
 

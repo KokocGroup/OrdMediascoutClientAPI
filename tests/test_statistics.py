@@ -1,11 +1,7 @@
-import pytest
-
 from ord_mediascout_client import (
     CreateInvoicelessStatisticsWebApiDto,
     GetInvoicelessPeriodsWebApiDto,
     InvoicelessStatisticsByPlatformsItemWebApiDto,
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
 )
 
 # Setup test data
@@ -25,13 +21,7 @@ _price = 5
 _vatIncluded = True
 
 
-@pytest.fixture
-def client() -> ORDMediascoutClient:
-    config = ORDMediascoutConfig()
-    return ORDMediascoutClient(config)
-
-
-def test_create_statistics(client: ORDMediascoutClient) -> None:
+def test_create_statistics(client):
     request_data = CreateInvoicelessStatisticsWebApiDto(
         statistics=[
             InvoicelessStatisticsByPlatformsItemWebApiDto(
@@ -58,7 +48,7 @@ def test_create_statistics(client: ORDMediascoutClient) -> None:
     assert response_data is None
 
 
-def test_get_statistics(client: ORDMediascoutClient) -> None:
+def test_get_statistics(client):
     request_data = GetInvoicelessPeriodsWebApiDto(dateStart='2023-01-01', dateEnd='2023-06-21', status='Creating')
 
     response_data = client.get_statistics(request_data)

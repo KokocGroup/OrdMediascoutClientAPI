@@ -1,5 +1,3 @@
-import pytest
-
 from ord_mediascout_client import (
     CampaignType,
     CreateCreativeWebApiDto,
@@ -8,18 +6,10 @@ from ord_mediascout_client import (
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
     GetCreativesWebApiDto,
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
 )
 
 
-@pytest.fixture
-def client() -> ORDMediascoutClient:
-    config = ORDMediascoutConfig()
-    return ORDMediascoutClient(config)
-
-
-def test_create_mediadata_creative(client: ORDMediascoutClient) -> None:
+def test_create_mediadata_creative(client):
     request_data = CreateCreativeWebApiDto(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
@@ -48,7 +38,7 @@ def test_create_mediadata_creative(client: ORDMediascoutClient) -> None:
     assert response_data.id is not None
 
 
-def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
+def test_create_textdata_creative(client):
     request_data = CreateCreativeWebApiDto(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
@@ -69,7 +59,7 @@ def test_create_textdata_creative(client: ORDMediascoutClient) -> None:
     assert response_data.id is not None
 
 
-def test_get_creatives(client: ORDMediascoutClient) -> None:
+def test_get_creatives(client):
     request_data = GetCreativesWebApiDto(status=CreativeStatus.Active)
 
     response_data = client.get_creatives(request_data)

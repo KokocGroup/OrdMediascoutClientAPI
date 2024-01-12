@@ -1,5 +1,3 @@
-import pytest
-
 from ord_mediascout_client import (
     ContractStatus,
     ContractSubjectTypeWebApi,
@@ -10,8 +8,6 @@ from ord_mediascout_client import (
     GetFinalContractsWebApiDto,
     GetInitialContractsWebApiDto,
     GetOuterContractsWebApiDto,
-    ORDMediascoutClient,
-    ORDMediascoutConfig,
 )
 
 # Setup test data
@@ -21,13 +17,7 @@ _contractorId = 'CLcnt4AYTax0aLQfxuRZjG_Q'  # «ООО Рафинад»
 _finalContractId = 'CTiwhIpoQ_F0OEPpKj8vWKGg'
 
 
-@pytest.fixture
-def client() -> ORDMediascoutClient:
-    config = ORDMediascoutConfig()
-    return ORDMediascoutClient(config)
-
-
-def test_create_final_contract(client: ORDMediascoutClient) -> None:
+def test_create_final_contract(client):
     request_data = CreateFinalContractWebApiDto(
         number='AB1234567890C',
         date='2023-03-02',
@@ -57,7 +47,7 @@ def test_create_final_contract(client: ORDMediascoutClient) -> None:
     assert response_data.status == ContractStatus.Created or ContractStatus.Active
 
 
-def test_get_final_contracts(client: ORDMediascoutClient) -> None:
+def test_get_final_contracts(client):
     request_data = GetFinalContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_final_contracts(request_data)
@@ -66,7 +56,7 @@ def test_get_final_contracts(client: ORDMediascoutClient) -> None:
         assert final_contract.id is not None
 
 
-def test_create_initial_contract(client: ORDMediascoutClient) -> None:
+def test_create_initial_contract(client):
     request_data = CreateInitialContractWebApiDto(
         number='ABC-12345',
         date='2023-04-07',
@@ -100,7 +90,7 @@ def test_create_initial_contract(client: ORDMediascoutClient) -> None:
     assert response_data.status == ContractStatus.Created or ContractStatus.Active
 
 
-def test_get_initial_contracts(client: ORDMediascoutClient) -> None:
+def test_get_initial_contracts(client):
     request_data = GetInitialContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_initial_contracts(request_data)
@@ -109,7 +99,7 @@ def test_get_initial_contracts(client: ORDMediascoutClient) -> None:
         assert initial_contract.id is not None
 
 
-def test_create_outer_contract(client: ORDMediascoutClient) -> None:
+def test_create_outer_contract(client):
     request_data = CreateOuterContractWebApiDto(
         number='AB1234567890123CD',
         date='2023-03-05',
@@ -140,7 +130,7 @@ def test_create_outer_contract(client: ORDMediascoutClient) -> None:
     assert response_data.status == ContractStatus.Created or ContractStatus.Active
 
 
-def test_get_outer_contracts(client: ORDMediascoutClient) -> None:
+def test_get_outer_contracts(client):
     request_data = GetOuterContractsWebApiDto(status=ContractStatus.Active)
 
     response_data = client.get_outer_contracts(request_data)
