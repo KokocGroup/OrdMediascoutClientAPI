@@ -70,11 +70,25 @@ class APIError(Exception):
     pass
 
 
+class ResponseError(APIError):
+    def __init__(self, response: requests.Response):
+        super().__init__(
+            f'Response error {response.status_code} for API {response.request.method} {response.request.url}'
+        )
+        self.response = response
+
+
 class BadResponseError(APIError):
     def __init__(self, response: requests.Response, error: Optional[BadRequestWebApiDto] = None):
         super().__init__(error and error.errorType or f'Bad response from API: {response.status_code}')
         self.response = response
         self.error = error
+
+
+class TemporaryResponseError(APIError):
+    def __init__(self, response: requests.Response):
+        super().__init__(f'Temporary error: {response.status_code}')
+        self.response = response
 
 
 class UnexpectedResponseError(APIError):
@@ -98,17 +112,31 @@ class ORDMediascoutClient:
         return_type: Optional[Type[Any]] = None,
         **kwargs: dict[str, Any],
     ) -> Any:
-        response = requests.request(
-            method, f'{self.config.url}{url}', data=obj and obj.json(), auth=self.auth, headers=self.headers, **kwargs
-        )
+        try:
+            response = requests.request(
+                method,
+                f'{self.config.url}{url}',
+                data=obj and obj.json(),
+                auth=self.auth,
+                headers=self.headers,
+                **kwargs,
+            )
+            self.logger.debug(
+                f'API call: {method} {url}\n'
+                f'Headers: {self.headers}\n'
+                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Response: {response.status_code}\n'
+                f'{response.text}'
+            )
+        except requests.RequestException as e:
+            self.logger.exception(
+                f'API call: {method} {url}\n'
+                f'Headers: {self.headers}\n'
+                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Exception: {e}\n'
+            )
+            raise APIError from e
 
-        self.logger.debug(
-            f'API call: {method} {url}\n'
-            f'Headers: {self.headers}\n'
-            f'Body: {obj and obj.json(indent=4)}\n'
-            f'Response: {response.status_code}\n'
-            f'{response.text}'
-        )
         match response.status_code:
             case 400 | 401:
                 try:
@@ -116,8 +144,8 @@ class ORDMediascoutClient:
                 except ValidationError as e:
                     raise UnexpectedResponseError(response) from e
                 raise BadResponseError(response, bad_response)
-            case 500:
-                raise BadResponseError(response)
+            case int() if 500 <= response.status_code < 600:
+                raise TemporaryResponseError(response)
             case 200 | 201:
                 if return_type is not None:
                     try:

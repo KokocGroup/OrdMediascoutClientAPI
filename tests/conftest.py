@@ -1,8 +1,13 @@
+import logging
+import random
 import time
 
 import pytest
 
-from ord_mediascout_client import ORDMediascoutClient, ORDMediascoutConfig
+from ord_mediascout_client import CreatePlatformWebApiDto, ORDMediascoutClient, ORDMediascoutConfig, PlatformType
+
+logging.getLogger('faker').setLevel(logging.WARNING)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
 @pytest.fixture
@@ -19,3 +24,19 @@ def faker_session_locale():
 @pytest.fixture(scope='session', autouse=True)
 def faker_seed():
     return int(time.time())
+
+
+@pytest.fixture
+def create_platform_data():
+    def _create_platform_data(**kwargs):
+        rnd = random.randrange(111, 999)
+        data = {
+            'name': f'Test Platform {rnd}',
+            'type': PlatformType.Site,
+            'url': f'https://www.testplatform{rnd}.ru/',
+            'isOwner': False,
+        }
+        data.update(kwargs)
+        return CreatePlatformWebApiDto(**data)
+
+    return _create_platform_data
