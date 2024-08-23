@@ -101,7 +101,6 @@ class APIValidationError(APIError):
     def __init__(self, e: ValidationError):
         if callable(e.errors):
             error_list = e.errors()
-
             if error_list:
                 error_message = error_list[0]
                 loc = error_message.get('loc', [])
@@ -112,7 +111,6 @@ class APIValidationError(APIError):
         else:
             error_details = "ValidationError: Unable to retrieve error details"
         super().__init__(error_details)
-        self.error = e
 
 
 class ORDMediascoutClient:
