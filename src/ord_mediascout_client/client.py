@@ -97,6 +97,24 @@ class UnexpectedResponseError(APIError):
         self.response = response
 
 
+class APIValidationError(APIError):
+    def __init__(self, e: ValidationError):
+        if callable(e.errors):
+            error_list = e.errors()
+
+            if error_list:
+                error_message = error_list[0]
+                loc = error_message.get('loc', [])
+                msg = error_message.get('msg', 'Unknown message')
+                error_details = f"ValidationError: '{loc[-1] if loc else 'Unknown field'} {msg}'"
+            else:
+                error_details = "ValidationError: No error details available"
+        else:
+            error_details = "ValidationError: Unable to retrieve error details"
+        super().__init__(error_details)
+        self.error = e
+
+
 class ORDMediascoutClient:
     def __init__(self, config: ORDMediascoutConfig):
         self.config = config
@@ -151,7 +169,7 @@ class ORDMediascoutClient:
                     try:
                         return parse_raw_as(return_type, response.text or '{}')
                     except ValidationError as e:
-                        raise UnexpectedResponseError(response) from e
+                        raise APIValidationError(e) from e
             case _:
                 raise UnexpectedResponseError(response)
 
