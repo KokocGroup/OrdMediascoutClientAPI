@@ -439,6 +439,7 @@ class BadRequestWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
+    traceId: Optional[str] = None
     errorType: Optional[str] = None
     errorItems: Optional[List[ValidationFailure]] = None
 
