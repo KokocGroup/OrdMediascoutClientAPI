@@ -782,6 +782,7 @@ class InitialContractWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
+    cid: Optional[str] = None
     number: Optional[str] = None
     date: Optional[date] = None
     amount: Optional[float] = None
