@@ -12,7 +12,7 @@ pip install ord-mediascout-client
 
 ```python
 from ord_mediascout_client import ORDMediascoutClient, \
-    ORDMediascoutConfig, CreateClientWebApiDto, \
+    ORDMediascoutConfig, CreateClientRequest, \
     ClientRelationshipType, LegalForm
 
 config = ORDMediascoutConfig(
@@ -23,7 +23,7 @@ config = ORDMediascoutConfig(
 
 api = ORDMediascoutClient(config)
 
-client_dto = CreateClientWebApiDto(
+client_dto = CreateClientRequest(
     createMode=ClientRelationshipType.DirectClient,
     legalForm=LegalForm.JuridicalPerson,
     inn="1234567890",
