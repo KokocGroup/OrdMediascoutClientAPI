@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from ord_mediascout_client import CreatePlatformWebApiDto, ORDMediascoutClient, ORDMediascoutConfig, PlatformType
+from ord_mediascout_client import CreatePlatformRequest, ORDMediascoutClient, ORDMediascoutConfig, PlatformType
 
 logging.getLogger('faker').setLevel(logging.WARNING)
 logging.getLogger('urllib3').setLevel(logging.WARNING)
@@ -37,6 +37,6 @@ def create_platform_data():
             'isOwner': False,
         }
         data.update(kwargs)
-        return CreatePlatformWebApiDto(**data)
+        return CreatePlatformRequest(**data)
 
     return _create_platform_data

@@ -1,7 +1,7 @@
 from ord_mediascout_client import (
-    CreateInvoicelessStatisticsWebApiDto,
-    GetInvoicelessPeriodsWebApiDto,
-    InvoicelessStatisticsByPlatformsItemWebApiDto,
+    CreateInvoicelessStatisticsRequest,
+    GetInvoicelessPeriodsRequest,
+    InvoicelessStatisticsByPlatforms,
 )
 
 # Setup test data
@@ -22,9 +22,9 @@ _vatIncluded = True
 
 
 def test_create_statistics(client):
-    request_data = CreateInvoicelessStatisticsWebApiDto(
+    request_data = CreateInvoicelessStatisticsRequest(
         statistics=[
-            InvoicelessStatisticsByPlatformsItemWebApiDto(
+            InvoicelessStatisticsByPlatforms(
                 erid=_erid,
                 platformUrl=_platformUrl,
                 platformName=_platformName,
@@ -49,7 +49,7 @@ def test_create_statistics(client):
 
 
 def test_get_statistics(client):
-    request_data = GetInvoicelessPeriodsWebApiDto(dateStart='2023-01-01', dateEnd='2023-06-21', status='Creating')
+    request_data = GetInvoicelessPeriodsRequest(dateStart='2023-01-01', dateEnd='2023-06-21', status='Creating')
 
     response_data = client.get_statistics(request_data)
 

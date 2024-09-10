@@ -25,43 +25,43 @@ from .feed_models import (
     ResponseGetFeedElementsWebApiDto,
 )
 from .models import (
-    BadRequestWebApiDto,
+    BadRequestResponse,
     ClearInvoiceDataWebApiDto,
-    ClientWebApiDto,
-    CreateClientWebApiDto,
-    CreateCreativeWebApiDto,
-    CreatedCreativeWebApiDto,
-    CreateFinalContractWebApiDto,
-    CreateInitialContractWebApiDto,
-    CreateInvoicelessStatisticsWebApiDto,
-    CreateInvoiceWebApiDto,
-    CreateOuterContractWebApiDto,
-    CreatePlatformWebApiDto,
-    CreativeGroupWebApiDto,
-    CreativeWebApiDto,
-    EditCreativeWebApiDto,
+    ClientResponse,
+    CreateClientRequest,
+    CreateCreativeRequest,
+    CreatedCreativeResponse,
+    CreateFinalContractRequest,
+    CreateInitialContractRequest,
+    CreateInvoicelessStatisticsRequest,
+    CreateInvoiceRequest,
+    CreateOuterContractRequest,
+    CreatePlatformRequest,
+    CreativeGroupResponse,
+    CreativeResponse,
+    EditCreativeRequest,
     EditFinalContractWebApiDto,
     EditInitialContractWebApiDto,
     EditInvoiceDataWebApiDto,
     EditInvoiceStatisticsWebApiDto,
     EditOuterContractWebApiDto,
     EditPlatformWebApiDto,
-    EntityIdWebApiDto,
-    FinalContractWebApiDto,
-    GetClientsWebApiDto,
-    GetCreativeGroupsWebApiDto,
+    EntityIdResponse,
+    FinalContractResponse,
+    GetClientRequest,
+    GetCreativeGroupsRequest,
     GetCreativesWebApiDto,
-    GetFinalContractsWebApiDto,
-    GetInitialContractsWebApiDto,
-    GetInvoicelessPeriodsWebApiDto,
+    GetFinalContractsRequest,
+    GetInitialContractRequest,
+    GetInvoicelessPeriodsRequest,
     GetInvoicesWebApiDto,
-    GetOuterContractsWebApiDto,
-    InitialContractWebApiDto,
-    InvoicelessStatisticsWebApiDto,
-    InvoiceSummaryWebApiDto,
-    InvoiceWebApiDto,
-    OuterContractWebApiDto,
-    PlatformCardWebApiDto,
+    GetOuterContractsRequest,
+    InitialContractResponse,
+    InvoicelessStatisticsResponse,
+    InvoiceResponse,
+    InvoiceSummaryResponse,
+    OuterContractResponse,
+    PlatformResponse,
     SupplementInvoiceWebApiDto,
 )
 
@@ -79,7 +79,7 @@ class ResponseError(APIError):
 
 
 class BadResponseError(APIError):
-    def __init__(self, response: requests.Response, error: Optional[BadRequestWebApiDto] = None):
+    def __init__(self, response: requests.Response, error: Optional[BadRequestResponse] = None):
         super().__init__(error and error.errorType or f'Bad response from API: {response.status_code}')
         self.response = response
         self.error = error
@@ -107,9 +107,9 @@ class APIValidationError(APIError):
                 msg = error_message.get('msg', 'Unknown message')
                 error_details = f"ValidationError: '{loc[-1] if loc else 'Unknown field'} {msg}'"
             else:
-                error_details = "ValidationError: No error details available"
+                error_details = 'ValidationError: No error details available'
         else:
-            error_details = "ValidationError: Unable to retrieve error details"
+            error_details = 'ValidationError: Unable to retrieve error details'
         super().__init__(error_details)
 
 
@@ -156,7 +156,7 @@ class ORDMediascoutClient:
         match response.status_code:
             case 400 | 401:
                 try:
-                    bad_response = BadRequestWebApiDto.parse_raw(response.text)
+                    bad_response = BadRequestResponse.parse_raw(response.text)
                 except ValidationError as e:
                     raise UnexpectedResponseError(response) from e
                 raise BadResponseError(response, bad_response)
@@ -172,114 +172,105 @@ class ORDMediascoutClient:
                 raise UnexpectedResponseError(response)
 
     # Clients
-    def create_client(self, client: CreateClientWebApiDto) -> ClientWebApiDto:
-        client: ClientWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/clients/createclient', client, ClientWebApiDto
+    def create_client(self, client: CreateClientRequest) -> ClientResponse:
+        client: ClientResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/clients/createclient', client, ClientResponse
         )
         return client
 
-    def get_clients(self, parameters: GetClientsWebApiDto) -> list[ClientWebApiDto]:
-        clients: list[ClientWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/clients/getclients', parameters, list[ClientWebApiDto]
+    def get_clients(self, parameters: GetClientRequest) -> list[ClientResponse]:
+        clients: list[ClientResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/clients/getclients', parameters, list[ClientResponse]
         )
         return clients
 
     # Contracts
-    def create_initial_contract(self, contract: CreateInitialContractWebApiDto) -> InitialContractWebApiDto:
-        contract: InitialContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/createinitialcontract', contract, InitialContractWebApiDto
+    def create_initial_contract(self, contract: CreateInitialContractRequest) -> InitialContractResponse:
+        contract: InitialContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/createinitialcontract', contract, InitialContractResponse
         )
         return contract
 
-    def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractWebApiDto:
-        contract: InitialContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/editinitialcontract', contract, InitialContractWebApiDto
+    def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractResponse:
+        contract: InitialContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/editinitialcontract', contract, InitialContractResponse
         )
         return contract
 
-    def get_initial_contracts(self, parameters: GetInitialContractsWebApiDto) -> list[InitialContractWebApiDto]:
-        contracts: list[InitialContractWebApiDto] = self._call(
+    def get_initial_contracts(self, parameters: GetInitialContractRequest) -> list[InitialContractResponse]:
+        contracts: list[InitialContractResponse] = self._call(
             'post',
             f'{self.config.api_url_prefix}/contracts/getinitialcontracts',
             parameters,
-            list[InitialContractWebApiDto],
+            list[InitialContractResponse],
         )
         return contracts
 
-    def create_final_contract(self, contract: CreateFinalContractWebApiDto) -> FinalContractWebApiDto:
-        contract: FinalContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/createfinalcontract', contract, FinalContractWebApiDto
+    def create_final_contract(self, contract: CreateFinalContractRequest) -> FinalContractResponse:
+        contract: FinalContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/createfinalcontract', contract, FinalContractResponse
         )
         return contract
 
-    def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractWebApiDto:
-        contract: FinalContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/editfinalcontract', contract, FinalContractWebApiDto
+    def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractResponse:
+        contract: FinalContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/editfinalcontract', contract, FinalContractResponse
         )
         return contract
 
-    def get_final_contracts(self, parameters: GetFinalContractsWebApiDto) -> list[FinalContractWebApiDto]:
-        contracts: list[FinalContractWebApiDto] = self._call(
-            'post',
-            f'{self.config.api_url_prefix}/contracts/getfinalcontracts',
-            parameters,
-            list[FinalContractWebApiDto],
+    def get_final_contracts(self, parameters: GetFinalContractsRequest) -> list[FinalContractResponse]:
+        contracts: list[FinalContractResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/getfinalcontracts', parameters, list[FinalContractResponse]
         )
         return contracts
 
-    def create_outer_contract(self, contract: CreateOuterContractWebApiDto) -> OuterContractWebApiDto:
-        contract: OuterContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/createoutercontract', contract, OuterContractWebApiDto
+    def create_outer_contract(self, contract: CreateOuterContractRequest) -> OuterContractResponse:
+        contract: OuterContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/createoutercontract', contract, OuterContractResponse
         )
         return contract
 
-    def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractWebApiDto:
-        contract: OuterContractWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/contracts/editoutercontract', contract, OuterContractWebApiDto
+    def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractResponse:
+        contract: OuterContractResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/editoutercontract', contract, OuterContractResponse
         )
         return contract
 
-    def get_outer_contracts(self, parameters: GetOuterContractsWebApiDto) -> list[OuterContractWebApiDto]:
-        contracts: list[OuterContractWebApiDto] = self._call(
-            'post',
-            f'{self.config.api_url_prefix}/contracts/getoutercontracts',
-            parameters,
-            list[OuterContractWebApiDto],
+    def get_outer_contracts(self, parameters: GetOuterContractsRequest) -> list[OuterContractResponse]:
+        contracts: list[OuterContractResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/contracts/getoutercontracts', parameters, list[OuterContractResponse]
         )
         return contracts
 
     # Creatives
-    def create_creative(self, creative: CreateCreativeWebApiDto) -> CreatedCreativeWebApiDto:
-        creative: CreatedCreativeWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/createcreative', creative, CreatedCreativeWebApiDto
+    def create_creative(self, creative: CreateCreativeRequest) -> CreatedCreativeResponse:
+        creative: CreatedCreativeResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/creatives/createcreative', creative, CreatedCreativeResponse
         )
         return creative
 
-    def edit_creative(self, creative: EditCreativeWebApiDto) -> CreativeWebApiDto:
-        updated_creative: CreativeWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/editcreative', creative, CreativeWebApiDto
+    def edit_creative(self, creative: EditCreativeRequest) -> CreativeResponse:
+        updated_creative: CreativeResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/creatives/editcreative', creative, CreativeResponse
         )
         return updated_creative
 
-    def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeWebApiDto]:
-        creatives: list[CreativeWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/getcreatives', parameters, list[CreativeWebApiDto]
+    def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeResponse]:
+        creatives: list[CreativeResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/creatives/getcreatives', parameters, list[CreativeResponse]
         )
         return creatives
 
     # Creative Group
-    def edit_creative_group(self, creative_group: CreativeGroupWebApiDto) -> CreativeGroupWebApiDto:
-        updated_creative_group: CreativeGroupWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/creatives/editcreativegroup', creative_group, CreativeGroupWebApiDto
+    def edit_creative_group(self, creative_group: CreativeGroupResponse) -> CreativeGroupResponse:
+        updated_creative_group: CreativeGroupResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/creatives/editcreativegroup', creative_group, CreativeGroupResponse
         )
         return updated_creative_group
 
-    def get_creative_groups(self, parameters: GetCreativeGroupsWebApiDto) -> list[CreativeGroupWebApiDto]:
-        creative_groups: list[CreativeGroupWebApiDto] = self._call(
-            'post',
-            f'{self.config.api_url_prefix}/creatives/getcreativegroups',
-            parameters,
-            list[CreativeGroupWebApiDto],
+    def get_creative_groups(self, parameters: GetCreativeGroupsRequest) -> list[CreativeGroupResponse]:
+        creative_groups: list[CreativeGroupResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/creatives/getcreativegroups', parameters, list[CreativeGroupResponse]
         )
         return creative_groups
 
@@ -337,15 +328,15 @@ class ORDMediascoutClient:
         return feed_elements_bulk_info
 
     # Invoices
-    def create_invoice(self, invoice: CreateInvoiceWebApiDto) -> EntityIdWebApiDto:
-        entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/invoices/createinvoice', invoice, EntityIdWebApiDto
+    def create_invoice(self, invoice: CreateInvoiceRequest) -> EntityIdResponse:
+        entity: EntityIdResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/invoices/createinvoice', invoice, EntityIdResponse
         )
         return entity
 
-    def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceWebApiDto:
-        invoice: InvoiceWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/invoices/editinvoice', invoice, InvoiceWebApiDto
+    def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceResponse:
+        invoice: InvoiceResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/invoices/editinvoice', invoice, InvoiceResponse
         )
         return invoice
 
@@ -355,56 +346,56 @@ class ORDMediascoutClient:
     def clear_invoice(self, invoice: ClearInvoiceDataWebApiDto) -> None:
         self._call('post', f'{self.config.api_url_prefix}/invoices/clearinvoice', invoice)
 
-    def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdWebApiDto:
-        entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/invoices/supplementinvoice', invoice, EntityIdWebApiDto
+    def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdResponse:
+        entity: EntityIdResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/invoices/supplementinvoice', invoice, EntityIdResponse
         )
         return entity
 
-    def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceWebApiDto]:
-        invoices: list[InvoiceWebApiDto] = self._call(
-            'post', f'{self.config.api_url_prefix}/invoices/getinvoices', parameters, list[InvoiceWebApiDto]
+    def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceResponse]:
+        invoices: list[InvoiceResponse] = self._call(
+            'post', f'{self.config.api_url_prefix}/invoices/getinvoices', parameters, list[InvoiceResponse]
         )
         return invoices
 
-    def get_invoice_summary(self, entity: EntityIdWebApiDto) -> InvoiceSummaryWebApiDto:
-        invoice_summary: InvoiceSummaryWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/invoices/getinvoicesummary', entity, InvoiceSummaryWebApiDto
+    def get_invoice_summary(self, entity: EntityIdResponse) -> InvoiceSummaryResponse:
+        invoice_summary: InvoiceSummaryResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/invoices/getinvoicesummary', entity, InvoiceSummaryResponse
         )
         return invoice_summary
 
-    def confirm_invoice(self, entity: EntityIdWebApiDto) -> None:
+    def confirm_invoice(self, entity: EntityIdResponse) -> None:
         self._call('post', f'{self.config.api_url_prefix}/invoices/confirminvoice', entity)
 
-    def delete_invoice(self, entity: EntityIdWebApiDto) -> None:
+    def delete_invoice(self, entity: EntityIdResponse) -> None:
         self._call('post', f'{self.config.api_url_prefix}/invoices/deleteinvoices', entity)
 
     # WebApiPlatform
-    def create_platform(self, platform: CreatePlatformWebApiDto) -> EntityIdWebApiDto:
-        entity: EntityIdWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/platforms/createplatform', platform, EntityIdWebApiDto
+    def create_platform(self, platform: CreatePlatformRequest) -> EntityIdResponse:
+        entity: EntityIdResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/platforms/createplatform', platform, EntityIdResponse
         )
         return entity
 
-    def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformCardWebApiDto:
-        updated_platform: PlatformCardWebApiDto = self._call(
-            'post', f'{self.config.api_url_prefix}/platforms/editplatform', platform, PlatformCardWebApiDto
+    def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformResponse:
+        updated_platform: PlatformResponse = self._call(
+            'post', f'{self.config.api_url_prefix}/platforms/editplatform', platform, PlatformResponse
         )
         return updated_platform
 
     # Statistics
-    def create_statistics(self, statistics: CreateInvoicelessStatisticsWebApiDto) -> None:
+    def create_statistics(self, statistics: CreateInvoicelessStatisticsRequest) -> None:
         statistics: None = self._call(
             'post', f'{self.config.api_url_prefix}/statistics/createstatistics', statistics, None
         )
         return statistics
 
-    def get_statistics(self, parameters: GetInvoicelessPeriodsWebApiDto) -> list[InvoicelessStatisticsWebApiDto]:
-        statistics: list[InvoicelessStatisticsWebApiDto] = self._call(
+    def get_statistics(self, parameters: GetInvoicelessPeriodsRequest) -> list[InvoicelessStatisticsResponse]:
+        statistics: list[InvoicelessStatisticsResponse] = self._call(
             'post',
             f'{self.config.api_url_prefix}/statistics/getstatistics',
             parameters,
-            list[InvoicelessStatisticsWebApiDto],
+            list[InvoicelessStatisticsResponse],
         )
         return statistics
 

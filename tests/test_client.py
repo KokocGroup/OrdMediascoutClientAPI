@@ -1,14 +1,14 @@
 from ord_mediascout_client import (
     ClientRelationshipType,
     CounterpartyStatus,
-    CreateClientWebApiDto,
-    GetClientsWebApiDto,
+    CreateClientRequest,
+    GetClientRequest,
     LegalForm,
 )
 
 
 def test_create_client(client):
-    request_data = CreateClientWebApiDto(
+    request_data = CreateClientRequest(
         createMode=ClientRelationshipType.DirectClient,
         legalForm=LegalForm.JuridicalPerson,
         inn='7720805643',
@@ -34,7 +34,7 @@ def test_create_client(client):
 
 
 def test_get_clients(client):
-    request_data = GetClientsWebApiDto(status=CounterpartyStatus.Active)
+    request_data = GetClientRequest(status=CounterpartyStatus.Active)
 
     response_data = client.get_clients(request_data)
 

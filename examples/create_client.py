@@ -1,7 +1,7 @@
 from ord_mediascout_client import (
     ClientRelationshipType,
-    CreateClientWebApiDto,
-    GetClientsWebApiDto,
+    CreateClientRequest,
+    GetClientRequest,
     LegalForm,
     ORDMediascoutClient,
     ORDMediascoutConfig,
@@ -12,7 +12,7 @@ config = ORDMediascoutConfig(url='http://localhost:5000', username='username', p
 
 api = ORDMediascoutClient(config)
 
-client = CreateClientWebApiDto(
+client = CreateClientRequest(
     createMode=ClientRelationshipType.DirectClient,
     legalForm=LegalForm.JuridicalPerson,
     inn='7702070139',
@@ -27,7 +27,7 @@ try:
     client = api.create_client(client)
     print(client)
 
-    clients = api.get_clients(GetClientsWebApiDto())
+    clients = api.get_clients(GetClientRequest())
     for client in clients:
         print(client)
 

@@ -1,13 +1,13 @@
 from ord_mediascout_client import (
     ContractStatus,
-    ContractSubjectTypeWebApi,
+    ContractSubjectType,
     ContractType,
-    CreateFinalContractWebApiDto,
-    CreateInitialContractWebApiDto,
-    CreateOuterContractWebApiDto,
-    GetFinalContractsWebApiDto,
-    GetInitialContractsWebApiDto,
-    GetOuterContractsWebApiDto,
+    CreateFinalContractRequest,
+    CreateInitialContractRequest,
+    CreateOuterContractRequest,
+    GetFinalContractsRequest,
+    GetInitialContractRequest,
+    GetOuterContractsRequest,
 )
 
 # Setup test data
@@ -18,14 +18,14 @@ _finalContractId = 'CTiwhIpoQ_F0OEPpKj8vWKGg'
 
 
 def test_create_final_contract(client):
-    request_data = CreateFinalContractWebApiDto(
+    request_data = CreateFinalContractRequest(
         number='AB1234567890C',
         date='2023-03-02',
         amount=100000.00,
         vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
-        subjectType=ContractSubjectTypeWebApi.Distribution,
+        subjectType=ContractSubjectType.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId='',
         clientId=_clientId,
@@ -48,7 +48,7 @@ def test_create_final_contract(client):
 
 
 def test_get_final_contracts(client):
-    request_data = GetFinalContractsWebApiDto(status=ContractStatus.Active)
+    request_data = GetFinalContractsRequest(status=ContractStatus.Active)
 
     response_data = client.get_final_contracts(request_data)
 
@@ -57,14 +57,14 @@ def test_get_final_contracts(client):
 
 
 def test_create_initial_contract(client):
-    request_data = CreateInitialContractWebApiDto(
+    request_data = CreateInitialContractRequest(
         number='ABC-12345',
         date='2023-04-07',
         amount=155000.00,
         vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
-        subjectType=ContractSubjectTypeWebApi.Distribution,
+        subjectType=ContractSubjectType.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId=None,
         contractorId=_contractorId,
@@ -91,7 +91,7 @@ def test_create_initial_contract(client):
 
 
 def test_get_initial_contracts(client):
-    request_data = GetInitialContractsWebApiDto(status=ContractStatus.Active)
+    request_data = GetInitialContractRequest(status=ContractStatus.Active)
 
     response_data = client.get_initial_contracts(request_data)
 
@@ -100,14 +100,14 @@ def test_get_initial_contracts(client):
 
 
 def test_create_outer_contract(client):
-    request_data = CreateOuterContractWebApiDto(
+    request_data = CreateOuterContractRequest(
         number='AB1234567890123CD',
         date='2023-03-05',
         amount=150000.00,
         vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
-        subjectType=ContractSubjectTypeWebApi.Distribution,
+        subjectType=ContractSubjectType.Distribution,
         # actionType=MediationActionType.Contracting,
         parentMainContractId='',
         contractorId=_clientId,
@@ -131,7 +131,7 @@ def test_create_outer_contract(client):
 
 
 def test_get_outer_contracts(client):
-    request_data = GetOuterContractsWebApiDto(status=ContractStatus.Active)
+    request_data = GetOuterContractsRequest(status=ContractStatus.Active)
 
     response_data = client.get_outer_contracts(request_data)
 

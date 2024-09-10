@@ -1,11 +1,11 @@
 import random
 
 from ord_mediascout_client import (
-    CreateInvoiceWebApiDto,
+    CreateInvoiceRequest,
     GetInvoicesWebApiDto,
-    InvoiceInitialContractItemWebApiDto,
+    InvoiceInitialContractItem,
     InvoicePartyRole,
-    InvoiceStatisticsByPlatformsItemWebApiDto,
+    InvoiceStatisticsByPlatformsItem,
     InvoiceStatus,
     PlatformType,
 )
@@ -13,7 +13,7 @@ from ord_mediascout_client import (
 
 # НЕ работает в режиме "get or create", только "create" с новым номером, потому number генерится
 def test_create_invoice(client):
-    request_data = CreateInvoiceWebApiDto(
+    request_data = CreateInvoiceRequest(
         number='INV-{}'.format(random.randrange(11111111, 99999999)),
         date='2023-03-20',
         contractorRole=InvoicePartyRole.Rr,
@@ -24,12 +24,10 @@ def test_create_invoice(client):
         endDate='2023-03-23',
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractsData=[
-            InvoiceInitialContractItemWebApiDto(
-                initialContractId='CTKLAzsvgYREmK0unGXLsCTg', amount=1000.00, vatIncluded=True
-            )
+            InvoiceInitialContractItem(initialContractId='CTKLAzsvgYREmK0unGXLsCTg', amount=1000.00, vatIncluded=True)
         ],
         statisticsByPlatforms=[
-            InvoiceStatisticsByPlatformsItemWebApiDto(
+            InvoiceStatisticsByPlatformsItem(
                 initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
                 erid='Pb3XmBtzsxtPgHUnh4hEFkxvF9Ay6CSGDzFnCHt',
                 platformUrl='http://www.testplatform.ru',

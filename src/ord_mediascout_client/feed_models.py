@@ -5,10 +5,10 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Extra
 
-from .models import CampaignType, CreativeForm, ErirValidationErrorWebApiDto, capitalize
+from .models import CampaignType, CreativeForm, ErirValidationError, capitalize
 
 
-class TargetAudienceParamsWebApiDto(BaseModel):
+class TargetAudienceParams(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
@@ -32,7 +32,7 @@ class CreateContainerWebApiDto(BaseModel):
     type: Optional[CampaignType] = None
     form: Optional[CreativeForm] = None
     targetAudience: Optional[str] = None
-    targetAudienceParams: Optional[TargetAudienceParamsWebApiDto] = None
+    targetAudienceParams: Optional[TargetAudienceParams] = None
     description: Optional[str] = None
     isNative: Optional[bool] = None
     isSocial: Optional[bool] = None
@@ -44,7 +44,7 @@ class ResponseContainerWebApiDto(CreateContainerWebApiDto):
     erid: Optional[str] = None
     feedName: Optional[str] = None
     status: Optional[str] = None
-    erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    erirValidationError: Optional[ErirValidationError] = None
 
 
 class GetContainerWebApiDto(BaseModel):
@@ -152,7 +152,7 @@ class ResponseFeedElementsWebApiDto(BaseModel):
     status: Optional[str] = None
     description: Optional[str] = None
     advertiserUrls: Optional[List[str]] = None
-    erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    erirValidationError: Optional[ErirValidationError] = None
     clickId: Optional[str] = None
 
 
@@ -215,7 +215,7 @@ class ResponseGetFeedElementsWebApiDto(BaseModel):
     description: Optional[str] = None
     advertiserUrls: Optional[List[str]] = None
     status: Optional[str] = None
-    erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    erirValidationError: Optional[ErirValidationError] = None
     clickId: Optional[str] = None
 
 
@@ -294,7 +294,7 @@ class BulkFeedElementWebApiDto(FeedElementWebApiDto):
     feedElementNativeCustomerId: Optional[str] = None
     feedId: Optional[str] = None
     feedNativeCustomerId: Optional[str] = None
-    erirValidationError: Optional[ErirValidationErrorWebApiDto] = None
+    erirValidationError: Optional[ErirValidationError] = None
     feedElementDto: Optional[FeedElementDto] = None
     status: Optional[ElementFeedStatusEnum] = None
     failedDownloadAttemptCount: Optional[int] = None

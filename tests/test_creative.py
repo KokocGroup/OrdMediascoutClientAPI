@@ -1,8 +1,8 @@
 from ord_mediascout_client import (
     CampaignType,
-    CreateCreativeWebApiDto,
+    CreateCreativeRequest,
     CreativeForm,
-    CreativeMediaDataItemWebApiDto,
+    CreativeMediaDataItem,
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
     GetCreativesWebApiDto,
@@ -10,7 +10,7 @@ from ord_mediascout_client import (
 
 
 def test_create_mediadata_creative(client):
-    request_data = CreateCreativeWebApiDto(
+    request_data = CreateCreativeRequest(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
         type=CampaignType.CPM,
@@ -23,7 +23,7 @@ def test_create_mediadata_creative(client):
         isSocial=False,
         okvedCodes=['01.02', '01.03'],
         mediaData=[
-            CreativeMediaDataItemWebApiDto(
+            CreativeMediaDataItem(
                 fileName='logo.svg',
                 # fileContentBase64="string",
                 srcUrl='https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
@@ -39,7 +39,7 @@ def test_create_mediadata_creative(client):
 
 
 def test_create_textdata_creative(client):
-    request_data = CreateCreativeWebApiDto(
+    request_data = CreateCreativeRequest(
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
         type=CampaignType.CPM,
