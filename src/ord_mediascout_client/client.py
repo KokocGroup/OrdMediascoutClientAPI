@@ -70,6 +70,10 @@ class APIError(Exception):
     pass
 
 
+class TemporaryAPIError(APIError):
+    pass
+
+
 class ResponseError(APIError):
     def __init__(self, response: requests.Response):
         super().__init__(
@@ -85,7 +89,7 @@ class BadResponseError(APIError):
         self.error = error
 
 
-class TemporaryResponseError(APIError):
+class TemporaryResponseError(TemporaryAPIError):
     def __init__(self, response: requests.Response):
         super().__init__(f'Temporary error: {response.status_code}')
         self.response = response
@@ -144,6 +148,14 @@ class ORDMediascoutClient:
                 f'Response: {response.status_code}\n'
                 f'{response.text}'
             )
+        except requests.ConnectionError as e:
+            self.logger.exception(
+                f'API call: {method} {url}\n'
+                f'Headers: {self.headers}\n'
+                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Exception: {e}\n'
+            )
+            raise TemporaryAPIError(f'Connection lost while requesting: {method} {url}') from e
         except requests.RequestException as e:
             self.logger.exception(
                 f'API call: {method} {url}\n'
