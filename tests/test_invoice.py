@@ -19,13 +19,10 @@ def test_create_invoice(client):
         contractorRole=InvoicePartyRole.Rr,
         clientRole=InvoicePartyRole.Ra,
         amount=20000.00,
-        vatIncluded=True,
         startDate='2023-03-23',
         endDate='2023-03-23',
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
-        initialContractsData=[
-            InvoiceInitialContractItem(initialContractId='CTKLAzsvgYREmK0unGXLsCTg', amount=1000.00, vatIncluded=True)
-        ],
+        initialContractsData=[InvoiceInitialContractItem(initialContractId='CTKLAzsvgYREmK0unGXLsCTg', amount=1000.00)],
         statisticsByPlatforms=[
             InvoiceStatisticsByPlatformsItem(
                 initialContractId='CTKLAzsvgYREmK0unGXLsCTg',

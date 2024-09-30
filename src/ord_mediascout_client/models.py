@@ -106,21 +106,60 @@ class CreativeForm(Enum):
     Other = 'Other'
 
 
+class FileType(Enum):
+    Image = 'Image'
+    Video = 'Video'
+    Audio = 'Audio'
+    Zip = 'Zip'
+    Other = 'Other'
+
+
 class CreativeMediaDataItem(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    fileName: Optional[str] = Field(None, description='Имя файла', example='file.txt')
-    fileContentBase64: Optional[str] = Field(None, description='Содержимое файла в кодировке Base64')
+    fileName: Optional[str] = Field(
+        None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
+    )
+    fileType: Optional[FileType] = Field(
+        None,
+        description='Тип файла медиаданных креатива\r\n'
+        '<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p><ul>'
+        '<li><i>Image</i> - Изображение</li>'
+        '<li><i>Video</i> - Видео</li>'
+        '<li><i>Audio</i> - Аудио</li>'
+        '<li><i>Zip</i> - Архив</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
+        example='image',
+    )
+    fileContentBase64: Optional[str] = Field(
+        None,
+        description='Содержимое файла в кодировке Base64\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения.'
+        'Обязательно, если не заполнено поле `srcUrl`</p>',
+    )
     srcUrl: Optional[str] = Field(
         None,
-        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации',
+        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно,'
+        'если не заполнено поле `fileContentBase64`</p>',
         example='https://example.com',
     )
-    description: Optional[str] = Field(None, description='Описание изображения креатива', example='Описание')
-    isArchive: Optional[bool] = Field(None, description='Признак того, что это архив')
+    description: Optional[str] = Field(
+        None,
+        description='Описание изображения креатива\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `fileType = image`</p>',
+        example='Описание',
+    )
+    isArchive: Optional[bool] = Field(
+        None,
+        description='Признак того, что это архив\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+    )
 
 
 class CreativeStatus(Enum):
@@ -380,7 +419,6 @@ class InvoiceInitialContractItem(BaseModel):
     amount: Optional[float] = Field(
         None, description='Стоимость услуг по изначальному договору в составе акта в руб.', example=1500
     )
-    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
 
 
 class InvoicePartyRole(Enum):
@@ -548,13 +586,42 @@ class Severity(Enum):
     Info = 'Info'
 
 
-class TargetAudienceParams(BaseModel):
+class TargetAudienceParamType(Enum):
+    Geo = 'Geo'
+    Sex = 'Sex'
+    Age = 'Age'
+
+
+class TargetAudienceParam(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    geo: Optional[List[str]] = Field(None, description='Параметры геотаргетинга')
+    type: Optional[TargetAudienceParamType] = Field(
+        None,
+        description='Тип параметра: регион, пол, возраст<p>Members:</p>'
+        '<ul><li><i>Geo</i> - Код региона</li>'
+        '<li><i>Sex</i> - Пол</li>'
+        '<li><i>Age</i> - Возраст</li></ul>',
+    )
+    values: Optional[List[str]] = Field(
+        None,
+        description='Коллекция значений\n'
+        '<ul><li>Для типа "geo":\r\n<ul>'
+        '<li>Максимальная длина: 2</li>'
+        '<li>Длина строки 2, может содержать цифры 0-9</li>'
+        '<li>В элементах массива передаются коды регионов.'
+        'Если массив пустой, то геотаргетинг направлен на всю Россию</li></ul>'
+        '</li><li>Для типа "sex":\n'
+        '<ul><li>male - мужчины</li>'
+        '<li>female - женщины</li></ul>\r\n'
+        'Если таргетинг на аудиторию не зависящую от пола, то параметр не передается.\r\n'
+        '</li><li>Для типа "age":\n'
+        '<ul><li>"<минимальный возраст>:<максимальный возраст>".</li>'
+        '<li>Например, "25:45" - означает, что реклама таргетируется на аудиторию от 25 до 45 лет.</li>'
+        '</ul>\r\nЕсли таргетинг на любой возраст, то параметр не передается\r\n</li></ul>',
+    )
 
 
 class ValidationFailure(BaseModel):
@@ -667,7 +734,7 @@ class CreateCreativeRequest(BaseModel):
     description: Optional[str] = Field(
         None, description='Общее описание объекта рекламирования', example='Описание креатива 4H67RLFG'
     )
-    targetAudienceParams: Optional[TargetAudienceParams] = None
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = None
     targetAudience: Optional[str] = Field(
         None, description='Параметры целевой аудитории рекламы (текстовое описание)', example='Текстовый креатив'
     )
@@ -816,7 +883,7 @@ class CreativeGroupResponse(BaseModel):
     form: Optional[CreativeForm] = None
     isSocial: Optional[bool] = Field(None, description='Признак социальной рекламы')
     isNative: Optional[bool] = Field(None, description='Признак нативной рекламы')
-    targetAudienceParams: Optional[TargetAudienceParams] = None
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = None
     targetAudience: Optional[str] = Field(None, description='Параметры целевой аудитории рекламы (текстовое описание)')
     description: Optional[str] = Field(None, description='Общее описание объекта рекламирования')
     okvedCodes: Optional[str] = Field(None, description='Коды ОКВЭД всех креативов группы, перечисленные через запятую')
@@ -860,7 +927,7 @@ class CreativeResponse(BaseModel):
     description: Optional[str] = Field(
         None, description='Общее описание объекта рекламирования', example='Описание креатива 4H67RLFG'
     )
-    targetAudienceParams: Optional[TargetAudienceParams] = None
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = None
     targetAudience: Optional[str] = Field(
         None, description='Параметры целевой аудитории рекламы (текстовое описание)', example='Текстовый креатив'
     )
@@ -962,7 +1029,6 @@ class EditInvoiceDataWebApiDto(BaseModel):
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
-    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
     startDate: Optional[date] = Field(None, description='Дата начала оказания услуг по акту', example='2022-12-01')
     endDate: Optional[date] = Field(
         None, description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
@@ -1145,7 +1211,6 @@ class InvoiceResponse(BaseModel):
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
-    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
     startDate: Optional[date] = Field(None, description='Дата начала оказания услуг по акту', example='2022-12-01')
     endDate: Optional[date] = Field(
         None, description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
@@ -1254,7 +1319,7 @@ class SimpleEditCreativeRequest(BaseModel):
         None, description='Целевые ссылки (массив)', example=['http://test1.ru', 'http://test2.ru']
     )
     description: Optional[str] = Field(None, description='Общее описание объекта рекламирования', example='Описание')
-    targetAudienceParams: Optional[TargetAudienceParams] = None
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = None
     targetAudience: Optional[str] = Field(None, description='Параметры целевой аудитории рекламы')
     isNative: Optional[bool] = Field(None, description='Признак нативной рекламы')
     isSocial: Optional[bool] = Field(None, description='Признак социальной рекламы')
@@ -1294,7 +1359,6 @@ class CreateInvoiceRequest(BaseModel):
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
-    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
     startDate: Optional[date] = Field(None, description='Дата начала оказания услуг по акту', example='2022-12-01')
     endDate: Optional[date] = Field(
         None, description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'

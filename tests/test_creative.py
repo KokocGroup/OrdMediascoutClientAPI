@@ -7,6 +7,7 @@ from ord_mediascout_client import (
     CreativeTextDataItemWebApiDto,
     GetCreativesWebApiDto,
 )
+from ord_mediascout_client.models import FileType
 
 
 def test_create_mediadata_creative(client):
@@ -25,6 +26,7 @@ def test_create_mediadata_creative(client):
         mediaData=[
             CreativeMediaDataItem(
                 fileName='logo.svg',
+                fileType=FileType.Image,
                 # fileContentBase64="string",
                 srcUrl='https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
                 description='Тестовый баннер 333',
@@ -43,7 +45,7 @@ def test_create_textdata_creative(client):
         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
         type=CampaignType.CPM,
-        form=CreativeForm.Banner,
+        form=CreativeForm.Text,
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test textdata creative 555',
         targetAudience='',

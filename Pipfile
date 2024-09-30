@@ -22,6 +22,8 @@ isort = "*"
 datamodel-code-generator = {extras = ["http"], version = "*"}
 ord-mediascout-client = {editable = true, path = "."}
 faker = "*"
+openapi-schema-pydantic = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.11"
