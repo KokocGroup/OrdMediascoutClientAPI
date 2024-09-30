@@ -419,6 +419,7 @@ class InvoiceInitialContractItem(BaseModel):
     amount: Optional[float] = Field(
         None, description='Стоимость услуг по изначальному договору в составе акта в руб.', example=1500
     )
+    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
 
 
 class InvoicePartyRole(Enum):
