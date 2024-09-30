@@ -1211,6 +1211,7 @@ class InvoiceResponse(BaseModel):
     contractorRole: Optional[InvoicePartyRole] = None
     clientRole: Optional[InvoicePartyRole] = None
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
+    vatIncluded: Optional[bool] = Field(None, description='Включен ли НДС в Amount', example=True)
     startDate: Optional[date] = Field(None, description='Дата начала оказания услуг по акту', example='2022-12-01')
     endDate: Optional[date] = Field(
         None, description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
