@@ -22,7 +22,6 @@ def test_create_final_contract(client):
         number='AB1234567890C',
         date='2023-03-02',
         amount=100000.00,
-        vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
         subjectType=ContractSubjectType.Distribution,
@@ -32,11 +31,9 @@ def test_create_final_contract(client):
     )
 
     response_data = client.create_final_contract(request_data)
-
     assert request_data.number == response_data.number
     assert request_data.date == response_data.date
     assert request_data.amount == response_data.amount
-    assert request_data.vatIncluded == response_data.vatIncluded
     # assert request_data.isAgentActingForPublisher == response_data.isAgentActingForPublisher
     assert request_data.type == response_data.type
     assert request_data.subjectType == response_data.subjectType
@@ -61,7 +58,6 @@ def test_create_initial_contract(client):
         number='ABC-12345',
         date='2023-04-07',
         amount=155000.00,
-        vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
         subjectType=ContractSubjectType.Distribution,
@@ -77,7 +73,6 @@ def test_create_initial_contract(client):
     assert request_data.number == response_data.number
     assert request_data.date == response_data.date
     assert request_data.amount == response_data.amount
-    assert request_data.vatIncluded == response_data.vatIncluded
     # assert request_data.isAgentActingForPublisher == response_data.isAgentActingForPublisher
     assert request_data.type == response_data.type
     assert request_data.subjectType == response_data.subjectType
@@ -104,7 +99,6 @@ def test_create_outer_contract(client):
         number='AB1234567890123CD',
         date='2023-03-05',
         amount=150000.00,
-        vatIncluded=True,
         isAgentActingForPublisher=True,
         type=ContractType.ServiceAgreement,
         subjectType=ContractSubjectType.Distribution,
@@ -119,7 +113,6 @@ def test_create_outer_contract(client):
     assert request_data.number == response_data.number
     assert request_data.date == response_data.date
     assert request_data.amount == response_data.amount
-    assert request_data.vatIncluded == response_data.vatIncluded
     # assert request_data.isAgentActingForPublisher == response_data.isAgentActingForPublisher
     assert request_data.type == response_data.type
     assert request_data.subjectType == response_data.subjectType

@@ -39,7 +39,7 @@ def test_create_invoice(client):
                 endDateFact='2023-04-03',
                 amount=1000.00,
                 price=0.5,
-                vatIncluded=True,
+#                vatIncluded=True,
             )
         ],
     )

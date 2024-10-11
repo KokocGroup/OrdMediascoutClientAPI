@@ -10,6 +10,7 @@ _platformUrl = 'http://www.testplatform.ru'
 _platformName = 'Test Platform 1'
 _platformType = 'Site'
 _platformOwnedByAgency = False
+_type='CPM'
 _impsPlan = 10000
 _impsFact = 100
 _startDatePlan = '2023-06-01'
@@ -18,7 +19,6 @@ _endDatePlan = '2023-06-20'
 _endDateFact = '2023-06-20'
 _amount = 50000
 _price = 5
-_vatIncluded = True
 
 
 def test_create_statistics(client):
@@ -30,6 +30,7 @@ def test_create_statistics(client):
                 platformName=_platformName,
                 platformType=_platformType,
                 platformOwnedByAgency=_platformOwnedByAgency,
+                type=_type,
                 impsPlan=_impsPlan,
                 impsFact=_impsFact,
                 startDatePlan=_startDatePlan,
@@ -38,7 +39,6 @@ def test_create_statistics(client):
                 endDateFact=_endDateFact,
                 amount=_amount,
                 price=_price,
-                vatIncluded=_vatIncluded,
             )
         ]
     )

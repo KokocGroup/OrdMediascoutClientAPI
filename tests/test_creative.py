@@ -2,7 +2,8 @@ from ord_mediascout_client import (
     CampaignType,
     CreateCreativeRequest,
     CreativeForm,
-    CreativeMediaDataItem,
+#    CreativeMediaDataItem,
+    CreateCreativeMediaDataItem,
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
     GetCreativesWebApiDto,
@@ -18,13 +19,14 @@ def test_create_mediadata_creative(client):
         form=CreativeForm.Banner,
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test mediadata creative 333',
-        targetAudience='',
+#        targetAudience='',
+        targetAudienceParams=[],
         isSelfPromotion=False,
         isNative=False,
         isSocial=False,
-        okvedCodes=['01.02', '01.03'],
+#        okvedCodes=['01.02', '01.03'],
         mediaData=[
-            CreativeMediaDataItem(
+            CreateCreativeMediaDataItem(
                 fileName='logo.svg',
                 fileType=FileType.Image,
                 # fileContentBase64="string",
@@ -48,11 +50,12 @@ def test_create_textdata_creative(client):
         form=CreativeForm.Text,
         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
         description='Test textdata creative 555',
-        targetAudience='',
+#        targetAudience='',
+        targetAudienceParams=[],
         isSelfPromotion=False,
         isNative=False,
         isSocial=False,
-        okvedCodes=['01.05'],
+#        okvedCodes=['01.05'],
         textData=[CreativeTextDataItemWebApiDto(textData='Creative 555 text data test')],
     )
 
