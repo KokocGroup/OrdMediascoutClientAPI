@@ -19,11 +19,18 @@ def capitalize(s: str) -> str:
 class ProblemDetails(BaseModel):
     type: Optional[str] = Field(
         None,
-        description='Ссылка URI [RFC3986], идентифицирующая\r\n                тип ошибки. Данная спецификация рекомендует, чтобы при\r\n                ссылке на него предоставлялась документация по\r\n                типу ошибки. Когда\r\n                этот элемент отсутствует, его значение предполагается равным\r\n                «about:blank».',
+        description='Ссылка URI [RFC3986], идентифицирующая\r\n'
+        'тип ошибки. Данная спецификация рекомендует, чтобы при\r\n'
+        'ссылке на него предоставлялась документация по\r\n'
+        'типу ошибки. Когда\r\n'
+        'этот элемент отсутствует, его значение предполагается равным\r\n'
+        '«about:blank».',
     )
     title: Optional[str] = Field(
         None,
-        description='Краткое описание типа ошибки. Оно НЕ ДОЛЖНО меняться от случая к случаю\r\n                ошибки, за исключением целей локализации (например, при использовании\r\n                проактивного согласования содержимого',
+        description='Краткое описание типа ошибки. Оно НЕ ДОЛЖНО меняться от случая к случаю\r\n'
+        'ошибки, за исключением целей локализации (например, при использовании\r\n'
+        'проактивного согласования содержимого',
     )
     status: Optional[int] = Field(
         None, description='Код состояния HTTP сгенерированный сервером для данного случая возникновения ошибки.'
@@ -32,6 +39,50 @@ class ProblemDetails(BaseModel):
     instance: Optional[str] = Field(
         None, description='Ссылка URI, идентифицирующая конкретное\r\nвозникновение ошибки.'
     )
+    traceId: Optional[str] = Field(
+        None,
+        description='Идентификатор запроса. Значение атрибута TraceId необходимо использовать при взаимодействии с '
+        'техподдержкой ОРД Медиаскаут. Данное поле содержит в себе идентификатор логов текущего процесса.',
+        example='00-982607166a542147b435be3a847ddd71-fc75498eb9f09d48-00',
+    )
+
+
+class Severity(Enum):
+    Error = 'Error'
+    Warning = 'Warning'
+    Info = 'Info'
+
+
+class ValidationFailure(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    propertyName: Optional[str] = None
+    errorMessage: Optional[str] = None
+    attemptedValue: Optional[Any] = None
+    customState: Optional[Any] = None
+    severity: Optional[Severity] = None
+    errorCode: Optional[str] = None
+    formattedMessagePlaceholderValues: Optional[Dict[str, Any]] = None
+
+
+class BadRequestResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    errorType: Optional[str] = Field(None, description='Тип ошибки.', example='Unauthorized')
+    traceId: Optional[str] = Field(
+        None,
+        description='Идентификатор запроса. Значение атрибута TraceId необходимо использовать при взаимодействии с '
+        'техподдержкой ОРД Медиаскаут. Данное поле содержит в себе идентификатор логов текущего процесса.',
+        example='00-982607166a542147b435be3a847ddd71-fc75498eb9f09d48-00',
+    )
+    errorItems: Optional[List[ValidationFailure]] = Field(None, description='Список ошибок.', example=['Unauthorized'])
+
 
 class ClearInvoiceDataWebApiDto(BaseModel):
     class Config:
@@ -73,11 +124,17 @@ class CreateClientRequest(BaseModel):
     createMode: Optional[ClientRelationshipType] = Field(None, description='Тип отношения заказчика к агентству')
     legalForm: Optional[LegalForm] = Field(
         None,
-        description='Юридическая форма заказчика<p>Members:</p><ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li><li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li><li><i>PhysicalPerson</i> - Физлицо РФ</li><li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li><li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
+        description='Юридическая форма заказчика<p>Members:</p>'
+        '<ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li>'
+        '<li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li>'
+        '<li><i>PhysicalPerson</i> - Физлицо РФ</li>'
+        '<li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li>'
+        '<li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
     )
     inn: Optional[str] = Field(
         None,
-        description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика либо его аналог в стране регистрации',
+        description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика '
+        'либо его аналог в стране регистрации',
         example='1234567890',
     )
     name: Optional[str] = Field(None, description='Наименование контрагента', example='Наименование контрагента')
@@ -137,18 +194,28 @@ class CreateFinalContractRequest(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -163,6 +230,7 @@ class CreateFinalContractRequest(BaseModel):
         None, description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class CreateInitialContractRequest(BaseModel):
@@ -173,18 +241,28 @@ class CreateInitialContractRequest(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, '
+        'ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -204,6 +282,7 @@ class CreateInitialContractRequest(BaseModel):
     finalContractId: Optional[str] = Field(
         None, description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class InvoicePartyRole(Enum):
@@ -221,18 +300,28 @@ class CreateOuterContractRequest(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, '
+        'ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -249,8 +338,10 @@ class CreateOuterContractRequest(BaseModel):
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     isRegReport: Optional[bool] = Field(
         None,
-        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен регистрировать креативы и предоставлять разаллокацию по ним в актах',
+        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
+        'регистрировать креативы и предоставлять разаллокацию по ним в актах',
     )
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class PlatformType(Enum):
@@ -268,7 +359,11 @@ class CreatePlatformRequest(BaseModel):
     name: Optional[str] = Field(None, description='Наименование площадки', example='Тестовая площадка')
     type: Optional[PlatformType] = Field(
         None,
-        description='Тип площадки<p>Members:</p><ul><li><i>Site</i> - Сайт</li><li><i>Application</i> - Приложение</li><li><i>InformationSystem</i> - Информационная система, не поддерживается начиная с ЕРИР v.5</li></ul>',
+        description='Тип площадки<p>Members:</p>'
+        '<ul><li><i>Site</i> - Сайт</li>'
+        '<li><i>Application</i> - Приложение</li>'
+        '<li><i>InformationSystem</i> - Информационная система, не поддерживается '
+        'начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
     isOwner: Optional[bool] = Field(None, description='Признак принадлежности агентству')
@@ -309,17 +404,24 @@ class CreativeMediaDataItem(BaseModel):
     )
     fileType: Optional[FileType] = Field(
         None,
-        description='Тип файла медиаданных креатива<p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип файла медиаданных креатива<p>Members:</p>'
+        '<ul><li><i>Image</i> - Изображение</li>'
+        '<li><i>Video</i> - Видео</li>'
+        '<li><i>Audio</i> - Аудио</li>'
+        '<li><i>Zip</i> - Архив</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
         example='image',
     )
     description: Optional[str] = Field(
         None,
-        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image`</p>',
+        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `fileType = image`</p>',
         example='Описание',
     )
     # isArchive: bool = Field(
     #     ...,
-    #     description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
+    #     description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения.
+    #     Если не заполнено, устанавливается значение `false`</p>',
     # )
 
 
@@ -335,26 +437,37 @@ class CreateCreativeMediaDataItem(BaseModel):
     )
     fileType: Optional[FileType] = Field(
         None,
-        description='Тип файла медиаданных креатива\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип файла медиаданных креатива\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:'
+        '</p><ul><li><i>Image</i> - Изображение</li>'
+        '<li><i>Video</i> - Видео</li>'
+        '<li><i>Audio</i> - Аудио</li>'
+        '<li><i>Zip</i> - Архив</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
         example='image',
     )
     fileContentBase64: Optional[str] = Field(
         None,
-        description='Содержимое файла в кодировке Base64\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `srcUrl`</p>',
+        description='Содержимое файла в кодировке Base64\r\n<p style="color: blue">Поле условно-обязательно для '
+        'заполнения. Обязательно, если не заполнено поле `srcUrl`</p>',
     )
     srcUrl: Optional[str] = Field(
         None,
-        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `fileContentBase64`</p>',
+        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, '
+        'если не заполнено поле `fileContentBase64`</p>',
         example='https://example.com',
     )
     description: Optional[str] = Field(
         None,
-        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image`</p>',
+        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `fileType = image`</p>',
         example='Описание',
     )
     isArchive: bool = Field(
         ...,
-        description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
+        description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. '
+        'Если не заполнено, устанавливается значение `false`</p>',
     )
 
 
@@ -366,39 +479,49 @@ class EditCreativeMediaDataItem(BaseModel):
 
     id: Optional[str] = Field(
         None,
-        description='Идентификатор текстовых медиаданных\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Обязательно для `ActionType` = `Edit` или `Delete`</p>',
+        description='Идентификатор текстовых медиаданных\r\n<p style="color: lightblue">Поле условно-обязательно для '
+        'заполнения. Обязательно для `ActionType` = `Edit` или `Delete`</p>',
     )
     actionType: Optional[ActionType] = Field(
         None,
-        description='Тип действия над медиаданными\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Если не заполнено, будет установлено значение `Add`</p>',
+        description='Тип действия над медиаданными\r\n<p style="color: lightblue">Поле условно-обязательно для '
+        'заполнения. Если не заполнено, будет установлено значение `Add`</p>',
     )
     fileName: Optional[str] = Field(
         None,
-        description='Имя файла\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Обязательно для `ActionType` = `Add`</p>',
+        description='Имя файла\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `ActionType` = `Add`</p>',
         example='file.txt',
     )
     fileType: Optional[FileType] = Field(
         None,
-        description='Тип файла медиаданных креатива\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Обязательно для `ActionType` = `Add` или `Edit`</p>',
+        description='Тип файла медиаданных креатива\r\n<p style="color: lightblue">Поле условно-обязательно для '
+        'заполнения. Обязательно для `ActionType` = `Add` или `Edit`</p>',
         example='image',
     )
     fileContentBase64: Optional[str] = Field(
         None,
-        description='Содержимое файла в кодировке Base64\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `srcUrl` и `ActionType` = `Add`</p>',
+        description='Содержимое файла в кодировке Base64\r\n<p style="color: blue">Поле условно-обязательно для '
+        'заполнения. Обязательно, если не заполнено поле `srcUrl` и `ActionType` = `Add`</p>',
     )
     srcUrl: Optional[str] = Field(
         None,
-        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `fileContentBase64` и `ActionType` = `Add`</p>',
+        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, '
+        'если не заполнено поле `fileContentBase64` и `ActionType` = `Add`</p>',
         example='https://example.com',
     )
     description: Optional[str] = Field(
         None,
-        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image` и `ActionType` = `Add` или `Edit`</p>',
+        description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `fileType = image` и `ActionType` = `Add` или `Edit`</p>',
         example='Описание',
     )
     isArchive: bool = Field(
         ...,
-        description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`. Имеет смысл только для `ActionType` = `Add`</p>',
+        description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. '
+        'Если не заполнено, устанавливается значение `false`. '
+        'Имеет смысл только для `ActionType` = `Add`</p>',
     )
 
 
@@ -419,15 +542,18 @@ class EditCreativeTextDataItem(BaseModel):
 
     id: Optional[str] = Field(
         None,
-        description='Идентификатор текстовых медиаданных\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Обязательно для `ActionType` = `Edit` или `Delete`</p>',
+        description='Идентификатор текстовых медиаданных\r\n<p style="color: lightblue">Поле условно-обязательно для '
+        'заполнения. Обязательно для `ActionType` = `Edit` или `Delete`</p>',
     )
     actionType: Optional[ActionType] = Field(
         None,
-        description='Тип действия над медиаданными\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Если не заполнено, будет установлено значение `Add`</p>',
+        description='Тип действия над медиаданными\r\n<p style="color: lightblue">Поле условно-обязательно для '
+        'заполнения. Если не заполнено, будет установлено значение `Add`</p>',
     )
     textData: Optional[str] = Field(
         None,
-        description='Текстовые данные креатива\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. Обязательно для `ActionType` = `Add` или `Edit`</p>',
+        description='Текстовые данные креатива\r\n<p style="color: lightblue">Поле условно-обязательно для заполнения. '
+        'Обязательно для `ActionType` = `Add` или `Edit`</p>',
         example='Некий текст',
     )
 
@@ -502,7 +628,11 @@ class DeleteContractWebApiDto(BaseModel):
     )
     contractKind: Optional[DeleteContractKind] = Field(
         None,
-        description='Вид удаляемой связи (т.е. чем этот договор был - конечным, изначальным, внешним для агентства)<p>Members:</p><ul><li><i>FinalContract</i> - Конечный договор</li><li><i>InitialContract</i> - Изначальный договор</li><li><i>OuterContract</i> - Внешний договор</li></ul>',
+        description='Вид удаляемой связи (т.е. чем этот договор был - конечным, изначальным, внешним для агентства)'
+        '<p>Members:</p>'
+        '<ul><li><i>FinalContract</i> - Конечный договор</li>'
+        '<li><i>InitialContract</i> - Изначальный договор</li>'
+        '<li><i>OuterContract</i> - Внешний договор</li></ul>',
     )
 
 
@@ -524,49 +654,64 @@ class EditCreativeRequest(BaseModel):
 
     id: Optional[str] = Field(
         None,
-        description='Id креатива. Должно быть заполнено либо Id креатива, либо NativeCustomerId, либо Erid\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `NativeCustomerId`, `Erid`</p>',
+        description='Id креатива. Должно быть заполнено либо Id креатива, либо NativeCustomerId, либо Erid\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться '
+        'одновременно с полями `NativeCustomerId`, `Erid`</p>',
         example='CR5pxRa__aRkSgUqt0JeNkoA',
     )
     nativeCustomerId: Optional[str] = Field(
         None,
-        description='Id креатива в системе клиента\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `Id`, `Erid`</p>',
+        description='Id креатива в системе клиента\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Не должно заполняться одновременно с полями `Id`, `Erid`</p>',
     )
     erid: Optional[str] = Field(
         None,
-        description='Erid креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `Id`, `NativeCustomerId`</p>',
+        description='Erid креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно '
+        'заполняться одновременно с полями `Id`, `NativeCustomerId`</p>',
         example='2SDnjcX1BkW',
     )
     creativeGroupId: Optional[str] = Field(
         None,
-        description='Id брони, если пусто, значит - создаем новую бронь, иначе добавляем в существующую. При этом бронь остается текущая или все поля новой брони обязаны совпадать с текущей\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Id брони, если пусто, значит - создаем новую бронь, иначе добавляем в существующую. При этом '
+        'бронь остается текущая или все поля новой брони обязаны совпадать с текущей\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     creativeGroupName: Optional[str] = Field(
         None,
-        description='Наименование создаваемой брони, заполняется только если CreativeGroupId = NULL\r\n<p style="color: blue">Поле условно-обязательно для заполнения</p>',
+        description='Наименование создаваемой брони, заполняется только если CreativeGroupId = NULL\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
         example='ТестоваяГруппа',
     )
     creativeGroupStartDate: Optional[date] = Field(
         None,
-        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-01-01',
     )
     creativeGroupEndDate: Optional[date] = Field(
         None,
-        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-30-01',
     )
     advertiserUrls: Optional[List[str]] = Field(
         None,
-        description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход с креатива)\r\nПроверка URL:\r\n<ul><li>Проверить протокол http, https, ftp, sftp</li><li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul><p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход с креатива)\r\n'
+        'Проверка URL:\r\n'
+        '<ul><li>Проверить протокол http, https, ftp, sftp</li>'
+        '<li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul>'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test1.ru', 'http://test2.ru'],
     )
     mediaData: Optional[List[EditCreativeMediaDataItem]] = Field(
         None,
-        description='Медиаданные креатива (массив)\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Медиаданные креатива (массив)\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
     textData: Optional[List[EditCreativeTextDataItem]] = Field(
         None,
-        description='Текстовые медиаданные креатива (массив)\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Текстовые медиаданные креатива (массив)\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
 
 
@@ -578,18 +723,28 @@ class EditFinalContractWebApiDto(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -605,6 +760,7 @@ class EditFinalContractWebApiDto(BaseModel):
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     id: Optional[str] = Field(None, description='Id доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class EditInitialContractWebApiDto(BaseModel):
@@ -615,18 +771,28 @@ class EditInitialContractWebApiDto(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -647,6 +813,7 @@ class EditInitialContractWebApiDto(BaseModel):
         None, description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
     id: Optional[str] = Field(None, description='Id изначального договора', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class EditInvoiceDataWebApiDto(BaseModel):
@@ -658,15 +825,22 @@ class EditInvoiceDataWebApiDto(BaseModel):
     number: Optional[str] = Field(
         None, description='Номер акта. Допускается null, в таком случае считаем, что акт без номера', example='Тест'
     )
-    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
     contractorRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль исполнителя в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль исполнителя в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Ra',
     )
     clientRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль заказчика в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль заказчика в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Rd',
     )
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
@@ -678,6 +852,7 @@ class EditInvoiceDataWebApiDto(BaseModel):
         None, description='Id доходного договора в ОРД', example='CT3at_SU7y3ECdCb-AfHV3sA'
     )
     id: Optional[str] = Field(None, description='Идентификатор акта', example='INUFNs1ibfg0erF1PNpTOAyg')
+    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
 
 
 class EditOuterContractWebApiDto(BaseModel):
@@ -688,18 +863,28 @@ class EditOuterContractWebApiDto(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -716,9 +901,11 @@ class EditOuterContractWebApiDto(BaseModel):
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     isRegReport: Optional[bool] = Field(
         None,
-        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен регистрировать креативы и предоставлять разаллокацию по ним в актах',
+        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
+        'регистрировать креативы и предоставлять разаллокацию по ним в актах',
     )
     id: Optional[str] = Field(None, description='Id расходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class EditPlatformWebApiDto(BaseModel):
@@ -730,7 +917,11 @@ class EditPlatformWebApiDto(BaseModel):
     name: Optional[str] = Field(None, description='Наименование площадки', example='Тестовая площадка')
     type: Optional[PlatformType] = Field(
         None,
-        description='Тип площадки<p>Members:</p><ul><li><i>Site</i> - Сайт</li><li><i>Application</i> - Приложение</li><li><i>InformationSystem</i> - Информационная система, не поддерживается начиная с ЕРИР v.5</li></ul>',
+        description='Тип площадки<p>Members:</p>'
+        '<ul><li><i>Site</i> - Сайт</li>'
+        '<li><i>Application</i> - Приложение</li>'
+        '<li><i>InformationSystem</i> - Информационная система, '
+        'не поддерживается начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
     isOwner: Optional[bool] = Field(None, description='Признак принадлежности агентству')
@@ -760,7 +951,10 @@ class ErirValidationError(BaseModel):
 
     stage: Optional[Stage] = Field(
         None,
-        description='Тип запроса ЕРИР-интеграции<p>Members:</p><ul><li><i>EntityHeader</i> - Отправлена заголовочная информация (например шапка акта)</li><li><i>First</i> - Первоначальный быстрый запрос, проверяются лишь атрибуты сущности</li><li><i>Second</i> - Запрос на получение уточненных результатов логической проверки</li></ul>',
+        description='Тип запроса ЕРИР-интеграции<p>Members:</p><ul><li><i>EntityHeader</i> - Отправлена заголовочная '
+        'информация (например шапка акта)</li><li><i>First</i> - Первоначальный быстрый запрос, '
+        'проверяются лишь атрибуты сущности</li><li><i>Second</i> - Запрос на получение уточненных '
+        'результатов логической проверки</li></ul>',
     )
     code: Optional[str] = Field(None, description='Код ошибки от ЕРИР', example='I_82')
     message: Optional[str] = Field(
@@ -788,7 +982,6 @@ class FiasResponse(BaseModel):
     )
 
 
-
 class ContractStatus(Enum):
     Created = 'Created'
     RegistrationRequired = 'RegistrationRequired'
@@ -810,18 +1003,28 @@ class FinalContractResponse(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что '
+        'договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни '
+        'через интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -839,7 +1042,20 @@ class FinalContractResponse(BaseModel):
     id: Optional[str] = Field(None, description='Id доходного договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
     status: Optional[ContractStatus] = Field(
         None,
-        description='Статус доходного договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус доходного договора в ОРД<p>Members:</p>'
+        '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, '
+        'сущность сразу переходит в статус [Ожидает регистрации].</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, '
+        'ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+        '<li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом '
+        'контуре</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     contractorId: Optional[str] = Field(None, description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
@@ -848,6 +1064,7 @@ class FinalContractResponse(BaseModel):
         None, description='Cid доходного договора', example='763acd99-687b-46cd-8f40-45eced77413c'
     )
     erirValidationError: Optional[ErirValidationError] = None
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class GetClientRequest(BaseModel):
@@ -869,23 +1086,28 @@ class GetCreativeGroupsRequest(BaseModel):
 
     initialContractId: Optional[str] = Field(
         None,
-        description='Фильтр по Id или Cid изначального договора изначального договора\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Фильтр по Id или Cid изначального договора изначального договора\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     finalContractId: Optional[str] = Field(
         None,
-        description='Фильтр по Id доходного договора в ОРД\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Фильтр по Id доходного договора в ОРД\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     creativeGroupName: Optional[str] = Field(
         None,
-        description='Фильтр по номеру доходного договора\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Фильтр по номеру доходного договора\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     creativeGroupStartDate: Optional[date] = Field(
         None,
-        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата начала рекламной компании\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     creativeGroupEndDate: Optional[date] = Field(
         None,
-        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата окончания рекламной компании\r\n'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
 
 
@@ -1017,18 +1239,28 @@ class InitialContractResponse(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -1051,7 +1283,19 @@ class InitialContractResponse(BaseModel):
     id: Optional[str] = Field(None, description='Id изначального договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
     status: Optional[ContractStatus] = Field(
         None,
-        description='Статус изначального договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус изначального договора в ОРД<p>Members:</p>'
+        '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, '
+        'сущность сразу переходит в статус [Ожидает регистрации].</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, '
+        'ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+        '<li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
     contractorName: Optional[str] = Field(None, description='Наименование исполнителя', example='ООО «Ромашка»')
@@ -1061,6 +1305,7 @@ class InitialContractResponse(BaseModel):
         None, description='Cid изначального договора', example='763acd99-687b-46cd-8f40-45eced77413c'
     )
     erirValidationError: Optional[ErirValidationError] = None
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class InvoiceInitialContractItem(BaseModel):
@@ -1086,15 +1331,22 @@ class InvoiceResponse(BaseModel):
     number: Optional[str] = Field(
         None, description='Номер акта. Допускается null, в таком случае считаем, что акт без номера', example='Тест'
     )
-    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
     contractorRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль исполнителя в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль исполнителя в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Ra',
     )
     clientRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль заказчика в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль заказчика в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Rd',
     )
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
@@ -1108,9 +1360,27 @@ class InvoiceResponse(BaseModel):
     id: Optional[str] = Field(None, description='Идентификатор акта', example='INUFNs1ibfg0erF1PNpTOAyg')
     status: Optional[InvoiceStatus] = Field(
         None,
-        description='Статус акта в ОРД<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li><li><i>Created</i> - Черновик (загрузка в ОРД завершена), нужно послать в ЕРИР</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Transferring</i> - Идет передача в ЕРИР, после чего перадача шапки акта, разаллокации и статистики</li><li><i>Registering</i> - Идет регистрация, удаленные креативы и статистика переданы, также передана остальная информация по акту, быстрый контроль ЕРИР пройден, через сутки ждем уточненного ответа</li><li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li><li><i>RegistrationError</i> - Ошибка регистрации в ЕРИР (любого этапа)</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>DeletionTransferring</i> - Идет передача в ЕРИР удаленных креативов и строк, после чего перадача шапки акта, разаллокации и статистики</li><li><i>Deleting</i> - Идет передача креативов и статистики для удаления, либо быстрый контроль всего ЕРИР пройден, через сутки ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус акта в ОРД<p>Members:</p>'
+        '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
+        '<li><i>Created</i> - Черновик (загрузка в ОРД завершена), нужно послать в ЕРИР</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Transferring</i> - Идет передача в ЕРИР, после чего перадача шапки акта, '
+        'разаллокации и статистики</li>'
+        '<li><i>Registering</i> - Идет регистрация, удаленные креативы и статистика переданы, '
+        'также передана остальная информация по акту, быстрый контроль ЕРИР пройден, через сутки '
+        'ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации в ЕРИР (любого этапа)</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>DeletionTransferring</i> - Идет передача в ЕРИР удаленных креативов и строк, '
+        'после чего перадача шапки акта, разаллокации и статистики</li>'
+        '<li><i>Deleting</i> - Идет передача креативов и статистики для удаления, либо быстрый '
+        'контроль всего ЕРИР пройден, через сутки ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
+    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
 
 
 class InvoiceStatisticsByPlatformsItem(BaseModel):
@@ -1152,7 +1422,24 @@ class InvoiceSummaryResponse(BaseModel):
     id: Optional[str] = Field(None, description='Id акта в ОРД', example='INUFNs1ibfg0erF1PNpTOAyg')
     status: Optional[InvoiceStatus] = Field(
         None,
-        description='Статус акта в ОРД<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li><li><i>Created</i> - Черновик (загрузка в ОРД завершена), нужно послать в ЕРИР</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Transferring</i> - Идет передача в ЕРИР, после чего перадача шапки акта, разаллокации и статистики</li><li><i>Registering</i> - Идет регистрация, удаленные креативы и статистика переданы, также передана остальная информация по акту, быстрый контроль ЕРИР пройден, через сутки ждем уточненного ответа</li><li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li><li><i>RegistrationError</i> - Ошибка регистрации в ЕРИР (любого этапа)</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>DeletionTransferring</i> - Идет передача в ЕРИР удаленных креативов и строк, после чего перадача шапки акта, разаллокации и статистики</li><li><i>Deleting</i> - Идет передача креативов и статистики для удаления, либо быстрый контроль всего ЕРИР пройден, через сутки ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус акта в ОРД<p>Members:</p>'
+        '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
+        '<li><i>Created</i> - Черновик (загрузка в ОРД завершена), нужно послать в ЕРИР</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Transferring</i> - Идет передача в ЕРИР, после чего перадача шапки акта, '
+        'разаллокации и статистики</li>'
+        '<li><i>Registering</i> - Идет регистрация, удаленные креативы и статистика переданы, '
+        'также передана остальная информация по акту, быстрый контроль ЕРИР пройден, '
+        'через сутки ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации в ЕРИР (любого этапа)</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>DeletionTransferring</i> - Идет передача в ЕРИР удаленных креативов и строк, после '
+        'чего перадача шапки акта, разаллокации и статистики</li>'
+        '<li><i>Deleting</i> - Идет передача креативов и статистики для удаления, либо быстрый '
+        'контроль всего ЕРИР пройден, через сутки ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
     initialContractsCount: Optional[int] = Field(None, description='Кол-во изначальных договоров в акте', example=12)
@@ -1179,7 +1466,7 @@ class InvoicelessStatisticsByPlatforms(BaseModel):
         None, description='Значение из справочника "Типы площадок"', example='Site'
     )
     platformOwnedByAgency: Optional[bool] = Field(None, description='Принадлежит ли площадка агентству', example=False)
-    type: Optional[CampaignType] = Field(None, description='Тип рекламной кампании', example='CPM'),
+    type: Optional[CampaignType] = Field(None, description='Тип рекламной кампании', example='CPM')
     impsPlan: Optional[int] = Field(None, description='Количество показов по акту', example=100)
     impsFact: Optional[int] = Field(None, description='Количество показов фактическое', example=100)
     startDatePlan: Optional[date] = Field(None, description='Дата начала показов по акту', example='2022-12-01')
@@ -1203,7 +1490,13 @@ class InvoicelessStatisticsResponse(BaseModel):
     id: Optional[str] = Field(None, description='Id акта в ОРД')
     status: Optional[InvoicelessPeriodStatus] = Field(
         None,
-        description='Статус периода в ОРД<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа, включая ответ по креативам и статистике</li><li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li></ul>',
+        description='Статус периода в ОРД<p>Members:</p>'
+        '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного '
+        'ответа, включая ответ по креативам и статистике</li>'
+        '<li><i>Active</i> - Активный, зарегистрирован в ЕРИР</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
     year: Optional[int] = Field(None, description='Год периода')
@@ -1223,18 +1516,28 @@ class OuterContractResponse(BaseModel):
 
     number: Optional[str] = Field(
         None,
-        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
+        'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
     type: Optional[ContractType] = Field(
         None,
-        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+        description='Значение из справочника "Типы договоров"<p>Members:</p>'
+        '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
+        '<li><i>MediationContract</i> - Посреднический договор</li>'
+        '<li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li>'
+        '<li><i>SelfPromotionContract</i> - Самореклама</li>'
+        '<li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через '
+        'интерфейсе, ни через WebApi, не передается в ЕРИР</li>'
+        '<li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть '
+        'родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
@@ -1251,17 +1554,32 @@ class OuterContractResponse(BaseModel):
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     isRegReport: Optional[bool] = Field(
         None,
-        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен регистрировать креативы и предоставлять разаллокацию по ним в актах',
+        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
+        'регистрировать креативы и предоставлять разаллокацию по ним в актах',
     )
     id: Optional[str] = Field(None, description='Id договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
     status: Optional[ContractStatus] = Field(
         None,
-        description='Статус договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус договора в ОРД<p>Members:</p>'
+        '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность '
+        'сразу переходит в статус [Ожидает регистрации].</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного '
+        'ответа</li>'
+        '<li><i>Active</i> - Активный</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+        '<li><i>Testing</i> - Тестирование - для тестирования массовой загрузки '
+        'креативов на продовом контуре</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     cid: Optional[str] = Field(
         None, description='Cid расходного договора', example='763acd99-687b-46cd-8f40-45eced77413c'
     )
     erirValidationError: Optional[ErirValidationError] = None
+    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
 
 
 class PartialClearInvoiceStatisticsItem(BaseModel):
@@ -1295,6 +1613,7 @@ class PartialClearInvoiceWebApiDto(BaseModel):
         None, description='Список строк статистики для удаления'
     )
 
+
 class PartialClearInvoiceInitialContractsRequest(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -1313,7 +1632,11 @@ class PlatformResponse(BaseModel):
     name: Optional[str] = Field(None, description='Наименование площадки', example='Тестовая площадка')
     type: Optional[PlatformType] = Field(
         None,
-        description='Тип площадки<p>Members:</p><ul><li><i>Site</i> - Сайт</li><li><i>Application</i> - Приложение</li><li><i>InformationSystem</i> - Информационная система, не поддерживается начиная с ЕРИР v.5</li></ul>',
+        description='Тип площадки<p>Members:</p>'
+        '<ul><li><i>Site</i> - Сайт</li>'
+        '<li><i>Application</i> - Приложение</li>'
+        '<li><i>InformationSystem</i> - Информационная система, не поддерживается '
+        'начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
     isOwner: Optional[bool] = Field(None, description='Признак принадлежности агентству')
@@ -1349,48 +1672,27 @@ class TargetAudienceParam(BaseModel):
 
     type: Optional[TargetAudienceParamType] = Field(
         None,
-        description='Тип параметра: регион, пол, возраст<p>Members:</p><ul><li><i>Geo</i> - Код региона</li><li><i>Sex</i> - Пол</li><li><i>Age</i> - Возраст</li></ul>',
+        description='Тип параметра: регион, пол, возраст<p>Members:</p>'
+        '<ul><li><i>Geo</i> - Код региона</li>'
+        '<li><i>Sex</i> - Пол</li>'
+        '<li><i>Age</i> - Возраст</li></ul>',
     )
     values: Optional[List[str]] = Field(
         None,
-        description='Коллекция значений\n<ul><li>Для типа "geo":\r\n<ul><li>Максимальная длина: 2</li><li>Длина строки 2, может содержать цифры 0-9</li><li>В элементах массива передаются коды регионов. Если массив пустой, то геотаргетинг направлен на всю Россию</li></ul></li><li>Для типа "sex":\n<ul><li>male - мужчины</li><li>female - женщины</li></ul>\r\nЕсли таргетинг на аудиторию не зависящую от пола, то параметр не передается.\r\n</li><li>Для типа "age":\n<ul><li>"<минимальный возраст>:<максимальный возраст>".</li><li>Например, "25:45" - означает, что реклама таргетируется на аудиторию от 25 до 45 лет.</li></ul>\r\nЕсли таргетинг на любой возраст, то параметр не передается\r\n</li></ul>',
+        description='Коллекция значений\n'
+        '<ul><li>Для типа "geo":\r\n<ul><li>Максимальная длина: 2</li>'
+        '<li>Длина строки 2, может содержать цифры 0-9</li>'
+        '<li>В элементах массива передаются коды регионов. Если массив пустой, то геотаргетинг направлен '
+        'на всю Россию</li></ul></li>'
+        '<li>Для типа "sex":\n<ul>'
+        '<li>male - мужчины</li>'
+        '<li>female - женщины</li></ul>\r\n'
+        'Если таргетинг на аудиторию не зависящую от пола, то параметр не передается.\r\n</li>'
+        '<li>Для типа "age":\n'
+        '<ul><li>"<минимальный возраст>:<максимальный возраст>".</li>'
+        '<li>Например, "25:45" - означает, что реклама таргетируется на аудиторию от 25 до 45 лет.</li>'
+        '</ul>\r\nЕсли таргетинг на любой возраст, то параметр не передается\r\n</li></ul>',
     )
-
-
-class Severity(Enum):
-    Error = 'Error'
-    Warning = 'Warning'
-    Info = 'Info'
-
-
-class ValidationFailure(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    propertyName: Optional[str] = None
-    errorMessage: Optional[str] = None
-    attemptedValue: Optional[Any] = None
-    customState: Optional[Any] = None
-    severity: Optional[Severity] = None
-    errorCode: Optional[str] = None
-    formattedMessagePlaceholderValues: Optional[Dict[str, Any]] = None
-
-
-class BadRequestResponse(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    errorType: Optional[str] = Field(None, description='Тип ошибки.', example='Unauthorized')
-    traceId: Optional[str] = Field(
-        None,
-        description='Идентификатор запроса. Значение атрибута TraceId необходимо использовать при взаимодействии с техподдержкой ОРД Медиаскаут. Данное поле содержит в себе идентификатор логов текущего процесса.',
-        example='00-982607166a542147b435be3a847ddd71-fc75498eb9f09d48-00',
-    )
-    errorItems: Optional[List[ValidationFailure]] = Field(None, description='Список ошибок.', example=['Unauthorized'])
 
 
 class ClientResponse(BaseModel):
@@ -1402,11 +1704,17 @@ class ClientResponse(BaseModel):
     createMode: Optional[ClientRelationshipType] = Field(None, description='Тип отношения заказчика к агентству')
     legalForm: Optional[LegalForm] = Field(
         None,
-        description='Юридическая форма заказчика<p>Members:</p><ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li><li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li><li><i>PhysicalPerson</i> - Физлицо РФ</li><li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li><li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
+        description='Юридическая форма заказчика<p>Members:</p>'
+        '<ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li>'
+        '<li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li>'
+        '<li><i>PhysicalPerson</i> - Физлицо РФ</li>'
+        '<li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li>'
+        '<li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
     )
     inn: Optional[str] = Field(
         None,
-        description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика либо его аналог в стране регистрации',
+        description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика либо его '
+        'аналог в стране регистрации',
         example='1234567890',
     )
     name: Optional[str] = Field(None, description='Наименование контрагента', example='Наименование контрагента')
@@ -1417,7 +1725,15 @@ class ClientResponse(BaseModel):
     id: Optional[str] = Field(None, description='Id контрагента в ОРД', example='CLfFpx6Ee4qkawO6JwEDJqFQ')
     status: Optional[CounterpartyStatus] = Field(
         None,
-        description='Статус контрагента в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный (оба этапа ЕРИР-регистрации завершены успешно)</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Blocked</i> - Заблокирован (применимо только к TopLevelAgency)</li></ul>',
+        description='Статус контрагента в ОРД<p>Members:</p>'
+        '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность '
+        'сразу переходит в статус [Ожидает регистрации].</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, '
+        'ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный (оба этапа ЕРИР-регистрации завершены успешно)</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+        '<li><i>Blocked</i> - Заблокирован (применимо только к TopLevelAgency)</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
 
@@ -1430,36 +1746,44 @@ class CreateCreativeRequest(BaseModel):
 
     nativeCustomerId: Optional[str] = Field(
         None,
-        description='Id креатива в системе клиента\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Id креатива в системе клиента\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
     creativeGroupId: Optional[str] = Field(
         None,
-        description='Id группы (брони) креативов\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Id группы (брони) креативов\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='CG3oAF-jsLEkGx83pCs9-FPQ',
     )
     creativeGroupName: Optional[str] = Field(
         None,
-        description='Имя группы (брони) креативов.\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно при создании новой группы (брони) креативов</p>',
+        description='Имя группы (брони) креативов.\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Обязательно при создании новой группы (брони) креативов</p>',
         example='ТестоваяГруппа',
     )
     creativeGroupStartDate: Optional[date] = Field(
         None,
-        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-01-01',
     )
     creativeGroupEndDate: Optional[date] = Field(
         None,
-        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-30-01',
     )
     finalContractId: Optional[str] = Field(
         None,
-        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='CT6WFbMXPGcE2lx5Ffm-npAg',
     )
     initialContractId: Optional[str] = Field(
         None,
-        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно указать InitialContractId = FinalContractId\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно '
+        'указать InitialContractId = FinalContractId\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='AAADgMygKIOkyGuPfl83W1ow',
     )
     isSelfPromotion: Optional[bool] = Field(
@@ -1467,25 +1791,55 @@ class CreateCreativeRequest(BaseModel):
     )
     type: Optional[CampaignType] = Field(
         None,
-        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
+        '<li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li>'
+        '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
     )
     form: Optional[CreativeForm] = Field(
         None,
-        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - </li></ul>',
+        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>Banner</i> - Баннер</li>'
+        '<li><i>Text</i> - Текстовый блок</li>'
+        '<li><i>TextGraphic</i> - Текстово-графический блок</li>'
+        '<li><i>Video</i> - Видеоролик</li>'
+        '<li><i>Audio</i> - Аудиозапись</li>'
+        '<li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li>'
+        '<li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li>'
+        '<li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li>'
+        '<li><i>TextVideoBlock</i> - Текстовый блок с видео</li>'
+        '<li><i>TextAudioBlock</i> - Текстовый блок с аудио</li>'
+        '<li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li>'
+        '<li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li>'
+        '<li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li>'
+        '<li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li>'
+        '<li><i>BannerHtml5</i> - </li></ul>',
     )
     advertiserUrls: Optional[List[str]] = Field(
         None,
-        description='Целевые ссылки (массив)\n\r\nПроверка URL:\r\n<ul><li>Проверить протокол http, https, ftp, sftp</li><li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul><p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Целевые ссылки (массив)\n\r\nПроверка URL:\r\n'
+        '<ul><li>Проверить протокол http, https, ftp, sftp</li>'
+        '<li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul>'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test.ru'],
     )
     description: Optional[str] = Field(
         None,
-        description='Общее описание объекта рекламирования\r\n<ul><li>Минимальная длина: 1</li><li>Максимальная длина: 1000</li><li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li><li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul><p style="color: blue">Поле обязательно для заполнения</p>',
+        description='Общее описание объекта рекламирования\r\n'
+        '<ul><li>Минимальная длина: 1</li>'
+        '<li>Максимальная длина: 1000</li>'
+        '<li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li>'
+        '<li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul>'
+        '<p style="color: blue">Поле обязательно для заполнения</p>',
         example='Описание креатива 4H67RLFG',
     )
     targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
         None,
-        description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
     isNative: Optional[bool] = Field(
         None, description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
@@ -1495,11 +1849,36 @@ class CreateCreativeRequest(BaseModel):
     )
     mediaData: Optional[List[CreateCreativeMediaDataItem]] = Field(
         None,
-        description='Медиаданные креатива (массив)\n\r\nДолжен быть добавлен хотя бы один элемент при значениях поля form:\r\n<ul><li>TextGraphic</li><li>TextVideoBlock</li><li>TextAudioBlock</li><li>TextAudioVideoBlock</li><li>TextGraphicVideoBlock</li><li>TextGraphicAudioBlock</li><li>TextGraphicAudioVideoBlock</li><li>Banner</li><li>BannerHtml5</li><li>Video</li><li>Audio</li><li>AudioBroadcast</li><li>VideoBroadcast</li></ul><p style="color: blue">Поле условно-обязательно для заполнения</p>',
+        description='Медиаданные креатива (массив)\n\r\n'
+        'Должен быть добавлен хотя бы один элемент при значениях поля form:\r\n'
+        '<ul><li>TextGraphic</li>'
+        '<li>TextVideoBlock</li>'
+        '<li>TextAudioBlock</li>'
+        '<li>TextAudioVideoBlock</li>'
+        '<li>TextGraphicVideoBlock</li>'
+        '<li>TextGraphicAudioBlock</li>'
+        '<li>TextGraphicAudioVideoBlock</li>'
+        '<li>Banner</li>'
+        '<li>BannerHtml5</li>'
+        '<li>Video</li>'
+        '<li>Audio</li>'
+        '<li>AudioBroadcast</li>'
+        '<li>VideoBroadcast</li></ul>'
+        '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
     )
     textData: Optional[List[CreateCreativeTextDataItem]] = Field(
         None,
-        description='Текстовые медиаданные креатива (массив)\n\r\nДолжен быть добавлен хотя бы один элемент при значениях поля form:\r\n<ul><li>Text</li><li>TextGraphic</li><li>TextVideoBlock</li><li>TextAudioBlock</li><li>TextAudioVideoBlock</li><li>TextGraphicVideoBlock</li><li>TextGraphicAudioBlock</li><li>TextGraphicAudioVideoBlock</li></ul><p style="color: blue">Поле условно-обязательно для заполнения</p>',
+        description='Текстовые медиаданные креатива (массив)\n\r\nДолжен быть добавлен хотя бы один элемент '
+        'при значениях поля form:\r\n'
+        '<ul><li>Text</li>'
+        '<li>TextGraphic</li>'
+        '<li>TextVideoBlock</li>'
+        '<li>TextAudioBlock</li>'
+        '<li>TextAudioVideoBlock</li>'
+        '<li>TextGraphicVideoBlock</li>'
+        '<li>TextGraphicAudioBlock</li>'
+        '<li>TextGraphicAudioVideoBlock</li></ul>'
+        '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
     )
 
 
@@ -1512,15 +1891,22 @@ class CreateInvoiceRequest(BaseModel):
     number: Optional[str] = Field(
         None, description='Номер акта. Допускается null, в таком случае считаем, что акт без номера', example='Тест'
     )
-    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
     contractorRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль исполнителя в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль исполнителя в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Ra',
     )
     clientRole: Optional[InvoicePartyRole] = Field(
         None,
-        description='Роль заказчика в акте<p>Members:</p><ul><li><i>Rr</i> - Рекламораспространитель</li><li><i>Ors</i> - Оператор рекламной системы</li><li><i>Rd</i> - Рекламодатель</li><li><i>Ra</i> - Рекламное агентство</li></ul>',
+        description='Роль заказчика в акте<p>Members:</p>'
+        '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
+        '<li><i>Ors</i> - Оператор рекламной системы</li>'
+        '<li><i>Rd</i> - Рекламодатель</li>'
+        '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Rd',
     )
     amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
@@ -1537,6 +1923,7 @@ class CreateInvoiceRequest(BaseModel):
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItem]] = Field(
         None, description='Статистика по площадкам (массив)'
     )
+    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
 
 
 class CreateInvoicelessStatisticsRequest(BaseModel):
@@ -1561,11 +1948,15 @@ class CreativeGroupResponse(BaseModel):
     )
     finalContractId: Optional[str] = Field(
         None,
-        description='Id конечного договора, к которому привязана группа креативов\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id конечного договора, к которому привязана группа креативов\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Для креатива саморекламы не должно заполняться</p>',
     )
     initialContractId: Optional[str] = Field(
         None,
-        description='Id или Cid изначального договора, к которому относится группа креативов\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id или Cid изначального договора, к которому относится группа креативов\r\n'
+        '<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Для креатива саморекламы не должно заполняться</p>',
     )
     isSelfPromotion: Optional[bool] = Field(
         None,
@@ -1583,11 +1974,32 @@ class CreativeGroupResponse(BaseModel):
     )
     type: Optional[CampaignType] = Field(
         None,
-        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
+        '<li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li>'
+        '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
     )
     form: Optional[CreativeForm] = Field(
         None,
-        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - </li></ul>',
+        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>Banner</i> - Баннер</li>'
+        '<li><i>Text</i> - Текстовый блок</li>'
+        '<li><i>TextGraphic</i> - Текстово-графический блок</li>'
+        '<li><i>Video</i> - Видеоролик</li>'
+        '<li><i>Audio</i> - Аудиозапись</li>'
+        '<li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li>'
+        '<li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li>'
+        '<li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li>'
+        '<li><i>TextVideoBlock</i> - Текстовый блок с видео</li>'
+        '<li><i>TextAudioBlock</i> - Текстовый блок с аудио</li>'
+        '<li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li>'
+        '<li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li>'
+        '<li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li>'
+        '<li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li>'
+        '<li><i>BannerHtml5</i> - </li></ul>',
     )
     isSocial: Optional[bool] = Field(
         None, description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
@@ -1600,7 +2012,12 @@ class CreativeGroupResponse(BaseModel):
     )
     description: Optional[str] = Field(
         None,
-        description='Общее описание объекта рекламирования\r\n<ul><li>Минимальная длина: 1</li><li>Максимальная длина: 1000</li><li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li><li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul><p style="color: blue">Поле обязательно для заполнения</p>',
+        description='Общее описание объекта рекламирования\r\n'
+        '<ul><li>Минимальная длина: 1</li>'
+        '<li>Максимальная длина: 1000</li>'
+        '<li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li>'
+        '<li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul>'
+        '<p style="color: blue">Поле обязательно для заполнения</p>',
     )
 
 
@@ -1612,36 +2029,44 @@ class CreativeResponse(BaseModel):
 
     nativeCustomerId: Optional[str] = Field(
         None,
-        description='Id креатива в системе клиента\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Id креатива в системе клиента\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
     creativeGroupId: Optional[str] = Field(
         None,
-        description='Id группы (брони) креативов\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Id группы (брони) креативов\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='CG3oAF-jsLEkGx83pCs9-FPQ',
     )
     creativeGroupName: Optional[str] = Field(
         None,
-        description='Имя группы (брони) креативов.\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно при создании новой группы (брони) креативов</p>',
+        description='Имя группы (брони) креативов.\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Обязательно при создании новой группы (брони) креативов</p>',
         example='ТестоваяГруппа',
     )
     creativeGroupStartDate: Optional[date] = Field(
         None,
-        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата начала рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-01-01',
     )
     creativeGroupEndDate: Optional[date] = Field(
         None,
-        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Дата окончания рекламной компании\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
         example='2023-30-01',
     )
     finalContractId: Optional[str] = Field(
         None,
-        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Для креатива саморекламы не должно заполняться</p>',
         example='CT6WFbMXPGcE2lx5Ffm-npAg',
     )
     initialContractId: Optional[str] = Field(
         None,
-        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно указать InitialContractId = FinalContractId\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно указать '
+        'InitialContractId = FinalContractId\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='AAADgMygKIOkyGuPfl83W1ow',
     )
     isSelfPromotion: Optional[bool] = Field(
@@ -1649,15 +2074,39 @@ class CreativeResponse(BaseModel):
     )
     type: Optional[CampaignType] = Field(
         None,
-        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
+        '<li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li>'
+        '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
     )
     form: Optional[CreativeForm] = Field(
         None,
-        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - </li></ul>',
+        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>Banner</i> - Баннер</li>'
+        '<li><i>Text</i> - Текстовый блок</li>'
+        '<li><i>TextGraphic</i> - Текстово-графический блок</li>'
+        '<li><i>Video</i> - Видеоролик</li>'
+        '<li><i>Audio</i> - Аудиозапись</li>'
+        '<li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li>'
+        '<li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li>'
+        '<li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li>'
+        '<li><i>TextVideoBlock</i> - Текстовый блок с видео</li>'
+        '<li><i>TextAudioBlock</i> - Текстовый блок с аудио</li>'
+        '<li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li>'
+        '<li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li>'
+        '<li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li>'
+        '<li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li>'
+        '<li><i>BannerHtml5</i> - </li></ul>',
     )
     advertiserUrls: Optional[List[str]] = Field(
         None,
-        description='Целевые ссылки (массив)\n\r\nПроверка URL:\r\n<ul><li>Проверить протокол http, https, ftp, sftp</li><li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul><p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Целевые ссылки (массив)\n\r\nПроверка URL:\r\n'
+        '<ul><li>Проверить протокол http, https, ftp, sftp</li>'
+        '<li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul>'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test.ru'],
     )
     advertiserUrl: Optional[str] = Field(
@@ -1667,12 +2116,18 @@ class CreativeResponse(BaseModel):
     )
     description: Optional[str] = Field(
         None,
-        description='Общее описание объекта рекламирования\r\n<ul><li>Минимальная длина: 1</li><li>Максимальная длина: 1000</li><li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li><li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul><p style="color: blue">Поле обязательно для заполнения</p>',
+        description='Общее описание объекта рекламирования\r\n'
+        '<ul><li>Минимальная длина: 1</li>'
+        '<li>Максимальная длина: 1000</li>'
+        '<li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li>'
+        '<li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul>'
+        '<p style="color: blue">Поле обязательно для заполнения</p>',
         example='Описание креатива 4H67RLFG',
     )
     targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
         None,
-        description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно '
+        'для заполнения</p>',
     )
     isNative: Optional[bool] = Field(
         None, description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
@@ -1682,20 +2137,60 @@ class CreativeResponse(BaseModel):
     )
     mediaData: Optional[List[CreativeMediaDataItem]] = Field(
         None,
-        description='Медиаданные креатива (массив)\n\r\nДолжен быть добавлен хотя бы один элемент при значениях поля form:\r\n<ul><li>TextGraphic</li><li>TextVideoBlock</li><li>TextAudioBlock</li><li>TextAudioVideoBlock</li><li>TextGraphicVideoBlock</li><li>TextGraphicAudioBlock</li><li>TextGraphicAudioVideoBlock</li><li>Banner</li><li>BannerHtml5</li><li>Video</li><li>Audio</li><li>AudioBroadcast</li><li>VideoBroadcast</li></ul><p style="color: blue">Поле условно-обязательно для заполнения</p>',
+        description='Медиаданные креатива (массив)\n\r\n'
+        'Должен быть добавлен хотя бы один элемент при значениях поля form:\r\n'
+        '<ul><li>TextGraphic</li>'
+        '<li>TextVideoBlock</li>'
+        '<li>TextAudioBlock</li>'
+        '<li>TextAudioVideoBlock</li>'
+        '<li>TextGraphicVideoBlock</li>'
+        '<li>TextGraphicAudioBlock</li>'
+        '<li>TextGraphicAudioVideoBlock</li>'
+        '<li>Banner</li>'
+        '<li>BannerHtml5</li>'
+        '<li>Video</li>'
+        '<li>Audio</li>'
+        '<li>AudioBroadcast</li>'
+        '<li>VideoBroadcast</li></ul>'
+        '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
     )
     textData: Optional[List[CreativeTextDataItemWebApiDto]] = Field(
         None,
-        description='Текстовые медиаданные креатива (массив)\n\r\nДолжен быть добавлен хотя бы один элемент при значениях поля form:\r\n<ul><li>Text</li><li>TextGraphic</li><li>TextVideoBlock</li><li>TextAudioBlock</li><li>TextAudioVideoBlock</li><li>TextGraphicVideoBlock</li><li>TextGraphicAudioBlock</li><li>TextGraphicAudioVideoBlock</li></ul><p style="color: blue">Поле условно-обязательно для заполнения</p>',
+        description='Текстовые медиаданные креатива (массив)\n\r\n'
+        'Должен быть добавлен хотя бы один элемент при значениях поля form:\r\n'
+        '<ul><li>Text</li>'
+        '<li>TextGraphic</li>'
+        '<li>TextVideoBlock</li>'
+        '<li>TextAudioBlock</li>'
+        '<li>TextAudioVideoBlock</li>'
+        '<li>TextGraphicVideoBlock</li>'
+        '<li>TextGraphicAudioBlock</li>'
+        '<li>TextGraphicAudioVideoBlock</li></ul>'
+        '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
     )
     id: Optional[str] = Field(None, description='Id креатива в ОРД')
     erid: Optional[str] = Field(
         None,
-        description='Маркер креатива для добавления в кликовые ссылки. Формируется в момент регистрации креатива в ЕРИР, в дальнейшем передаётся Агентствам',
+        description='Маркер креатива для добавления в кликовые ссылки. Формируется '
+        'в момент регистрации креатива в ЕРИР, в дальнейшем передаётся '
+        'Агентствам',
     )
     status: Optional[CreativeStatus] = Field(
         None,
-        description='Статус креатива<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные еще не загружены)</li><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+        description='Статус креатива<p>Members:</p>'
+        '<ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные '
+        'еще не загружены)</li>'
+        '<li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, '
+        'сущность сразу переходит в статус [Ожидает регистрации].</li>'
+        '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+        '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, '
+        'ждем уточненного ответа</li>'
+        '<li><i>Active</i> - Активный</li>'
+        '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+        '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+        '<li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+        '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+        '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
 
@@ -1723,16 +2218,19 @@ class SimpleEditCreativeRequest(BaseModel):
 
     id: Optional[str] = Field(
         None,
-        description='Id креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `NativeCustomerId`, `Erid`</p>',
+        description='Id креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно '
+        'заполняться одновременно с полями `NativeCustomerId`, `Erid`</p>',
         example='CR5pxRa__aRkSgUqt0JeNkoA',
     )
     nativeCustomerId: Optional[str] = Field(
         None,
-        description='Id креатива в системе клиента\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `Id`, `Erid`</p>',
+        description='Id креатива в системе клиента\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Не должно заполняться одновременно с полями `Id`, `Erid`</p>',
     )
     erid: Optional[str] = Field(
         None,
-        description='Erid креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Не должно заполняться одновременно с полями `Id`, `NativeCustomerId`</p>',
+        description='Erid креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Не должно заполняться одновременно с полями `Id`, `NativeCustomerId`</p>',
         example='2SDnjcX1BkW',
     )
     startDate: Optional[date] = Field(
@@ -1744,12 +2242,15 @@ class SimpleEditCreativeRequest(BaseModel):
     )
     finalContractId: Optional[str] = Field(
         None,
-        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id доходного договора в ОРД\r\n<p style="color: blue">Поле условно-обязательно для заполнения. '
+        'Для креатива саморекламы не должно заполняться</p>',
         example='CTRl8rP7sBCU6KfyeCWdYBcw',
     )
     initialContractId: Optional[str] = Field(
         None,
-        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно указать InitialContractId = FinalContractId.\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Для креатива саморекламы не должно заполняться</p>',
+        description='Id или Cid изначального договора. Если креатив создается на доходный договор, то нужно указать'
+        ' InitialContractId = FinalContractId.\r\n<p style="color: blue">Поле условно-обязательно '
+        'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='CTRl8rP7sBCU6KfyeCWdYBcw',
     )
     isSelfPromotion: Optional[bool] = Field(
@@ -1758,20 +2259,49 @@ class SimpleEditCreativeRequest(BaseModel):
     )
     type: Optional[CampaignType] = Field(
         None,
-        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+        description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
+        '<li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li>'
+        '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
+        '<li><i>Other</i> - Иное</li></ul>',
     )
     form: Optional[CreativeForm] = Field(
         None,
-        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p><p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - </li></ul>',
+        description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        '<p>Members:</p>'
+        '<ul><li><i>Banner</i> - Баннер</li>'
+        '<li><i>Text</i> - Текстовый блок</li>'
+        '<li><i>TextGraphic</i> - Текстово-графический блок</li>'
+        '<li><i>Video</i> - Видеоролик</li>'
+        '<li><i>Audio</i> - Аудиозапись</li>'
+        '<li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li>'
+        '<li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li>'
+        '<li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li>'
+        '<li><i>TextVideoBlock</i> - Текстовый блок с видео</li>'
+        '<li><i>TextAudioBlock</i> - Текстовый блок с аудио</li>'
+        '<li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li>'
+        '<li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li>'
+        '<li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li>'
+        '<li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li>'
+        '<li><i>BannerHtml5</i> - </li></ul>',
     )
     advertiserUrls: Optional[List[str]] = Field(
         None,
-        description='Целевые ссылки (массив)\r\nПроверка URL:\r\n<ul><li>Проверить протокол http, https, ftp, sftp</li><li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul><p style="color: lightblue">Поле не обязательно для заполнения</p>',
+        description='Целевые ссылки (массив)\r\nПроверка URL:\r\n'
+        '<ul><li>Проверить протокол http, https, ftp, sftp</li>'
+        '<li>Проверить хост: в нем не должно содержаться punycode или urlencode</li></ul>'
+        '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test1.ru', 'http://test2.ru'],
     )
     description: Optional[str] = Field(
         None,
-        description='Общее описание объекта рекламирования\r\n<ul><li>Минимальная длина: 1</li><li>Максимальная длина: 1000</li><li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li><li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul><p style="color: blue">Поле обязательно для заполнения</p>',
+        description='Общее описание объекта рекламирования\r\n'
+        '<ul><li>Минимальная длина: 1</li>'
+        '<li>Максимальная длина: 1000</li>'
+        '<li>Длина строки от 1 до 1000, может содержать цифры и буквы, а также все спец символы</li>'
+        '<li>В начале и в конце не должно быть пробела и переноса на другую строку</li></ul>'
+        '<p style="color: blue">Поле обязательно для заполнения</p>',
         example='Описание',
     )
     targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
@@ -1790,5 +2320,6 @@ class SimpleEditCreativeRequest(BaseModel):
     )
     textData: Optional[List[EditCreativeTextDataItem]] = Field(
         None,
-        description='Текстовые медиаданные креатива (массив)\r\n<p style="color: blue">Поле не обязательно для заполнения</p>',
+        description='Текстовые медиаданные креатива (массив)\r\n<p style="color: blue">Поле не обязательно '
+        'для заполнения</p>',
     )

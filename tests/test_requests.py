@@ -51,6 +51,34 @@ def test__requests__400_bad_request(client, create_platform_data):
         assert e.error.errorItems[0].propertyName == 'string'
 
 
+def test__requests__400_problem_detail(client, create_platform_data):
+    platform = create_platform_data()
+
+    with patch('requests.request') as mock_post:
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.text = '''{
+                "type": "https://lk.mediascout.ru/ru/400/",
+                "title": "Ошибка валидации данных запроса.",
+                "status": 400,
+                "detail": "Форма распространения креатива/контейнера [Иное] не поддерживается, начиная с ЕРИР v.5",
+                "traceId": "052cd6ff4f605a15c086c2cd65b3ae46"
+            }'''
+
+        with pytest.raises(BadResponseError) as exc_info:
+            client.create_platform(platform)
+
+        e = exc_info.value
+        assert e.response.status_code == 400
+        assert isinstance(e.__cause__, ValidationError)
+        assert len(e.error.errorItems) == 1
+        assert e.error.errorType == 'https://lk.mediascout.ru/ru/400/'
+        assert e.error.errorItems[0].propertyName is None
+        assert (
+            e.error.errorItems[0].errorMessage
+            == 'Форма распространения креатива/контейнера [Иное] не поддерживается, начиная с ЕРИР v.5'
+        )
+
+
 def test__requests__400_unexpected_response(client, create_platform_data):
     platform = create_platform_data()
 
