@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Extra
 
-from .models import CampaignType, CreativeForm, ErirValidationError, capitalize
+from .models import CampaignType, CreativeForm, EditCreativeMediaDataItem, EditCreativeTextDataItem, ErirValidationError, capitalize
 
 
 class TargetAudienceParams(BaseModel):
@@ -36,7 +36,6 @@ class CreateContainerWebApiDto(BaseModel):
     description: Optional[str] = None
     isNative: Optional[bool] = None
     isSocial: Optional[bool] = None
-    okvedCodes: Optional[List[str]] = None
 
 
 class ResponseContainerWebApiDto(CreateContainerWebApiDto):
@@ -87,7 +86,6 @@ class ResponseGetContainerWebApiDto(BaseModel):
     description: Optional[str] = None
     isNative: Optional[str] = None
     isSocial: Optional[str] = None
-    okvedCodes: Optional[list[str]] = None
 
 
 class FeedElementMediaDataItem(BaseModel):
@@ -96,6 +94,7 @@ class FeedElementMediaDataItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
+    id: Optional[str] = None
     fileName: Optional[str] = None
     fileContentBase64: Optional[str] = None
     srcUrl: Optional[str] = None
@@ -109,6 +108,7 @@ class FeedElementTextDataItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
+    id: Optional[str] = None
     textData: Optional[str] = None
 
 
@@ -124,6 +124,20 @@ class FeedElementWebApiDto(BaseModel):
     advertiserUrls: Optional[List[str]] = None
     mediaData: Optional[List[FeedElementMediaDataItem]] = None
     textData: Optional[List[FeedElementTextDataItem]] = None
+
+
+class EditFeedElementWebApiDto(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    id: Optional[str] = None
+    nativeCustomerId: Optional[str] = None
+    description: Optional[str] = None
+    advertiserUrls: Optional[List[str]] = None
+    mediaData: Optional[List[EditCreativeMediaDataItem]] = None
+    textData: Optional[List[EditCreativeTextDataItem]] = None
 
 
 class CreateFeedElementsWebApiDto(BaseModel):
@@ -169,8 +183,8 @@ class EditFeedElementWebApiDto(BaseModel):
     feedName: Optional[str] = None
     description: Optional[str] = None
     advertiserUrls: Optional[List[str]] = None
-    mediaData: Optional[List[FeedElementMediaDataItem]] = None
-    textData: Optional[List[FeedElementTextDataItem]] = None
+    mediaData: Optional[List[EditCreativeMediaDataItem]] = None
+    textData: Optional[List[EditCreativeTextDataItem]] = None
 
 
 class ResponseEditFeedElementWebApiDto(BaseModel):
