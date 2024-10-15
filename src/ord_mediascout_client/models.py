@@ -16,6 +16,23 @@ def capitalize(s: str) -> str:
     return s[0].upper() + s[1:]
 
 
+class ProblemDetails(BaseModel):
+    type: Optional[str] = Field(
+        None,
+        description='Ссылка URI [RFC3986], идентифицирующая\r\n                тип ошибки. Данная спецификация рекомендует, чтобы при\r\n                ссылке на него предоставлялась документация по\r\n                типу ошибки. Когда\r\n                этот элемент отсутствует, его значение предполагается равным\r\n                «about:blank».',
+    )
+    title: Optional[str] = Field(
+        None,
+        description='Краткое описание типа ошибки. Оно НЕ ДОЛЖНО меняться от случая к случаю\r\n                ошибки, за исключением целей локализации (например, при использовании\r\n                проактивного согласования содержимого',
+    )
+    status: Optional[int] = Field(
+        None, description='Код состояния HTTP сгенерированный сервером для данного случая возникновения ошибки.'
+    )
+    detail: Optional[str] = Field(None, description='Детальное описание ошибки')
+    instance: Optional[str] = Field(
+        None, description='Ссылка URI, идентифицирующая конкретное\r\nвозникновение ошибки.'
+    )
+
 class ClearInvoiceDataWebApiDto(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -286,7 +303,7 @@ class CreativeMediaDataItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Идентификатор медиаданных')
+    id: Optional[str] = Field(..., description='Идентификатор медиаданных')
     fileName: Optional[str] = Field(
         None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
@@ -295,24 +312,15 @@ class CreativeMediaDataItem(BaseModel):
         description='Тип файла медиаданных креатива<p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
         example='image',
     )
-    fileContentBase64: Optional[str] = Field(
-        None,
-        description='Содержимое файла в кодировке Base64\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `srcUrl`</p>',
-    )
-    srcUrl: Optional[str] = Field(
-        None,
-        description='URL, откуда можно скачать файл. URL должен быть доступен без авторизации\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно, если не заполнено поле `fileContentBase64`</p>',
-        example='https://example.com',
-    )
     description: Optional[str] = Field(
         None,
         description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image`</p>',
         example='Описание',
     )
-    isArchive: Optional[bool] = Field(
-        None,
-        description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
-    )
+    # isArchive: bool = Field(
+    #     ...,
+    #     description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
+    # )
 
 
 class CreateCreativeMediaDataItem(BaseModel):
@@ -344,8 +352,8 @@ class CreateCreativeMediaDataItem(BaseModel):
         description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image`</p>',
         example='Описание',
     )
-    isArchive: Optional[bool] = Field(
-        None,
+    isArchive: bool = Field(
+        ...,
         description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
     )
 
@@ -388,8 +396,8 @@ class EditCreativeMediaDataItem(BaseModel):
         description='Описание изображения креатива\r\n<p style="color: blue">Поле условно-обязательно для заполнения. Обязательно для `fileType = image` и `ActionType` = `Add` или `Edit`</p>',
         example='Описание',
     )
-    isArchive: Optional[bool] = Field(
-        None,
+    isArchive: bool = Field(
+        ...,
         description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`. Имеет смысл только для `ActionType` = `Add`</p>',
     )
 
@@ -488,11 +496,11 @@ class DeleteContractWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Id удаляемого договора')
+    contractId: Optional[str] = Field(None, description='Id удаляемого договора')
     finalContractId: Optional[str] = Field(
-        None, description='Id доходного договора, заполняется только при удалении изначального договора'
+        None, description='Идентификатор доходного договора. Заполняется только при удалении изначального договора.'
     )
-    kind: Optional[DeleteContractKind] = Field(
+    contractKind: Optional[DeleteContractKind] = Field(
         None,
         description='Вид удаляемой связи (т.е. чем этот договор был - конечным, изначальным, внешним для агентства)<p>Members:</p><ul><li><i>FinalContract</i> - Конечный договор</li><li><i>InitialContract</i> - Изначальный договор</li><li><i>OuterContract</i> - Внешний договор</li></ul>',
     )

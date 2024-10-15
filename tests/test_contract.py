@@ -5,6 +5,8 @@ from ord_mediascout_client import (
     CreateFinalContractRequest,
     CreateInitialContractRequest,
     CreateOuterContractRequest,
+    DeleteContractWebApiDto,
+    DeleteContractKind,
     GetFinalContractsRequest,
     GetInitialContractRequest,
     GetOuterContractsRequest,
@@ -50,8 +52,21 @@ def test_get_final_contracts(client):
     response_data = client.get_final_contracts(request_data)
 
     for final_contract in response_data:
+        print(f"{final_contract.id=}")
         assert final_contract.id is not None
 
+
+
+def test__delete_final_contract(client):
+    _finalContractId = 'CTR5RcpKtdDE23ajEqR4s52g'
+    request_data = DeleteContractWebApiDto(contractId=_finalContractId, contractKind=DeleteContractKind.FinalContract)
+    print(f"{request_data=}")
+    response_data = client.delete_contract(request_data)
+
+    assert response_data.status_code == 204
+
+
+# curl -X 'DELETE' 'https://demo.mediascout.ru/webapi/v3/contracts/FinalContract/CTiwhIpoQ_F0OEPpKj8vWKGg' -H 'accept: */*'
 
 def test_create_initial_contract(client):
     request_data = CreateInitialContractRequest(
