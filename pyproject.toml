@@ -1,9 +1,10 @@
 [project]
 name = "ord_mediascout_client"
-version = "0.0.37"
+version = "0.0.38"
 authors = [
   { name="Alexey Ruzin", email="ruzin@me.com" },
   { name="Ilya Chegodayev", email="lighter97@gmail.com" },
+  { name="Leonid Klimparsky", email="l.klimparskiy@dev.kokoc.com" },
 ]
 description = "API Client for Mediascout ORD"
 readme = "README.md"
