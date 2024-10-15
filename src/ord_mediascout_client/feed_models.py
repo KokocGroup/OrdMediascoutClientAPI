@@ -36,8 +36,6 @@ class CreateContainerWebApiDto(BaseModel):
     description: Optional[str] = None
     isNative: Optional[bool] = None
     isSocial: Optional[bool] = None
-    # TODO: выпилить eacs/okved под МС API V3
-    # okvedCodes: Optional[List[str]] = None
 
 
 class ResponseContainerWebApiDto(CreateContainerWebApiDto):
@@ -88,8 +86,6 @@ class ResponseGetContainerWebApiDto(BaseModel):
     description: Optional[str] = None
     isNative: Optional[str] = None
     isSocial: Optional[str] = None
-    # TODO: выпилить eacs/okved под МС API V3
-    # okvedCodes: Optional[list[str]] = None
 
 
 class FeedElementMediaDataItem(BaseModel):
