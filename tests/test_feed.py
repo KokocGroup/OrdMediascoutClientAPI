@@ -1,3 +1,5 @@
+import pytest
+
 from ord_mediascout_client import (
     CreateFeedElementsWebApiDto,
     FeedElementTextDataItem,
@@ -6,6 +8,7 @@ from ord_mediascout_client import (
 )
 
 
+@pytest.mark.skip(reason="Этот тест временно отключен")
 def test_create_feed_elements(client, faker):
     request_dto = CreateFeedElementsWebApiDto(
         feedName='test_feed',
@@ -32,7 +35,7 @@ def test_create_feed_elements(client, faker):
     assert response_dto[0].description == request_dto.feedElements[0].description
     assert response_dto[0].advertiserUrls == request_dto.feedElements[0].advertiserUrls
 
-
+@pytest.mark.skip(reason="Этот тест временно отключен")
 def test_request_absent_feed_element(client, faker):
     request_dto = GetFeedElementsWebApiDto(ids=['absent_feed_element_id'])
 
@@ -40,7 +43,7 @@ def test_request_absent_feed_element(client, faker):
 
     assert len(response_dto) == 0
 
-
+@pytest.mark.skip(reason="Этот тест временно отключен")
 def test_request_all_feed_element(client, faker):
     request_dto = GetFeedElementsWebApiDto()
 

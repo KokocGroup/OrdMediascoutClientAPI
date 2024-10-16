@@ -140,14 +140,16 @@ class CreateFinalContractRequest(BaseModel):
         description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
-    expirationDate: Optional[date] = Field(None, description='Дата окончания срока действия договора', example='2023-05-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
     amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
-        None,
+    type: ContractType = Field(
+        ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
     subjectType: Optional[ContractSubjectType] = Field(
@@ -159,8 +161,8 @@ class CreateFinalContractRequest(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    clientId: Optional[str] = Field(
-        None, description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    clientId: str = Field(
+        ..., description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
 
@@ -308,7 +310,7 @@ class CreativeMediaDataItem(BaseModel):
         None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
     fileType: Optional[FileType] = Field(
-        None,
+        ...,
         description='Тип файла медиаданных креатива<p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
         example='image',
     )
@@ -788,7 +790,6 @@ class FiasResponse(BaseModel):
     )
 
 
-
 class ContractStatus(Enum):
     Created = 'Created'
     RegistrationRequired = 'RegistrationRequired'
@@ -800,6 +801,52 @@ class ContractStatus(Enum):
     Deleting = 'Deleting'
     DeletionError = 'DeletionError'
     Deleted = 'Deleted'
+
+
+class CreatedFinalContractResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    number: Optional[str] = Field(
+        None,
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        example='Тест',
+    )
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
+    amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
+    isAgentActingForPublisher: Optional[bool] = Field(
+        None, description='Направление денежных средств в сторону заказчика', example=True
+    )
+    type: Type7 = Field(
+        ...,
+        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+    )
+    subjectType: Optional[SubjectType] = Field(
+        None, description='Значение из справочника "Сведения о предмете договора"'
+    )
+    actionType: Optional[ActionType] = Field(
+        None, description='Значение из справочника "Типы взаимодействия сторон посреднического договора"'
+    )
+    parentMainContractId: Optional[str] = Field(
+        None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
+    )
+    clientId: str = Field(
+        ..., description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    )
+    partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    id: str = Field(..., description='Id доходного договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    status: Status3 = Field(
+        ...,
+        description='Статус доходного договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
+    contractorId: str = Field(..., description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
+    contractorName: str = Field(..., description='Наименование исполнителя', example='ООО "Ромашка"')
 
 
 class FinalContractResponse(BaseModel):

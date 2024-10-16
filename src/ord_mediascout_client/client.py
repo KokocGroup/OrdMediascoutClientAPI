@@ -108,9 +108,10 @@ class TemporaryResponseError(TemporaryAPIError):
 
 class UnexpectedResponseError(APIError):
     def __init__(self, response: requests.Response):
-        rto = parse_raw_as(ProblemDetails, response.text or '{}')
+        # rto = parse_raw_as(ProblemDetails, response.text or '{}')
         super().__init__(
-            f'Unexpected response with STATUS_CODE: {response.status_code}\n TITLE: {rto.title}\nDETAIL: {rto.detail}'
+            f'Unexpected response with STATUS_CODE: {response.status_code}'
+            # f'Unexpected response with STATUS_CODE: {response.status_code}\n TITLE: {rto.title}\nDETAIL: {rto.detail}'
         )
         self.response = response
 
@@ -186,9 +187,13 @@ class ORDMediascoutClient:
                 try:
                     bad_response = BadRequestResponse.parse_raw(response.text)
                 except ValidationError as e:
-                    # rto = parse_raw_as(ProblemDetails, response.text or '{}')
+                    try:
+                        rto = parse_raw_as(ProblemDetails, response.text or '{}')
+                        print(f"{rto.detail=}")
+                    except ValidationError as e:
                     # print(f"{rto.detail=}")
-                    # print(f"{e=}")
+                        print(f"{e=}")
+                        raise ValidationError(response) from e
                     raise UnexpectedResponseError(response) from e
                 # print(f"{response.text=}")
                 # print(f"{bad_response=}")
