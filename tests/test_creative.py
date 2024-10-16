@@ -1,11 +1,10 @@
 import pytest
 
-
 from ord_mediascout_client import (
     CampaignType,
+    CreateCreativeMediaDataItem,
     CreateCreativeRequest,
     CreativeForm,
-    CreateCreativeMediaDataItem,
     CreativeStatus,
     CreativeTextDataItemWebApiDto,
     EditCreativeRequest,
@@ -48,6 +47,8 @@ def create_mediadata_creative(client):
 
 def test_create_mediadata_creative(create_mediadata_creative):
     assert create_mediadata_creative is not None
+
+
 #     request_data = CreateCreativeRequest(
 #         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
 #         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
@@ -105,12 +106,19 @@ def test_get_creatives(client):
     for creative in response_data:
         assert creative.id is not None
 
+
 def test_edit_creative(client, create_mediadata_creative):
     # print(f"{create_mediadata_creative=}")
     # print(f"{create_mediadata_creative.id=}")
-    create_mediadata_creative.nativeCustomerId=12345
+    create_mediadata_creative.nativeCustomerId = 12345
     # print(f"VARS: {vars(create_mediadata_creative)}")
-    request_data = EditCreativeRequest(**vars(create_mediadata_creative))
+    data = vars(create_mediadata_creative)
+    data.pop('creativeGroupName', None)
+    data.pop('creativeGroupName', None)
+    data.pop('creativeGroupStartDate', None)
+    data.pop('creativeGroupEndDate', None)
+    data['advertiserUrls'] = ['https://clisite1.ru/', 'https://clisite2.ru/']
+    request_data = EditCreativeRequest(**data)
     # print(f"{request_data=}")
-    response_data = client.edit_creative(request_data)
+    client.edit_creative(request_data)
     # print(f"{response_data=}")
