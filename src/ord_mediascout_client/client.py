@@ -1,6 +1,8 @@
 import logging
 from typing import Any, Optional, Type
+from enum import Enum
 
+from urllib.parse import urlencode
 import requests
 from pydantic.error_wrappers import ValidationError
 from pydantic.main import BaseModel
@@ -39,7 +41,7 @@ from .models import (
     CreatePlatformRequest,
     CreativeGroupResponse,
     CreativeResponse,
-    CreativeStatus,
+    CreativeBaseStatusResponse,
     DeleteContractWebApiDto,
     DeleteRestoreCreativeWebApiDto,
     EditCreativeRequest,
@@ -54,6 +56,7 @@ from .models import (
     GetClientRequest,
     GetCreativeGroupsRequest,
     GetCreativesWebApiDto,
+    GetCreativeStatusWebApiDto,
     GetFinalContractsRequest,
     GetInitialContractRequest,
     GetInvoicelessPeriodsRequest,
@@ -66,6 +69,7 @@ from .models import (
     OuterContractResponse,
     PartialClearInvoiceInitialContractsRequest,
     PartialClearInvoiceWebApiDto,
+    PartialClearInvoiceStatisticsRequest,
     PlatformResponse,
     ProblemDetails,
     SupplementInvoiceWebApiDto,
@@ -145,6 +149,7 @@ class ORDMediascoutClient:
                 method,
                 f'{self.config.url}{url}',
                 data=obj and obj.json(),
+                params=obj and obj.dict() if method == 'delete' else None,
                 auth=self.auth,
                 headers=self.headers,
                 **kwargs,
@@ -232,9 +237,9 @@ class ORDMediascoutClient:
         )
         return contract
 
-    def edit_initial_contract(self, contract: EditInitialContractWebApiDto) -> InitialContractResponse:
+    def edit_initial_contract(self, contract_id: str,contract: EditInitialContractWebApiDto) -> InitialContractResponse:
         contract: InitialContractResponse = self._call(
-            'patch', '/webapi/v3/contracts/initial', contract, InitialContractResponse
+            'patch', f'/webapi/v3/contracts/initial/{contract_id}', contract, InitialContractResponse
         )
         return contract
 
@@ -250,9 +255,9 @@ class ORDMediascoutClient:
         )
         return contract
 
-    def edit_final_contract(self, contract: EditFinalContractWebApiDto) -> FinalContractResponse:
+    def edit_final_contract(self, contract_id: str, contract: EditFinalContractWebApiDto) -> FinalContractResponse:
         contract: FinalContractResponse = self._call(
-            'patch', '/webapi/v3/contracts/final', contract, FinalContractResponse
+            'patch', f'/webapi/v3/contracts/final/{contract_id}', contract, FinalContractResponse
         )
         return contract
 
@@ -268,9 +273,9 @@ class ORDMediascoutClient:
         )
         return contract
 
-    def edit_outer_contract(self, contract: EditOuterContractWebApiDto) -> OuterContractResponse:
+    def edit_outer_contract(self, contract_id: str, contract: EditOuterContractWebApiDto) -> OuterContractResponse:
         contract: OuterContractResponse = self._call(
-            'patch', '/webapi/v3/contracts/outer', contract, OuterContractResponse
+            'patch', f'/webapi/v3/contracts/outer/{contract_id}', contract, OuterContractResponse
         )
         return contract
 
@@ -281,9 +286,9 @@ class ORDMediascoutClient:
         return contracts
 
     # new
-    def delete_contract(self, contract: DeleteContractWebApiDto) -> None:
+    def delete_contract(self, contract_id: str, contract: DeleteContractWebApiDto) -> None:
         contract_kind = contract.contractKind.value if contract.contractKind else ''
-        self._call('delete', f'/webapi/v3/contracts/{contract_kind}/{contract.contractId}', contract)
+        self._call('delete', f'/webapi/v3/contracts/{contract_kind}/{contract_id}', contract)
 
     # Creatives
     def create_creative(self, creative: CreateCreativeRequest) -> CreatedCreativeResponse:
@@ -297,15 +302,21 @@ class ORDMediascoutClient:
         return updated_creative
 
     def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeResponse]:
+        query_params = parameters.dict(exclude_none=True)
+        # Преобразовать Enum в строковые значения
+        for key, value in query_params.items():
+            if isinstance(value, Enum):
+                query_params[key] = value.value
+        query_string = urlencode(query_params, doseq=True)
         creatives: list[CreativeResponse] = self._call(
-            'get', '/webapi/v3/creatives', parameters, list[CreativeResponse]
+            'get', f'/webapi/v3/creatives?{query_string}', None, list[CreativeResponse]
         )
         return creatives
 
     # new
-    def get_creative_status(self, parameters: GetCreativesWebApiDto) -> CreativeStatus:
-        creative_status: CreativeStatus = self._call(
-            'get', f'/webapi/v3/creatives/{parameters.id}/status', parameters, CreativeStatus
+    def get_creative_status(self, parameters: GetCreativesWebApiDto) -> CreativeBaseStatusResponse:
+        creative_status: CreativeBaseStatusResponse = self._call(
+            'get', f'/webapi/v3/creatives/{parameters.creativeId}/status', parameters, CreativeBaseStatusResponse
         )
         return creative_status
 
@@ -317,6 +328,7 @@ class ORDMediascoutClient:
     def delete_creative(self, parameters: DeleteRestoreCreativeWebApiDto) -> None:
         self._call('delete', f'/webapi/v3/creatives/{parameters.erid or parameters.nativeCustomerId}', parameters)
 
+
     # Creative Group
     def edit_creative_group(self, creative_group: CreativeGroupResponse) -> CreativeGroupResponse:
         updated_creative_group: CreativeGroupResponse = self._call(
@@ -325,8 +337,10 @@ class ORDMediascoutClient:
         return updated_creative_group
 
     def get_creative_groups(self, parameters: GetCreativeGroupsRequest) -> list[CreativeGroupResponse]:
+        query_params = parameters.dict(exclude_none=True)
+        query_string = urlencode(query_params, doseq=True)
         creative_groups: list[CreativeGroupResponse] = self._call(
-            'get', '/webapi/v3/creatives/groups', parameters, list[CreativeGroupResponse]
+            'get', f'/webapi/v3/creatives/groups?{query_string}', None, list[CreativeGroupResponse]
         )
         return creative_groups
 
@@ -382,20 +396,20 @@ class ORDMediascoutClient:
         entity: EntityIdResponse = self._call('post', '/webapi/v3/invoices', invoice, EntityIdResponse)
         return entity
 
-    def edit_invoice(self, invoice: EditInvoiceDataWebApiDto) -> InvoiceResponse:
+    def edit_invoice(self, invoice_id: str, invoice: EditInvoiceDataWebApiDto) -> InvoiceResponse:
         invoice: InvoiceResponse = self._call(
-            'patch', f'/webapi/v3/invoices/{invoice.id}/edit', invoice, InvoiceResponse
+            'patch', f'/webapi/v3/invoices/{invoice_id}/edit', invoice, InvoiceResponse
         )
         return invoice
 
-    def overwrite_invoice(self, invoice: EditInvoiceStatisticsWebApiDto) -> None:
-        self._call('put', f'/webapi/v3/invoices/{invoice.id}/overwrite', invoice)
+    def overwrite_invoice(self, invoice_id: str,invoice: EditInvoiceStatisticsWebApiDto) -> None:
+        self._call('put', f'/webapi/v3/invoices/{invoice_id}/overwrite', invoice)
 
     def clear_invoice(self, invoice: ClearInvoiceDataWebApiDto) -> None:
-        self._call('put', f'/webapi/v3/invoices/{invoice.id}/clear', invoice)
+        self._call('put', f'/webapi/v3/invoices/{invoice.id}/clear')
 
-    def partial_clear_invoice(self, invoice: PartialClearInvoiceWebApiDto) -> None:
-        self._call('put', f'/webapi/v3/invoices/{invoice.id}/partialclear', invoice)
+    def partial_clear_invoice(self, invoice_id: str, parameters: PartialClearInvoiceWebApiDto) -> None:
+        self._call('patch', f'/webapi/v3/invoices/{invoice_id}/partialclear', parameters)
 
     def supplement_invoice(self, invoice: SupplementInvoiceWebApiDto) -> EntityIdResponse:
         entity: EntityIdResponse = self._call(
@@ -404,7 +418,14 @@ class ORDMediascoutClient:
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceResponse]:
-        invoices: list[InvoiceResponse] = self._call('get', '/webapi/v3/invoices', parameters, list[InvoiceResponse])
+        query_params = parameters.dict(exclude_none=True)
+        # Преобразовать Enum в строковые значения
+        for key, value in query_params.items():
+            if isinstance(value, Enum):
+                query_params[key] = value.value
+        query_string = urlencode(query_params, doseq=True)
+
+        invoices: list[InvoiceResponse] = self._call('get', f'/webapi/v3/invoices?{query_string}', parameters, list[InvoiceResponse])
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdResponse) -> InvoiceSummaryResponse:
@@ -414,10 +435,10 @@ class ORDMediascoutClient:
         return invoice_summary
 
     def confirm_invoice(self, entity: EntityIdResponse) -> None:
-        self._call('patch', f'/webapi/v3/invoices/{entity.id}/confirm', entity)
+        self._call('patch', f'/webapi/v3/invoices/{entity.id}/confirm')
 
     def delete_invoice(self, entity: EntityIdResponse) -> None:
-        self._call('delete', f'/webapi/v3/invoices/{entity.id}', entity)
+        self._call('delete', f'/webapi/v3/invoices/{entity.id}')
 
     # new
     def delete_invoice_initial_contracts(
@@ -425,14 +446,18 @@ class ORDMediascoutClient:
     ) -> None:
         self._call('delete', f'/webapi/v3/invoices/{invoice_id}/initial_contracts', initial_contracts)
 
+    # new
+    def delete_invoice_statistics(self, invoice_id: int, statistics: PartialClearInvoiceStatisticsRequest) -> None:
+        self._call('delete', f'/webapi/v3/invoices/{invoice_id}/statistics', statistics)
+
     # WebApiPlatform
     def create_platform(self, platform: CreatePlatformRequest) -> EntityIdResponse:
         entity: EntityIdResponse = self._call('post', '/webapi/v3/platforms', platform, EntityIdResponse)
         return entity
 
-    def edit_platform(self, platform: EditPlatformWebApiDto) -> PlatformResponse:
+    def edit_platform(self, platform_id: str, platform: EditPlatformWebApiDto) -> PlatformResponse:
         updated_platform: PlatformResponse = self._call(
-            'patch', f'/webapi/v3/platforms/{platform.id}', platform, PlatformResponse
+            'patch', f'/webapi/v3/platforms/{platform_id}', platform, PlatformResponse
         )
         return updated_platform
 

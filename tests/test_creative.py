@@ -1,104 +1,61 @@
 import pytest
 
 from ord_mediascout_client import (
-    CampaignType,
-    CreateCreativeMediaDataItem,
     CreateCreativeRequest,
+    GetCreativeGroupsRequest,
+    CreativeGroupResponse,
+    CreatedCreativeResponse,
     CreativeForm,
     CreativeStatus,
-    CreativeTextDataItemWebApiDto,
+    DeleteRestoreCreativeWebApiDto,
     EditCreativeRequest,
     GetCreativesWebApiDto,
+    GetCreativeStatusWebApiDto,
 )
-from ord_mediascout_client.models import FileType
 
 
-@pytest.fixture
-def create_mediadata_creative(client):
-    request_data = CreateCreativeRequest(
-        finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
-        initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-        type=CampaignType.CPM,
-        form=CreativeForm.Banner,
-        advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
-        description='Test mediadata creative 333',
-        targetAudienceParams=[],
-        isSelfPromotion=False,
-        isNative=False,
-        isSocial=False,
-        mediaData=[
-            CreateCreativeMediaDataItem(
-                fileName='logo.svg',
-                fileType=FileType.Image,
-                # fileContentBase64="string",
-                srcUrl='https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
-                description='Тестовый баннер 333',
-                isArchive=False,
-            )
-        ],
-    )
+@pytest.fixture(scope="module")
+def create_mediadata_creative(client, creative_data):
+    data = creative_data()
+    data['textData'] = []
+    data['form'] = CreativeForm.Banner
+    request_data = CreateCreativeRequest(**data)
 
     response_data = client.create_creative(request_data)
-    # print(f"{response_data=}")
-    response_data.mediaData[0] = request_data.mediaData[0]
-    # print(f"{response_data=}")
     return response_data
 
 
-def test_create_mediadata_creative(create_mediadata_creative):
-    assert create_mediadata_creative is not None
-
-
-#     request_data = CreateCreativeRequest(
-#         finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
-#         initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-#         type=CampaignType.CPM,
-#         form=CreativeForm.Banner,
-#         advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
-#         description='Test mediadata creative 333',
-#         targetAudienceParams=[],
-#         isSelfPromotion=False,
-#         isNative=False,
-#         isSocial=False,
-#         mediaData=[
-#             CreateCreativeMediaDataItem(
-#                 fileName='logo.svg',
-#                 fileType=FileType.Image,
-#                 # fileContentBase64="string",
-#                 srcUrl='https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
-#                 description='Тестовый баннер 333',
-#                 isArchive=False,
-#             )
-#         ],
-#     )
-#
-#     response_data = client.create_creative(request_data)
-#
-#     assert response_data.id is not None
-#     return response_data
-
-
-def test_create_textdata_creative(client):
-    request_data = CreateCreativeRequest(
-        finalContractId='CTiwhIpoQ_F0OEPpKj8vWKGg',
-        initialContractId='CTKLAzsvgYREmK0unGXLsCTg',
-        type=CampaignType.CPM,
-        form=CreativeForm.Text,
-        advertiserUrls=['https://clisite1.ru/', 'https://clisite2.ru/'],
-        description='Test textdata creative 555',
-        targetAudienceParams=[],
-        isSelfPromotion=False,
-        isNative=False,
-        isSocial=False,
-        textData=[CreativeTextDataItemWebApiDto(textData='Creative 555 text data test')],
-    )
+@pytest.fixture(scope="module")
+def create_textdata_creative(client, creative_data):
+    data = creative_data()
+    data['mediaData'] = []
+    data['form'] = CreativeForm.Text
+    request_data = CreateCreativeRequest(**data)
 
     response_data = client.create_creative(request_data)
+    return response_data
 
-    assert response_data.id is not None
+
+def test__create_mediadata_creative(create_mediadata_creative):
+    assert create_mediadata_creative is not None
+    assert isinstance(create_mediadata_creative, CreatedCreativeResponse)
 
 
-def test_get_creatives(client):
+def test__create_textdata_creative(create_textdata_creative):
+    assert create_textdata_creative is not None
+    assert isinstance(create_textdata_creative, CreatedCreativeResponse)
+
+
+def test__get_creative_status(client, create_mediadata_creative):
+    request_data = GetCreativeStatusWebApiDto(creativeId=create_mediadata_creative.id)
+
+    response_data = client.get_creative_status(request_data)
+
+    assert response_data is not None
+    assert response_data.erid == create_mediadata_creative.erid
+
+
+def test__get_creatives(client):
     request_data = GetCreativesWebApiDto(status=CreativeStatus.Active)
 
     response_data = client.get_creatives(request_data)
@@ -107,18 +64,67 @@ def test_get_creatives(client):
         assert creative.id is not None
 
 
-def test_edit_creative(client, create_mediadata_creative):
-    # print(f"{create_mediadata_creative=}")
-    # print(f"{create_mediadata_creative.id=}")
-    create_mediadata_creative.nativeCustomerId = 12345
-    # print(f"VARS: {vars(create_mediadata_creative)}")
-    data = vars(create_mediadata_creative)
-    data.pop('creativeGroupName', None)
-    data.pop('creativeGroupName', None)
-    data.pop('creativeGroupStartDate', None)
-    data.pop('creativeGroupEndDate', None)
-    data['advertiserUrls'] = ['https://clisite1.ru/', 'https://clisite2.ru/']
-    request_data = EditCreativeRequest(**data)
-    # print(f"{request_data=}")
-    client.edit_creative(request_data)
-    # print(f"{response_data=}")
+def test__edit_creative(client, create_mediadata_creative):
+    request_data = EditCreativeRequest(
+        id=create_mediadata_creative.id,
+        creativeGroupId=create_mediadata_creative.creativeGroupId,
+        advertiserUrls=['https://clisite1-edit.ru/', 'https://clisite2-edit.ru/'],
+        overwriteExistingCreativeMedia=False,
+    )
+    filtered_data = request_data.dict(exclude_none=True)
+    for field in request_data.__fields__:
+        if field not in filtered_data:
+            delattr(request_data, field)
+
+    response_data = client.edit_creative(request_data)
+
+    assert response_data is not None
+    assert response_data.id == create_mediadata_creative.id
+
+
+def test__edit_creative_group(client, create_mediadata_creative):
+    # Получить креатив для извлечения параметров для запроса на редактирование
+    request_creative = GetCreativesWebApiDto(ids=[create_mediadata_creative.id])
+    creative = client.get_creatives(request_creative)[0]
+
+    request_creative_group = CreativeGroupResponse(
+        creativeGroupId=creative.creativeGroupId,
+        creativeGroupName=creative.creativeGroupName,
+        finalContractId=creative.finalContractId,
+        isSelfPromotion=creative.isSelfPromotion,
+        type=creative.type,
+        form=creative.form,
+        isSocial=creative.isSocial,
+        isNative=creative.isNative,
+        description="Edited description",
+    )
+
+    response_data = client.edit_creative_group(request_creative_group)
+
+    assert response_data is not None
+    assert response_data.creativeGroupId == creative.creativeGroupId
+
+
+def test__get_creative_groups(client, creative_data):
+    data = creative_data()
+    request_data = GetCreativeGroupsRequest(
+        finalContractId=data['finalContractId'],
+        initialContractId=data['initialContractId'],
+    )
+
+    response_data = client.get_creative_groups(request_data)
+
+    assert response_data is not None
+    for creative_group in response_data:
+        assert isinstance(creative_group.creativeGroupId, str)
+
+
+def test__delete_and_restore_creative(client, create_mediadata_creative):
+    request_data = DeleteRestoreCreativeWebApiDto(erid=create_mediadata_creative.erid)
+    client.delete_creative(request_data)
+    client.restore_creative(request_data)
+
+
+def test__delete_creative(client, create_mediadata_creative):
+    request_data = DeleteRestoreCreativeWebApiDto(erid=create_mediadata_creative.erid)
+    client.delete_creative(request_data)
