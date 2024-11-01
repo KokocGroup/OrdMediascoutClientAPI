@@ -152,7 +152,7 @@ class ORDMediascoutClient:
             self.logger.debug(
                 f'API call: {method} {url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Response: {response.status_code}\n'
                 f'{response.text}'
             )
@@ -160,7 +160,7 @@ class ORDMediascoutClient:
             self.logger.exception(
                 f'API call: {method} {url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
             )
             raise TemporaryAPIError(f'Connection lost while requesting: {method} {url}') from e
@@ -168,7 +168,7 @@ class ORDMediascoutClient:
             self.logger.exception(
                 f'API call: {method} {url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
             )
             raise APIError from e
@@ -184,7 +184,7 @@ class ORDMediascoutClient:
                         self.sentry_logger.exception(
                             f'API call: {method} {url}\n'
                             f'Headers: {self.headers}\n'
-                            f'Body: {obj and obj.json(indent=4)}\n'
+                            f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                             f'Exception: {e}\n'
                         )
                         raise UnexpectedResponseError(response) from e
@@ -209,10 +209,10 @@ class ORDMediascoutClient:
                         raise APIValidationError(e) from e
             case _:
                 self.sentry_logger.exception(
+                    f'Unexpected response.status_code: {response.status_code}\n'
                     f'API call: {method} {url}\n'
                     f'Headers: {self.headers}\n'
-                    f'Body: {obj and obj.json(indent=4)}\n'
-                    f'Unexpected response.status_code: {response.status_code}\n'
+                    f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 )
                 raise UnexpectedResponseError(response)
 
