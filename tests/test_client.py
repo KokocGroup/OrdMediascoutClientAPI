@@ -7,7 +7,7 @@ from ord_mediascout_client import (
 )
 
 
-def test_create_client(client):
+def test__create_client(client):
     request_data = CreateClientRequest(
         createMode=ClientRelationshipType.DirectClient,
         legalForm=LegalForm.JuridicalPerson,
@@ -33,10 +33,35 @@ def test_create_client(client):
     assert response_data.status == CounterpartyStatus.Active
 
 
-def test_get_clients(client):
+def test__get_clients(client):
     request_data = GetClientRequest(status=CounterpartyStatus.Active)
 
     response_data = client.get_clients(request_data)
 
-    for cli in response_data:
-        assert cli.id is not None
+    assert len(response_data) > 0
+    for participant in response_data:
+        assert participant.id is not None
+        assert participant.status == CounterpartyStatus.Active
+
+
+def test__get_client__by_id(client):
+    client_id = 'CLGk5Rgt3AHk6er6qXR1T4mA'
+    request_data = GetClientRequest(id=client_id)
+
+    response_data = client.get_clients(request_data)
+
+    assert len(response_data) == 1
+    for participant in response_data:
+        assert participant.id == client_id
+
+
+def test__get_client__by_inn(client):
+    inn = '7740000076'
+    request_data = GetClientRequest(inn=inn)
+
+    response_data = client.get_clients(request_data)
+
+    assert len(response_data) == 1
+    for participant in response_data:
+        assert participant.id is not None
+        assert participant.inn == inn

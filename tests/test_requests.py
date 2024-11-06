@@ -9,7 +9,7 @@ from ord_mediascout_client.client import BadResponseError, TemporaryResponseErro
 def test__requests__200_ok(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 201
         mock_post.return_value.text = '{"id": "string"}'
 
@@ -21,7 +21,7 @@ def test__requests__200_ok(client, create_platform_data):
 def test__requests__400_bad_request(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 400
         mock_post.return_value.text = '''{
           "errorType": "errorType_string",
@@ -54,7 +54,7 @@ def test__requests__400_bad_request(client, create_platform_data):
 def test__requests__400_problem_detail(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 400
         mock_post.return_value.text = '''{
                 "type": "https://lk.mediascout.ru/ru/400/",
@@ -82,7 +82,7 @@ def test__requests__400_problem_detail(client, create_platform_data):
 def test__requests__400_unexpected_response(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 400
         mock_post.return_value.text = '''{
           "errorType": "errorType_string",
@@ -99,7 +99,7 @@ def test__requests__400_unexpected_response(client, create_platform_data):
 def test__requests__500_internal_error(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 500
         mock_post.return_value.text = '''bla-bla-bla'''
 
@@ -114,7 +114,7 @@ def test__requests__500_internal_error(client, create_platform_data):
 def test__requests__502_bad_gateway(client, create_platform_data):
     platform = create_platform_data()
 
-    with patch('requests.request') as mock_post:
+    with patch('requests.Session.send') as mock_post:
         mock_post.return_value.status_code = 502
         mock_post.return_value.text = '''bla-bla-2'''
 

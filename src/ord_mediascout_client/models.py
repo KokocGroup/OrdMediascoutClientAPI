@@ -1129,6 +1129,24 @@ class GetCreativesWebApiDto(BaseModel):
     status: Optional[CreativeStatus] = Field(None, description='Фильтр по статусу креатива')
 
 
+class GetCreativesParameters(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    ids: Optional[list[str]] = Field(None, description='Id креатива')
+    nativeCustomerIds: Optional[list[str]] = Field(None, description='Пользовательский Id креатива')
+    erids: Optional[list[str]] = Field(None, description='Фильтр по маркеру креатива')
+    creativeGroupStartDate: Optional[date] = Field(None, description='Дата начала рекламной компании')
+    creativeGroupEndDate: Optional[date] = Field(None, description='Дата окончания рекламной компании')
+    initialContractId: Optional[str] = Field(None, description='Фильтр по Id или Cid изначального договора')
+    initialContractNumber: Optional[str] = Field(None, description='Фильтр по номеру изначального договора')
+    finalContractId: Optional[str] = Field(None, description='Фильтр по Id доходного договора в ОРД')
+    finalContractNumber: Optional[str] = Field(None, description='Фильтр по номеру доходного договора')
+    status: Optional[CreativeStatus] = Field(None, description='Фильтр по статусу креатива')
+
+
 class GetFinalContractsRequest(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -1210,6 +1228,20 @@ class GetInvoicesWebApiDto(BaseModel):
         allow_population_by_field_name = True
 
     invoiceId: Optional[str] = Field(None, description='Фильтр по Id акта в ОРД')
+    number: Optional[str] = Field(None, description='Номер акта')
+    dateStart: Optional[date] = Field(None, description='Начало диапазона дат актов')
+    dateEnd: Optional[date] = Field(None, description='Конец диапазона дат актов')
+    finalContractId: Optional[str] = Field(None, description='Фильтр по Id доходного договора в ОРД')
+    status: Optional[InvoiceStatus] = Field(None, description='Фильтр по статусу акта')
+
+
+class GetInvoicesParameters(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    ids: Optional[list[str]] = Field(None, description='Фильтр по Id акта в ОРД')
     number: Optional[str] = Field(None, description='Номер акта')
     dateStart: Optional[date] = Field(None, description='Начало диапазона дат актов')
     dateEnd: Optional[date] = Field(None, description='Конец диапазона дат актов')

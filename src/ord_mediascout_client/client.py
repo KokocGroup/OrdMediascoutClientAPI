@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Optional, Type
+from enum import Enum
+from typing import Any, Optional, Type, cast
 
 import requests
 from pydantic.error_wrappers import ValidationError
@@ -53,6 +54,7 @@ from .models import (
     FinalContractResponse,
     GetClientRequest,
     GetCreativeGroupsRequest,
+    GetCreativesParameters,
     GetCreativesWebApiDto,
     GetFinalContractsRequest,
     GetInitialContractRequest,
@@ -141,7 +143,7 @@ class ORDMediascoutClient:
         **kwargs: dict[str, Any],
     ) -> Any:
         try:
-            response = requests.request(
+            request = requests.Request(
                 method,
                 f'{self.config.url}{url}',
                 data=obj and obj.json(),
@@ -149,16 +151,25 @@ class ORDMediascoutClient:
                 headers=self.headers,
                 **kwargs,
             )
+            prepared_request = request.prepare()
+        except Exception as e:
+            self.logger.exception(f'Error while preparing request: {method} {url}')
+            raise APIError from e
+
+        try:
+            with requests.Session() as session:
+                response = session.send(prepared_request)
+
             self.logger.debug(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
                 f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Response: {response.status_code}\n'
-                f'{response.text}'
+                # f'{response.text}'
             )
         except requests.ConnectionError as e:
             self.logger.exception(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
                 f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
@@ -166,7 +177,7 @@ class ORDMediascoutClient:
             raise TemporaryAPIError(f'Connection lost while requesting: {method} {url}') from e
         except requests.RequestException as e:
             self.logger.exception(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
                 f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
@@ -222,7 +233,10 @@ class ORDMediascoutClient:
         return client
 
     def get_clients(self, parameters: GetClientRequest) -> list[ClientResponse]:
-        clients: list[ClientResponse] = self._call('get', '/webapi/v3/clients', parameters, list[ClientResponse])
+        params = self._prepare_params(parameters)
+        clients: list[ClientResponse] = self._call(
+            'get', '/webapi/v3/clients', None, list[ClientResponse], params=params
+        )
         return clients
 
     # Contracts
@@ -239,8 +253,9 @@ class ORDMediascoutClient:
         return contract
 
     def get_initial_contracts(self, parameters: GetInitialContractRequest) -> list[InitialContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[InitialContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/initial', parameters, list[InitialContractResponse]
+            'get', '/webapi/v3/contracts/initial', None, list[InitialContractResponse], params=params
         )
         return contracts
 
@@ -257,8 +272,9 @@ class ORDMediascoutClient:
         return contract
 
     def get_final_contracts(self, parameters: GetFinalContractsRequest) -> list[FinalContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[FinalContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/final', parameters, list[FinalContractResponse]
+            'get', '/webapi/v3/contracts/final', None, list[FinalContractResponse], params=params
         )
         return contracts
 
@@ -275,8 +291,9 @@ class ORDMediascoutClient:
         return contract
 
     def get_outer_contracts(self, parameters: GetOuterContractsRequest) -> list[OuterContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[OuterContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/outer', parameters, list[OuterContractResponse]
+            'get', '/webapi/v3/contracts/outer', None, list[OuterContractResponse], params=params
         )
         return contracts
 
@@ -296,9 +313,10 @@ class ORDMediascoutClient:
         updated_creative: CreativeResponse = self._call('patch', '/webapi/v3/creatives', creative, CreativeResponse)
         return updated_creative
 
-    def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeResponse]:
+    def get_creatives(self, parameters: GetCreativesParameters) -> list[CreativeResponse]:
+        params = self._prepare_params(parameters)
         creatives: list[CreativeResponse] = self._call(
-            'get', '/webapi/v3/creatives', parameters, list[CreativeResponse]
+            'get', '/webapi/v3/creatives', None, list[CreativeResponse], params=params
         )
         return creatives
 
@@ -404,7 +422,10 @@ class ORDMediascoutClient:
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceResponse]:
-        invoices: list[InvoiceResponse] = self._call('get', '/webapi/v3/invoices', parameters, list[InvoiceResponse])
+        params = self._prepare_params(parameters)
+        invoices: list[InvoiceResponse] = self._call(
+            'get', '/webapi/v3/invoices', None, list[InvoiceResponse], params=params
+        )
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdResponse) -> InvoiceSummaryResponse:
@@ -457,3 +478,10 @@ class ORDMediascoutClient:
     def ping_auth(self) -> bool:
         self._call('get', '/webapi/pingauth')
         return True
+
+    def _prepare_params(self, parameters: BaseModel) -> dict[str, Any]:
+        params: dict[str, Any] = cast(dict[str, Any], parameters.dict(exclude_none=True))
+        for key, value in params.items():
+            if isinstance(value, Enum):
+                params[key] = value.value
+        return params

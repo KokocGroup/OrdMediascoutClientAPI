@@ -2,7 +2,7 @@ import random
 
 from ord_mediascout_client import (
     CreateInvoiceRequest,
-    GetInvoicesWebApiDto,
+    GetInvoicesParameters,
     InvoiceInitialContractItem,
     InvoicePartyRole,
     InvoiceStatisticsByPlatformsItem,
@@ -12,7 +12,7 @@ from ord_mediascout_client import (
 
 
 # НЕ работает в режиме "get or create", только "create" с новым номером, потому number генерится
-def test_create_invoice(client):
+def test__create_invoice(client):
     request_data = CreateInvoiceRequest(
         number='INV-{}'.format(random.randrange(11111111, 99999999)),
         date='2023-03-20',
@@ -39,7 +39,7 @@ def test_create_invoice(client):
                 endDateFact='2023-04-03',
                 amount=1000.00,
                 price=0.5,
-#                vatIncluded=True,
+                #                vatIncluded=True,
             )
         ],
     )
@@ -49,10 +49,24 @@ def test_create_invoice(client):
     assert response_data.id is not None
 
 
-def test_get_invoices(client):
-    request_data = GetInvoicesWebApiDto(status=InvoiceStatus.Active)
+def test__get_invoices(client):
+    request_data = GetInvoicesParameters(status=InvoiceStatus.Active)
 
     response_data = client.get_invoices(request_data)
 
+    assert len(response_data) > 0
     for invoice in response_data:
+        print(f'{invoice.id=}: {invoice.status}')
         assert invoice.id is not None
+        assert invoice.status == InvoiceStatus.Active
+
+
+def test__get_invoices__by_id(client):
+    invoice_ids = ['INjBnsHydXB0-gmGlG-HtNmQ', 'INHPHd4um3W0CABa5MYiCtEg']
+    request_data = GetInvoicesParameters(ids=invoice_ids)
+
+    response_data = client.get_invoices(request_data)
+
+    assert len(response_data) == 2
+    for invoice in response_data:
+        assert invoice.id in invoice_ids
