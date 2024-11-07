@@ -59,7 +59,7 @@ from .models import (
     GetFinalContractsRequest,
     GetInitialContractRequest,
     GetInvoicelessPeriodsRequest,
-    GetInvoicesWebApiDto,
+    GetInvoicesParameters,
     GetOuterContractsRequest,
     InitialContractResponse,
     InvoicelessStatisticsResponse,
@@ -421,7 +421,7 @@ class ORDMediascoutClient:
         )
         return entity
 
-    def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceResponse]:
+    def get_invoices(self, parameters: GetInvoicesParameters) -> list[InvoiceResponse]:
         params = self._prepare_params(parameters)
         invoices: list[InvoiceResponse] = self._call(
             'get', '/webapi/v3/invoices', None, list[InvoiceResponse], params=params
