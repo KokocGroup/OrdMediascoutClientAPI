@@ -165,7 +165,7 @@ class ORDMediascoutClient:
                 f'Headers: {self.headers}\n'
                 f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Response: {response.status_code}\n'
-                # f'{response.text}'
+                f'{response.text}'
             )
         except requests.ConnectionError as e:
             self.logger.exception(
