@@ -40,8 +40,11 @@ def test__get_invoices(client):
 
     response_data = client.get_invoices(request_data)
 
+    assert len(response_data) > 0
     for invoice in response_data:
+        print(f'{invoice.id=}: {invoice.status}')
         assert invoice.id is not None
+        assert invoice.status == InvoiceStatus.Active
 
 
 def test__get_one_invoice(client, create_invoice):

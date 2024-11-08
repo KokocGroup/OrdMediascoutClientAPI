@@ -58,12 +58,14 @@ def test__get_creative_status(client, create_mediadata_creative):
 
 
 def test__get_creatives(client):
-    request_data = GetCreativesWebApiDto(status=CreativeStatus.Active)
+    request_data = GetCreativesParameters(status=CreativeStatus.Registering)
 
     response_data = client.get_creatives(request_data)
 
+    assert len(response_data) > 0
     for creative in response_data:
         assert creative.id is not None
+        assert creative.status == CreativeStatus.Registering
 
 
 def test__get_one_creative(client):
@@ -71,8 +73,10 @@ def test__get_one_creative(client):
 
     response_data = client.get_creatives(request_data)
 
+    assert len(response_data) == len(_setup_test_data['creative']['ids'])
     for creative in response_data:
         assert creative.id is not None
+        assert creative.id in ids
 
 
 def test__edit_creative(client, create_mediadata_creative):

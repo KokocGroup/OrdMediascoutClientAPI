@@ -1,8 +1,7 @@
 import logging
-from typing import Any, Optional, Type
 from enum import Enum
+from typing import Any, Optional, Type, cast
 
-from urllib.parse import urlencode
 import requests
 from pydantic.error_wrappers import ValidationError
 from pydantic.main import BaseModel
@@ -125,25 +124,6 @@ class APIValidationError(APIError):
         super().__init__(error_details)
 
 
-def enum_to_str(value):
-    """
-    Преобразование значений типа Enum в их строковые представления
-    """
-    if isinstance(value, Enum):
-        return value.value
-    return value
-
-
-def prepare_params(obj):
-    """
-    Обработка объекта и замена всех значений перечислений (Enum) на их строковые представления
-    """
-    if not obj:
-        return None
-
-    return {k: enum_to_str(v) for k, v in obj.dict(exclude_none=True).items()}
-
-
 class ORDMediascoutClient:
     def __init__(self, config: ORDMediascoutConfig):
         self.config = config
@@ -160,36 +140,46 @@ class ORDMediascoutClient:
         return_type: Optional[Type[Any]] = None,
         **kwargs: dict[str, Any],
     ) -> Any:
+        print(f"DEBUG: {kwargs=}")
+        print(f'REQUEST URL: {self.config.url}{url}')
         try:
-            response = requests.request(
+            request = requests.Request(
                 method,
                 f'{self.config.url}{url}',
                 data=obj and obj.json(),
-                params=prepare_params(obj) if method in ['get', 'delete'] else None,
                 auth=self.auth,
                 headers=self.headers,
                 **kwargs,
             )
+            prepared_request = request.prepare()
+        except Exception as e:
+            self.logger.exception(f'Error while preparing request: {method} {url}')
+            raise APIError from e
+
+        try:
+            with requests.Session() as session:
+                response = session.send(prepared_request)
+
             self.logger.debug(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Response: {response.status_code}\n'
                 f'{response.text}'
             )
         except requests.ConnectionError as e:
             self.logger.exception(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
             )
             raise TemporaryAPIError(f'Connection lost while requesting: {method} {url}') from e
         except requests.RequestException as e:
             self.logger.exception(
-                f'API call: {method} {url}\n'
+                f'API call: {method} {prepared_request.url}\n'
                 f'Headers: {self.headers}\n'
-                f'Body: {obj and obj.json(indent=4)}\n'
+                f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 f'Exception: {e}\n'
             )
             raise APIError from e
@@ -205,7 +195,7 @@ class ORDMediascoutClient:
                         self.sentry_logger.exception(
                             f'API call: {method} {url}\n'
                             f'Headers: {self.headers}\n'
-                            f'Body: {obj and obj.json(indent=4)}\n'
+                            f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                             f'Exception: {e}\n'
                         )
                         raise UnexpectedResponseError(response) from e
@@ -230,10 +220,10 @@ class ORDMediascoutClient:
                         raise APIValidationError(e) from e
             case _:
                 self.sentry_logger.exception(
+                    f'Unexpected response.status_code: {response.status_code}\n'
                     f'API call: {method} {url}\n'
                     f'Headers: {self.headers}\n'
-                    f'Body: {obj and obj.json(indent=4)}\n'
-                    f'Unexpected response.status_code: {response.status_code}\n'
+                    f'Body: {obj and obj.json(indent=4, ensure_ascii=False)}\n'
                 )
                 raise UnexpectedResponseError(response)
 
@@ -243,7 +233,8 @@ class ORDMediascoutClient:
         return client
 
     def get_clients(self, parameters: GetClientRequest) -> list[ClientResponse]:
-        clients: list[ClientResponse] = self._call('get', '/webapi/v3/clients', parameters, list[ClientResponse])
+        params = self._prepare_params(parameters)
+        clients: list[ClientResponse] = self._call('get', '/webapi/v3/clients', None, list[ClientResponse], params=params)
         return clients
 
     # Contracts
@@ -253,15 +244,16 @@ class ORDMediascoutClient:
         )
         return contract
 
-    def edit_initial_contract(self, contract_id: str,contract: EditInitialContractWebApiDto) -> InitialContractResponse:
+    def edit_initial_contract(self, contract_id: str, contract: EditInitialContractWebApiDto) -> InitialContractResponse:
         contract: InitialContractResponse = self._call(
             'patch', f'/webapi/v3/contracts/initial/{contract_id}', contract, InitialContractResponse
         )
         return contract
 
     def get_initial_contracts(self, parameters: GetInitialContractRequest) -> list[InitialContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[InitialContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/initial', parameters, list[InitialContractResponse]
+            'get', '/webapi/v3/contracts/initial', None, list[InitialContractResponse], params=params
         )
         return contracts
 
@@ -278,8 +270,9 @@ class ORDMediascoutClient:
         return contract
 
     def get_final_contracts(self, parameters: GetFinalContractsRequest) -> list[FinalContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[FinalContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/final', parameters, list[FinalContractResponse]
+            'get', '/webapi/v3/contracts/final', None, list[FinalContractResponse], params=params
         )
         return contracts
 
@@ -296,14 +289,16 @@ class ORDMediascoutClient:
         return contract
 
     def get_outer_contracts(self, parameters: GetOuterContractsRequest) -> list[OuterContractResponse]:
+        params = self._prepare_params(parameters)
         contracts: list[OuterContractResponse] = self._call(
-            'get', '/webapi/v3/contracts/outer', parameters, list[OuterContractResponse]
+            'get', '/webapi/v3/contracts/outer', None, list[OuterContractResponse], params=params
         )
         return contracts
 
-    def delete_contract(self, contract_id: str, contract: DeleteContractWebApiDto) -> None:
-        contract_kind = contract.contractKind.value if contract.contractKind else ''
-        self._call('delete', f'/webapi/v3/contracts/{contract_kind}/{contract_id}', contract)
+    def delete_contract(self, contract_id: str, parameters: DeleteContractWebApiDto) -> None:
+        params = self._prepare_params(parameters)
+        contract_kind = parameters.contractKind.value if parameters.contractKind else ''
+        self._call('delete', f'/webapi/v3/contracts/{contract_kind}/{contract_id}', None, None, params=params)
 
     # Creatives
     def create_creative(self, creative: CreateCreativeRequest) -> CreatedCreativeResponse:
@@ -317,8 +312,9 @@ class ORDMediascoutClient:
         return updated_creative
 
     def get_creatives(self, parameters: GetCreativesWebApiDto) -> list[CreativeResponse]:
+        params = self._prepare_params(parameters)
         creatives: list[CreativeResponse] = self._call(
-            'get', f'/webapi/v3/creatives', parameters, list[CreativeResponse]
+            'get', f'/webapi/v3/creatives', None, list[CreativeResponse], params=params
         )
         return creatives
 
@@ -334,7 +330,6 @@ class ORDMediascoutClient:
     def delete_creative(self, parameters: DeleteRestoreCreativeWebApiDto) -> None:
         self._call('delete', f'/webapi/v3/creatives/{parameters.erid or parameters.nativeCustomerId}', parameters)
 
-
     # Creative Group
     def edit_creative_group(self, creative_group: CreativeGroupResponse) -> CreativeGroupResponse:
         updated_creative_group: CreativeGroupResponse = self._call(
@@ -343,8 +338,9 @@ class ORDMediascoutClient:
         return updated_creative_group
 
     def get_creative_groups(self, parameters: GetCreativeGroupsRequest) -> list[CreativeGroupResponse]:
+        params = self._prepare_params(parameters)
         creative_groups: list[CreativeGroupResponse] = self._call(
-            'get', f'/webapi/v3/creatives/groups', parameters, list[CreativeGroupResponse]
+            'get', f'/webapi/v3/creatives/groups', None, list[CreativeGroupResponse], params=params
         )
         return creative_groups
 
@@ -356,8 +352,9 @@ class ORDMediascoutClient:
         return container
 
     def get_containers(self, parameters: GetContainerWebApiDto) -> list[AdvertisingContainerResponse]:
+        params = self._prepare_params(parameters)
         containers: list[AdvertisingContainerResponse] = self._call(
-            'get', '/webapi/v3/feeds/containers', parameters, list[AdvertisingContainerResponse]
+            'get', '/webapi/v3/feeds/containers', None, list[AdvertisingContainerResponse], params=params
         )
         return containers
 
@@ -374,8 +371,9 @@ class ORDMediascoutClient:
         return feed_elements
 
     def get_feed_elements(self, parameters: GetFeedElementsWebApiDto) -> list[FeedElementResponse]:
+        params = self._prepare_params(parameters)
         feed_elements: list[FeedElementResponse] = self._call(
-            'get', '/webapi/v3/feeds/elements', parameters, list[FeedElementResponse]
+            'get', '/webapi/v3/feeds/elements', None, list[FeedElementResponse], params=params
         )
         return feed_elements
 
@@ -398,12 +396,13 @@ class ORDMediascoutClient:
         return feed_elements_bulk
 
     def get_feed_elements_bulk_info(
-        self, feed_elements_bulk_info: GetFeedElementsBulkInfo
+        self, parameters: GetFeedElementsBulkInfo
     ) -> DelayedFeedElementsBatchInfoResponse:
-        feed_elements_bulk_info: DelayedFeedElementsBatchInfoResponse = self._call(
-            'get', '/webapi/v3/feeds/elements/bulk', feed_elements_bulk_info, DelayedFeedElementsBatchInfoResponse
+        params = self._prepare_params(parameters)
+        bulk_info: DelayedFeedElementsBatchInfoResponse = self._call(
+            'get', '/webapi/v3/feeds/elements/bulk', None, DelayedFeedElementsBatchInfoResponse, params=params
         )
-        return feed_elements_bulk_info
+        return bulk_info
 
     # Invoices
     def create_invoice(self, invoice: CreateInvoiceRequest) -> EntityIdResponse:
@@ -432,8 +431,10 @@ class ORDMediascoutClient:
         return entity
 
     def get_invoices(self, parameters: GetInvoicesWebApiDto) -> list[InvoiceResponse]:
+        params = self._prepare_params(parameters)
         invoices: list[InvoiceResponse] = self._call(
-            'get', f'/webapi/v3/invoices', parameters, list[InvoiceResponse])
+            'get', '/webapi/v3/invoices', None, list[InvoiceResponse], params=params
+        )
         return invoices
 
     def get_invoice_summary(self, entity: EntityIdResponse) -> InvoiceSummaryResponse:
@@ -473,8 +474,9 @@ class ORDMediascoutClient:
         return statistics
 
     def get_statistics(self, parameters: GetInvoicelessPeriodsRequest) -> list[InvoicelessStatisticsResponse]:
+        params = self._prepare_params(parameters)
         statistics: list[InvoicelessStatisticsResponse] = self._call(
-            'get', '/webapi/v3/statistics', parameters, list[InvoicelessStatisticsResponse]
+            'get', '/webapi/v3/statistics', None, list[InvoicelessStatisticsResponse], params=params
         )
         return statistics
 
@@ -488,3 +490,10 @@ class ORDMediascoutClient:
     def ping_auth(self) -> bool:
         self._call('get', '/webapi/pingauth')
         return True
+
+    def _prepare_params(self, parameters: BaseModel) -> dict[str, Any]:
+        params: dict[str, Any] = cast(dict[str, Any], parameters.dict(exclude_none=True))
+        for key, value in params.items():
+            if isinstance(value, Enum):
+                params[key] = value.value
+        return params

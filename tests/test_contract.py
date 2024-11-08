@@ -46,6 +46,7 @@ def test__get_final_contracts(client):
 
     for final_contract in response_data:
         assert final_contract.id is not None
+        assert final_contract.status == ContractStatus.Active
 
 
 def test__edit_final_contract(client, create_final_contract):
@@ -104,8 +105,10 @@ def test__get_initial_contracts(client):
 
     response_data = client.get_initial_contracts(request_data)
 
+    assert len(response_data) > 0
     for initial_contract in response_data:
         assert initial_contract.id is not None
+        assert initial_contract.status == ContractStatus.Active
 
 
 def test__edit_initial_contract(client, create_initial_contract):
@@ -164,8 +167,10 @@ def test__get_outer_contracts(client):
 
     response_data = client.get_outer_contracts(request_data)
 
+    assert len(response_data) > 0
     for outer_contract in response_data:
         assert outer_contract.id is not None
+        assert outer_contract.status == ContractStatus.Active
 
 
 def test__edit_outer_contract(client, create_outer_contract):

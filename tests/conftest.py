@@ -58,6 +58,7 @@ _setup_test_data = {
         'srcUrl': os.getenv('SRC_URL'),
         'feedId': os.getenv('FEED_ID'),
         'elements': os.getenv('ELEMENTS').split(','),
+        'media_ids': os.getenv('MEDIA_IDS').split(','),
     },
 }
 
@@ -340,21 +341,21 @@ def bulk_edit_feed_elements_data():
                      "60e2932f-85ae-44fe-885f-70086e2d957d",
                      "https://www.haley-salazar.com",
                      True,
-                     "CMZ3o7haB9o0KjhhiSndxPTA"
+                     _setup_test_data['feed']['media_ids'][0]
                      ),
                     (
                      _setup_test_data['feed']['elements'][1],
                      "79608f17-29ab-4ae6-950b-1dc2c249d56c",
                      "http://www.friedman.com",
                      True,
-                     "CM4OA0WJhtVEuSW_Hbv50IOQ"
+                     _setup_test_data['feed']['media_ids'][1]
                     ),
                     (
                      _setup_test_data['feed']['elements'][2],
                      "489c3bcb-f6fc-40ac-97a2-a7725a674f86",
                      "http://smith.com",
                      False,
-                     "CMi9806TyW9U2XjcuWC5TQYQ"
+                     _setup_test_data['feed']['media_ids'][2]
                     )
                 ]
             ]
