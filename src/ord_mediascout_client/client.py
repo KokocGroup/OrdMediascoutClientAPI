@@ -140,8 +140,6 @@ class ORDMediascoutClient:
         return_type: Optional[Type[Any]] = None,
         **kwargs: dict[str, Any],
     ) -> Any:
-        print(f"DEBUG: {kwargs=}")
-        print(f'REQUEST URL: {self.config.url}{url}')
         try:
             request = requests.Request(
                 method,
