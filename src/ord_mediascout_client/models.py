@@ -349,17 +349,13 @@ class CreatePlatformRequest(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    name: Optional[str] = Field(None, description='Наименование площадки', example='Тестовая площадка')
-    type: Optional[PlatformType] = Field(
-        None,
-        description='Тип площадки<p>Members:</p>'
-        '<ul><li><i>Site</i> - Сайт</li>'
-        '<li><i>Application</i> - Приложение</li>'
-        '<li><i>InformationSystem</i> - Информационная система, не поддерживается '
-        'начиная с ЕРИР v.5</li></ul>',
+    name: str = Field(..., description='Наименование площадки', example='Тестовая площадка')
+    type: PlatformType = Field(
+        ...,
+        description='Тип площадки<p>Members:</p><ul><li><i>Site</i> - Сайт</li><li><i>Application</i> - Приложение</li><li><i>InformationSystem</i> - Информационная система, не поддерживается начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
-    isOwner: Optional[bool] = Field(None, description='Признак принадлежности агентству')
+    isOwner: bool = Field(..., description='Признак принадлежности агентству')
 
 
 class CampaignType(Enum):
@@ -406,11 +402,6 @@ class CreativeMediaDataItem(BaseModel):
         'Обязательно для `fileType = image`</p>',
         example='Описание',
     )
-    # isArchive: bool = Field(
-    #     ...,
-    #     description='Признак того, что это архив\r\n<p style="color: lightblue">Поле не обязательно для заполнения.
-    #     Если не заполнено, устанавливается значение `false`</p>',
-    # )
 
 
 class CreateCreativeMediaDataItem(BaseModel):
@@ -421,10 +412,10 @@ class CreateCreativeMediaDataItem(BaseModel):
 
     id: Optional[str] = Field(None, description='Идентификатор медиаданных')
     fileName: Optional[str] = Field(
-        None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
+        ..., description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
     fileType: Optional[FileType] = Field(
-        None,
+        ...,
         description='Тип файла медиаданных креатива\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:'
         '</p><ul><li><i>Image</i> - Изображение</li>'
@@ -914,17 +905,17 @@ class ErirValidationError(BaseModel):
         allow_population_by_field_name = True
 
     stage: Optional[Stage] = Field(
-        None,
+        ...,
         description='Тип запроса ЕРИР-интеграции<p>Members:</p><ul><li><i>EntityHeader</i> - Отправлена заголовочная '
         'информация (например шапка акта)</li><li><i>First</i> - Первоначальный быстрый запрос, '
         'проверяются лишь атрибуты сущности</li><li><i>Second</i> - Запрос на получение уточненных '
         'результатов логической проверки</li></ul>',
     )
-    code: Optional[str] = Field(None, description='Код ошибки от ЕРИР', example='I_82')
+    code: Optional[str] = Field(..., description='Код ошибки от ЕРИР', example='I_82')
     message: Optional[str] = Field(
-        None, description='Подробный текст ошибки от ЕРИР', example='В разаллокации присутствует более одного договора'
+        ..., description='Подробный текст ошибки от ЕРИР', example='В разаллокации присутствует более одного договора'
     )
-    responseDt: Optional[datetime] = Field(None, description='Дата-время ответа, полученного от ЕРИР')
+    responseDt: Optional[datetime] = Field(..., description='Дата-время ответа, полученного от ЕРИР')
 
 
 class FiasResponse(BaseModel):
@@ -933,16 +924,16 @@ class FiasResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Идентификатор адресного объекта')
+    id: Optional[str] = Field(..., description='Идентификатор адресного объекта')
     parentId: Optional[str] = Field(None, description='Идентификатор родительского объекта')
     objectGuid: Optional[UUID] = Field(
-        None,
+        ...,
         description='Глобальный уникальный идентификатор адресного объекта типа UUID',
         example='3fa85f64-5717-4562-b3fc-2c963f66afa6',
     )
-    name: Optional[str] = Field(None, description='Краткое наименование типа объекта', example='город')
+    name: Optional[str] = Field(..., description='Краткое наименование типа объекта', example='город')
     fullName: Optional[str] = Field(
-        None, description='Полное наименование адресного объекта', example='Нижний Новгород'
+        ..., description='Полное наименование адресного объекта', example='Нижний Новгород'
     )
 
 
@@ -1692,9 +1683,9 @@ class SupplementInvoiceWebApiDto(BaseModel):
 
 
 class TargetAudienceParamType(Enum):
-    Geo = 'Geo'
-    Sex = 'Sex'
-    Age = 'Age'
+    Geo = 'geo'
+    Sex = 'sex'
+    Age = 'age'
 
 
 class TargetAudienceParam(BaseModel):

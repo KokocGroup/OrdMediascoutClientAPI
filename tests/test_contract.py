@@ -47,7 +47,7 @@ def test__get_final_contracts(client):
     for final_contract in response_data:
         assert final_contract.id is not None
 
-# @pytest.mark.skip('В данный момент проблемы с этим запросом у Mediascout')
+
 def test__edit_final_contract(client, create_final_contract):
     data = create_final_contract.dict()
     data["number"] += "_edit_"
@@ -123,7 +123,7 @@ def test__edit_initial_contract(client, create_initial_contract):
     assert response_data.number == request_data.number
     assert response_data.amount == request_data.amount
 
-# @pytest.mark.skip('В данный момент проблемы с этим запросом у Mediascout')
+
 def test__delete_initial_contract(client, create_initial_contract):
     request_data = DeleteContractWebApiDto(
         contractId=create_initial_contract.id,

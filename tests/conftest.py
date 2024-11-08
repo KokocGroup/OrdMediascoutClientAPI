@@ -3,12 +3,13 @@ import random
 import string
 from datetime import datetime, timedelta
 import time
-
 import pytest
+from faker import Faker
+from dotenv import load_dotenv
+import os
 
 from ord_mediascout_client import (
     CreativeForm,
-    CreatePlatformRequest,
     CampaignType,
     ContractType,
     ContractSubjectType,
@@ -17,6 +18,7 @@ from ord_mediascout_client import (
     ORDMediascoutClient,
     ORDMediascoutConfig,
     PlatformType,
+    TargetAudienceParamType,
 )
 
 
@@ -24,28 +26,39 @@ logging.getLogger('faker').setLevel(logging.WARNING)
 logging.getLogger('urllib3').setLevel(logging.WARNING)
 
 
-# Setup Contract test data
-_contract = {
-    'clientId': 'CLoEdAGEwv6EufqiTlkEeIAg',  # «Совкомбанк»
-    'initial_contract_clientId': 'CLb0sZrPj5Y0KafIDU8ECPIw',  # «Рога и Копыта»
-    'contractorId': 'CLcnt4AYTax0aLQfxuRZjG_Q',  # «ООО Рафинад»
-    'finalContractId': 'CTiwhIpoQ_F0OEPpKj8vWKGg',
-}
+load_dotenv()
+faker = Faker()
 
 
-# Setup Invoice test data
-_invoice = {
-    'finalContractId': 'CTiwhIpoQ_F0OEPpKj8vWKGg',
-    'initialContractId': 'CTKLAzsvgYREmK0unGXLsCTg',
-    'erId': 'Pb3XmBtzsxtPgHUnh4hEFkxvF9Ay6CSGDzFnCHt',
-}
-
-
-# Setup Invoice test data
-_creative = {
-    'finalContractId': 'CTiwhIpoQ_F0OEPpKj8vWKGg',
-    'initialContractId': 'CTKLAzsvgYREmK0unGXLsCTg',
-    'srcUrl': 'https://kokoc.com/local/templates/kokoc/web/images/logo/logo.svg',
+_setup_test_data = {
+    # Setup Contract test data
+    'contract': {
+        'clientId': os.getenv('CLIENT_ID'),
+        'initial_contract_clientId': os.getenv('INITIAL_CONTRACT_CLIENT_ID'),
+        'contractorId': os.getenv('CONTRACTOR_ID'),
+        'finalContractId': os.getenv('FINAL_CONTRACT_ID'),
+    },
+    # Setup Invoice test data
+    'invoice': {
+        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
+        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
+        'erId': os.getenv('ER_ID'),
+    },
+    # Setup Creative test data
+    'creative': {
+        'ids': os.getenv('CREATIVE_IDS').split(','),
+        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
+        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
+        'srcUrl': os.getenv('SRC_URL'),
+    },
+    # Setup Feed test data
+    'feed': {
+        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
+        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
+        'srcUrl': os.getenv('SRC_URL'),
+        'feedId': os.getenv('FEED_ID'),
+        'elements': os.getenv('ELEMENTS').split(','),
+    },
 }
 
 
@@ -65,23 +78,6 @@ def faker_seed():
     return int(time.time())
 
 
-# Platform
-@pytest.fixture
-def create_platform_data():
-    def _create_platform_data(**kwargs):
-        rnd = random.randrange(111, 999)
-        data = {
-            'name': f'Test Platform {rnd}',
-            'type': PlatformType.Site,
-            'url': f'https://www.testplatform{rnd}.ru/',
-            'isOwner': False,
-        }
-        data.update(kwargs)
-        return CreatePlatformRequest(**data)
-
-    return _create_platform_data
-
-
 # Contract
 @pytest.fixture(scope="module")
 def final_contract_data():
@@ -95,7 +91,7 @@ def final_contract_data():
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
             'parentMainContractId': '',
-            'clientId': _contract['clientId'],
+            'clientId': _setup_test_data['contract']['clientId'],
         }
         data.update(kwargs)
         return data
@@ -114,9 +110,9 @@ def initial_contract_data():
             'type': ContractType.ServiceAgreement,
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
-            'contractorId': _contract['contractorId'],
-            'clientId': _contract['initial_contract_clientId'],
-            'finalContractId': _contract['finalContractId'],
+            'contractorId': _setup_test_data['contract']['contractorId'],
+            'clientId': _setup_test_data['contract']['initial_contract_clientId'],
+            'finalContractId': _setup_test_data['contract']['finalContractId'],
         }
         data.update(kwargs)
         return data
@@ -135,7 +131,7 @@ def outer_contract_data():
             'type': ContractType.ServiceAgreement,
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
-            'contractorId': _contract['clientId'],
+            'contractorId': _setup_test_data['contract']['clientId'],
             'isRegReport': True,
         }
         data.update(kwargs)
@@ -148,11 +144,11 @@ def outer_contract_data():
 @pytest.fixture(scope="module")
 def invoice_data():
     def _invoice_data(**kwargs):
-        start_date = random_date(year='2024')
-        end_date = random_date(start_date=start_date)
+        start_date = random_date(year='2024', month='10')
         start_date_fact = random_date(start_date=start_date)
         end_date_plan = random_date(start_date=start_date_fact)
         end_date_fact = random_date(start_date=end_date_plan)
+        end_date = random_date(start_date=end_date_fact)
         imps_plan = random.randrange(1000, 100000)
 
         data = {
@@ -163,17 +159,17 @@ def invoice_data():
             'amount': random.randrange(10000, 50000),
             'startDate': start_date,
             'endDate': end_date,
-            'finalContractId': _invoice['finalContractId'],
+            'finalContractId': _setup_test_data['invoice']['finalContractId'],
             'initialContractsData': [
                 {
-                    'initialContractId': _invoice['initialContractId'],
+                    'initialContractId': _setup_test_data['invoice']['initialContractId'],
                     'amount': 1000.00
                 }
             ],
             'statisticsByPlatforms': [
                 {
-                    'initialContractId': _invoice['initialContractId'],
-                    'erid': _invoice['erId'],
+                    'initialContractId': _setup_test_data['invoice']['initialContractId'],
+                    'erid': _setup_test_data['invoice']['erId'],
                     'platformUrl': 'http://www.testplatform.ru',
                     'platformName': 'Test Platform 1',
                     'platformType': PlatformType.Site,
@@ -202,8 +198,8 @@ def creative_data():
     def _creative_data(**kwargs):
         rnd = random.randrange(111, 9999)
         data = {
-                'finalContractId': _creative['finalContractId'],
-                'initialContractId': _creative['initialContractId'],
+                'finalContractId': _setup_test_data['creative']['finalContractId'],
+                'initialContractId': _setup_test_data['creative']['initialContractId'],
                 'creativeGroupName': f'_generated_creative_group_name_{random.randint(1000, 99999)}',
                 'type': CampaignType.CPM,
                 'form': CreativeForm.Banner,
@@ -218,7 +214,7 @@ def creative_data():
                         'fileName': 'logo.svg',
                         'fileType': FileType.Image,
                         # fileContentBase64="string",
-                        'srcUrl': _creative['srcUrl'],
+                        'srcUrl': _setup_test_data['creative']['srcUrl'],
                         'description': f'Тестовый баннер {rnd}',
                         'isArchive': False,
                     }],
@@ -247,6 +243,202 @@ def platform_data():
     return _platform_data
 
 
+# Feed
+@pytest.fixture(scope="module")
+def feed_elements_data():
+    def _feed_elements_data(**kwargs):
+        data = {
+            'feedName': 'test_feed',
+            'feedNativeCustomerId': 'test_feed_id',
+            'feedElements': [
+                {
+                    'nativeCustomerId': faker.uuid4(),
+                    'description': faker.text(30),
+                    'advertiserUrls': [faker.url()[:-1]],
+                    'textData': [{'textData': faker.text()},],
+                }
+            ],
+        }
+        data.update(kwargs)
+
+        return data
+
+    return _feed_elements_data
+
+
+@pytest.fixture(scope="module")
+def bulk_feed_elements_data():
+    def _bulk_feed_elements_data(**kwargs):
+        rnd = random.randrange(100000, 999999)
+        data = {
+            'feedElements': [
+                {
+                    #"feedId": "string",
+                    'feedName': f'bulk_test_feed {rnd}',
+                    'feedNativeCustomerId': f'test_feed_id {rnd}',
+                    'nativeCustomerId': faker.uuid4(),
+                    'description': faker.text(30),
+                    'advertiserUrls': [faker.url()[:-1]],
+                    'mediaData': [{
+                        'fileName': 'logo.svg',
+                        'fileType': FileType.Image,
+                        'srcUrl': _setup_test_data['creative']['srcUrl'],
+                        'description': f'Тестовый баннер {rnd}',
+                        'isArchive': False,
+                        },
+                    ],
+                }
+                for _ in range(3)
+            ],
+        }
+
+        # Если в kwargs передан feedElements, то обновить поля в каждом элементе data['feedElements']
+        if 'feedElements' in kwargs:
+            for index, feed_element in enumerate(kwargs['feedElements']):
+                if index < len(data['feedElements']):
+                    # Обновить ключи для соответствующего элемента в data['feedElements']
+                    for key, value in feed_element.items():
+                        data['feedElements'][index][key] = value
+            # Удалить 'feedElements' из kwargs после обработки
+            kwargs.pop('feedElements')
+
+        data.update(kwargs)
+
+        return data
+
+    return _bulk_feed_elements_data
+
+
+@pytest.fixture(scope="module")
+def bulk_edit_feed_elements_data():
+    def _bulk_edit_feed_elements_data(**kwargs):
+        rnd = random.randrange(100000, 999999)
+        data = {
+            'feedElements': [
+                {
+                    "id": feed_id,
+                    "feedId": _setup_test_data['feed']['feedId'],
+                    'feedName': f'bulk_test_feed Edit {rnd}',
+                    'feedNativeCustomerId': f'feedNativeCustomerId__{rnd}',
+                    'nativeCustomerId': customer_id,
+                    'description': faker.text(30),
+                    'advertiserUrls': [url],
+                    'OverwriteExistingCreativeMedia': overwrite,
+                    'mediaData': [{
+                        'actionType': 'Edit',
+                        'id': media_id,
+                        'fileName': f'logo{rnd}.svg',
+                        'fileType': FileType.Image,
+                        'srcUrl': _setup_test_data['creative']['srcUrl'],
+                        'description': f'Тестовый баннер {rnd}',
+                        'isArchive': False,
+                    }],
+                }
+                for feed_id, customer_id, url, overwrite, media_id in [
+                    (
+                     _setup_test_data['feed']['elements'][0],
+                     "60e2932f-85ae-44fe-885f-70086e2d957d",
+                     "https://www.haley-salazar.com",
+                     True,
+                     "CMZ3o7haB9o0KjhhiSndxPTA"
+                     ),
+                    (
+                     _setup_test_data['feed']['elements'][1],
+                     "79608f17-29ab-4ae6-950b-1dc2c249d56c",
+                     "http://www.friedman.com",
+                     True,
+                     "CM4OA0WJhtVEuSW_Hbv50IOQ"
+                    ),
+                    (
+                     _setup_test_data['feed']['elements'][2],
+                     "489c3bcb-f6fc-40ac-97a2-a7725a674f86",
+                     "http://smith.com",
+                     False,
+                     "CMi9806TyW9U2XjcuWC5TQYQ"
+                    )
+                ]
+            ]
+        }
+
+        # Если в kwargs передан feedElements, то обновить поля в каждом элементе data['feedElements']
+        if 'feedElements' in kwargs:
+            for index, feed_element in enumerate(kwargs['feedElements']):
+                if index < len(data['feedElements']):
+                    # Обновить ключи для соответствующего элемента в data['feedElements']
+                    for key, value in feed_element.items():
+                        data['feedElements'][index][key] = value
+            # Удалить 'feedElements' из kwargs после обработки
+            kwargs.pop('feedElements')
+
+        data.update(kwargs)
+
+        return data
+
+    return _bulk_edit_feed_elements_data
+
+
+@pytest.fixture(scope="module")
+def edit_feed_elements_data():
+    def _edit_feed_elements_data(**kwargs):
+        data = {
+            'feedName': 'edit_test_feed',
+            'feedNativeCustomerId': 'test_feed_id',
+            'feedElements': [
+                {
+                    'id': 'string',
+                    # 'nativeCustomerId': faker.uuid4(),
+                    'description': faker.text(30),
+                    'advertiserUrls': [faker.url()[:-1]],
+                    'overwriteExistingCreativeMedia': False,
+                    'textData': [{'textData': faker.text()}, ],
+                }
+            ],
+        }
+
+        # Если в kwargs передан feedElements, обновляем поля в первом элементе data['feedElements']
+        if 'feedElements' in kwargs:
+            for key, value in kwargs['feedElements'][0].items():
+
+                data['feedElements'][0][key] = value
+            kwargs.pop('feedElements')
+
+        data.update(kwargs)
+
+        return data
+
+    return _edit_feed_elements_data
+
+
+
+@pytest.fixture(scope="module")
+def container_data():
+    def _container_data(**kwargs):
+        data = {
+            'feedNativeCustomerId': 'string',
+            'finalContractId': _setup_test_data['feed']['finalContractId'],
+            'initialContractId': _setup_test_data['feed']['initialContractId'],
+            'name': f'Тестовый контейнер {random.randrange(10000, 999999)}',
+            'nativeCustomerId': 'string',
+            'type': CampaignType.CPM,
+            'form': CreativeForm.Banner,
+            'targetAudienceParams': [
+                {
+                    'type': TargetAudienceParamType.Geo,
+                    'values': [
+                        '75'
+                    ]
+                }
+            ],
+            'description': 'Описание тестового контейнера',
+            'isNative': True,
+            'isSocial': True
+        }
+        data.update(kwargs)
+        return data
+
+    return _container_data
+
+
 # Utils
 def parse_relative_value(value, base, lower_limit=None, upper_limit=None):
     """
@@ -255,20 +447,29 @@ def parse_relative_value(value, base, lower_limit=None, upper_limit=None):
     if isinstance(value, str) and value.startswith(("+", "-", "+-")):
         if value.startswith("+-"):
             delta = int(value[2:])
-            return random.randint(base - delta, base + delta)
+            result = random.randint(base - delta, base + delta)
         elif value.startswith("+"):
             delta = int(value[1:])
-            return random.randint(base, base + delta)
+            result = random.randint(base, base + delta)
         elif value.startswith("-"):
             delta = int(value[1:])
-            return random.randint(base - delta, base)
+            result = random.randint(base - delta, base)
+    else:
+        # Если значение не является строкой с "+", "-" или "+-", то использовать указанное значение как есть.
+        result = int(value)
 
-    # Если значение не является строкой с "+", "-" или "+-", то используем указанное значение как есть.
-    return int(value)
+    # Проверка, чтобы результат не выходил за границы
+    if lower_limit is not None:
+        result = max(lower_limit, result)
+    if upper_limit is not None:
+        result = min(upper_limit, result)
+
+    return result
 
 
 def random_date(year=None, month=None, start_date=None):
-    """Генерация даты в формате '2024-10-23'
+    """
+    Генерация даты в формате '2024-10-23'
     Примеры использования:
     random_date(year='+3', month='05'))        # Рандомная дата от текущего до +3 лет, в мае
     random_date(year='+3', month='05'))        # Рандомная дата от текущего до +3 лет, в мае
@@ -309,4 +510,58 @@ def random_date(year=None, month=None, start_date=None):
 
 
 def random_string(length=3):
+    """
+    Генератор рандомной строки
+    """
     return ''.join(random.choices(string.ascii_uppercase, k=length))
+
+
+def _serialize(obj, seen=None):
+    """
+    Рекурсивная функция для сериализации объекта в словарь.
+    Обрабатывает объекты со словарями и списками, а также
+    использует __dict__ для вложенных объектов.
+    """
+    from enum import Enum
+
+
+    if seen is None:
+        seen = set()
+
+    # Проверка на Enum - получаем его значение
+    if isinstance(obj, Enum):
+        return obj.value
+
+    # Проверка на тип списка
+    if isinstance(obj, list):
+        return [_serialize(item, seen) for item in obj]
+
+    # Проверка на тип словаря
+    elif isinstance(obj, dict):
+        return {key: _serialize(value, seen) for key, value in obj.items()}
+
+    # Проверка на объекты с __dict__, чтобы предотвратить бесконечную рекурсию
+    elif hasattr(obj, "__dict__"):
+        obj_id = id(obj)
+        if obj_id in seen:
+            return f"<RecursionError: {obj.__class__.__name__}>"
+
+        seen.add(obj_id)  # Добавить объект в "просмотренные"
+
+        obj_dict = {key: _serialize(value, seen) for key, value in obj.__dict__.items()}
+        obj_dict["__class__"] = obj.__class__.__name__  # добавить имя класса
+        return obj_dict
+
+    else:
+        return obj
+
+
+def print_obj(obj):
+    """
+    Распечатать объект в удобочитаемом виде
+    """
+    from pprint import pprint
+
+    serialized_data = _serialize(obj)
+    pprint(serialized_data, width=80)
+    print()

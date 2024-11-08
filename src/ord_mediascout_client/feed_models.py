@@ -3,9 +3,52 @@ from __future__ import annotations
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 
-from .models import CampaignType, CreativeForm, EditCreativeMediaDataItem, EditCreativeTextDataItem, ErirValidationError, capitalize
+from .models import (
+    CampaignType,
+    CreativeForm,
+    CreativeMediaDataItem,
+    CreateCreativeMediaDataItem,
+    CreateCreativeTextDataItem,
+    CreativeTextDataItemWebApiDto,
+    EditCreativeMediaDataItem,
+    EditCreativeTextDataItem,
+    ErirValidationError,
+    TargetAudienceParam,
+    capitalize
+)
+
+
+class FeedStatus(Enum):
+    Creating = 'Creating'
+    Created = 'Created'
+    RegistrationRequired = 'RegistrationRequired'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+    DeletionRequired = 'DeletionRequired'
+    Deleting = 'Deleting'
+    DeletionError = 'DeletionError'
+    Deleted = 'Deleted'
+
+
+class ElementFeedStatusEnum(Enum):
+    Pending = 'Pending'  # Добавлен в очередь и ожидает загрузки внешних файлов
+    Downloading = 'Downloading'  # Внешние файлы скачиваются
+    Downloaded = 'Downloaded'  # Добавление медиаданных к элементам фидов в ОРД
+    Failed = 'Failed'  # Ошибка создания
+    WaitingForRetry = 'WaitingForRetry'  # Ожидает повторной отправки
+    RegistrationRequired = 'RegistrationRequired'  # ожидает регистрации в ЕРИР
+    Registering = 'Registering'  # в процессе регистрации в ЕРИР
+    Active = 'Active'  # активный. Зарегистрирован в ЕРИР
+    RegistrationError = 'RegistrationError'  # ошибка регистрации в ЕРИР
+    ReadyToDownload = 'ReadyToDownload'
+    DeletionRequired = 'DeletionRequired'
+    Deleting = 'Deleting'
+    DeletionError = 'DeletionError'
+    Deleted = 'Deleted'
+    Duplicate = 'Duplicate'
 
 
 class TargetAudienceParams(BaseModel):
@@ -17,32 +60,95 @@ class TargetAudienceParams(BaseModel):
     geo: Optional[str] = None
 
 
-class CreateContainerWebApiDto(BaseModel):
+class AdvertisementStatusResponse(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    finalContractId: Optional[str] = None
-    initialContractId: Optional[str] = None
-    name: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    type: Optional[CampaignType] = None
-    form: Optional[CreativeForm] = None
-    targetAudience: Optional[str] = None
-    targetAudienceParams: Optional[TargetAudienceParams] = None
-    description: Optional[str] = None
-    isNative: Optional[bool] = None
-    isSocial: Optional[bool] = None
+    status: FeedStatus = Field(
+        ...,
+        description='Статус рекламного элемента<p>Members:</p>'
+                    '<ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные еще не загружены)</li>'
+                    '<li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li>'
+                    '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
+                    '<li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+                    '<li><i>Active</i> - Активный</li>'
+                    '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li>'
+                    '<li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li>'
+                    '<li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li>'
+                    '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
+                    '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
 
 
-class ResponseContainerWebApiDto(CreateContainerWebApiDto):
-    id: Optional[str] = None
-    erid: Optional[str] = None
-    feedName: Optional[str] = None
-    status: Optional[str] = None
+class CreateAdvertisingContainerRequest(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    finalContractId: str = Field(..., description='Id доходного договора')
+    initialContractId: Optional[str] = Field(
+        None,
+        description='Id или Cid изначального договора. В случае, если контейнер добавляется только к доходному договору, должно быть NULL.',
+    )
+    name: str = Field(..., description='Наименование контейнера')
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id контейнера')
+    type: CampaignType = Field(
+        ...,
+        description='Тип рекламной кампании<p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+    )
+    form: CreativeForm = Field(
+        ...,
+        description='Форма распространения рекламы<p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - HTML5-баннер</li></ul>',
+    )
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
+        None, description='Параметры целевой аудитории рекламы'
+    )
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    isNative: bool = Field(..., description='Признак нативной рекламы')
+    isSocial: bool = Field(..., description='Признак социальной рекламы')
+
+
+class AdvertisingContainerResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    finalContractId: str = Field(..., description='Id доходного договора')
+    initialContractId: Optional[str] = Field(
+        None,
+        description='Id или Cid изначального договора. В случае, если контейнер добавляется только к доходному договору, должно быть NULL.',
+    )
+    name: str = Field(..., description='Наименование контейнера')
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id контейнера')
+    type: CampaignType = Field(
+        ...,
+        description='Тип рекламной кампании<p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+    )
+    form: CreativeForm = Field(
+        ...,
+        description='Форма распространения рекламы<p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>Other</i> - Иное - не поддерживается начиная с ЕРИР v.5</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - HTML5-баннер</li></ul>',
+    )
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
+        None, description='Параметры целевой аудитории рекламы'
+    )
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    isNative: bool = Field(..., description='Признак нативной рекламы')
+    isSocial: bool = Field(..., description='Признак социальной рекламы')
+    id: str = Field(..., description='Id контейнера')
+    erid: str = Field(..., description='Erid контейнера')
+    status: FeedStatus = Field(
+        ...,
+        description='Статус контейнера<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные еще не загружены)</li><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
+    feedName: Optional[str] = Field(None, description='Наименование фида')
     erirValidationError: Optional[ErirValidationError] = None
 
 
@@ -60,32 +166,7 @@ class GetContainerWebApiDto(BaseModel):
     initialContractNumber: Optional[str] = None
     finalContractId: Optional[str] = None
     finalContractNumber: Optional[str] = None
-    status: Optional[str] = None
-
-
-class ResponseGetContainerWebApiDto(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    erid: Optional[str] = None
-    name: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    finalContractId: Optional[str] = None
-    initialContractId: Optional[str] = None
-    status: Optional[str] = None
-    type: Optional[str] = None
-    form: Optional[str] = None
-    targetAudience: Optional[str] = None
-    targetAudienceParams: Optional[str] = None
-    description: Optional[str] = None
-    isNative: Optional[str] = None
-    isSocial: Optional[str] = None
+    status: Optional[FeedStatus] = None
 
 
 class FeedElementMediaDataItem(BaseModel):
@@ -112,18 +193,57 @@ class FeedElementTextDataItem(BaseModel):
     textData: Optional[str] = None
 
 
-class FeedElementWebApiDto(BaseModel):
+class CreateFeedElement(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    feedId: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
-    mediaData: Optional[List[FeedElementMediaDataItem]] = None
-    textData: Optional[List[FeedElementTextDataItem]] = None
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    advertiserUrls: List[str] = Field(
+        ..., description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход по клику на рекламе)'
+    )
+    mediaData: Optional[List[CreateCreativeMediaDataItem]] = Field(
+        None, description='Медиаданные элемента фида (массив)'
+    )
+    textData: Optional[List[CreateCreativeTextDataItem]] = Field(
+        None, description='Текстовые медиаданные элемента фида (массив)'
+    )
+
+
+class EditDelayedFeedElement(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    id: Optional[str] = Field(None, description='Id элемента фида')
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    advertiserUrls: List[str] = Field(
+        ..., description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход по клику на рекламе)'
+    )
+    overwriteExistingCreativeMedia: bool = Field(
+        ...,
+        description='Перезаписать все предыдущие медиаданные элемента фида (файловые и текстовые). Токен останется прежним, существующие медиаданные удалятся, переданные медиаданые запишутся.\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
+    )
+    mediaData: Optional[List[EditCreativeMediaDataItem]] = Field(None, description='Медиаданные элемента фида (массив)')
+    textData: Optional[List[EditCreativeTextDataItem]] = Field(
+        None, description='Текстовые медиаданные элемента фида (массив)'
+    )
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    feedName: Optional[str] = Field(None, description='Наименование фида')
+
+
+class EditDelayedFeedElementsBulkRequest(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedElements: List[EditDelayedFeedElement]
 
 
 class EditFeedElementWebApiDto(BaseModel):
@@ -132,75 +252,78 @@ class EditFeedElementWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
-    mediaData: Optional[List[EditCreativeMediaDataItem]] = None
-    textData: Optional[List[EditCreativeTextDataItem]] = None
+    id: Optional[str] = Field(None, description='Id элемента фида')
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    advertiserUrls: List[str] = Field(
+        ..., description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход по клику на рекламе)'
+    )
+    overwriteExistingCreativeMedia: bool = Field(
+        ...,
+        description='Перезаписать все предыдущие медиаданные элемента фида (файловые и текстовые). Токен останется прежним, существующие медиаданные удалятся, переданные медиаданые запишутся.\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
+    )
+    mediaData: Optional[List[EditCreativeMediaDataItem]] = Field(None, description='Медиаданные элемента фида (массив)')
+    textData: Optional[List[EditCreativeTextDataItem]] = Field(
+        None, description='Текстовые медиаданные элемента фида (массив)'
+    )
 
 
-class CreateFeedElementsWebApiDto(BaseModel):
+class EditFeedElementsRequest(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    feedId: Optional[str] = None
-    feedName: Optional[str] = None
-    feedElements: Optional[List[FeedElementWebApiDto]] = None
-    feedNativeCustomerId: Optional[str] = None
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    feedName: Optional[str] = Field(
+        None,
+        description='Наименование фида для его создания, а если фид уже существует, и имеет другое наименование, оно будет заменено этим значением',
+    )
+    feedElements: List[EditFeedElementWebApiDto] = Field(
+        ..., description='Список элементов, содержащих индивидуальную информацию для каждого элемента фида'
+    )
 
 
-class ResponseFeedElementsWebApiDto(BaseModel):
+class CreateFeedElementsRequest(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    status: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    feedName: Optional[str] = Field(
+        None,
+        description='Наименование фида для его создания, а если фид уже существует, и имеет другое наименование, оно будет заменено этим значением',
+    )
+    feedElements: List[CreateFeedElement] = Field(
+        ..., description='Список элементов, содержащих индивидуальную информацию для каждого элемента фида'
+    )
+
+
+class FeedElementResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    id: str = Field(..., description='Id элемента фида')
+    feedId: str = Field(..., description='Id фида')
+    feedName: str = Field(..., description='Наименование фида')
+    status: FeedStatus = Field(
+        ...,
+        description='Статус<p>Members:</p><ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные еще не загружены)</li><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    advertiserUrls: List[str] = Field(
+        ..., description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход по клику на рекламе)'
+    )
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
     erirValidationError: Optional[ErirValidationError] = None
-    clickId: Optional[str] = None
-
-
-class EditFeedElementWebApiDto(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
-    mediaData: Optional[List[EditCreativeMediaDataItem]] = None
-    textData: Optional[List[EditCreativeTextDataItem]] = None
-
-
-class ResponseEditFeedElementWebApiDto(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    status: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[str] = None
+    mediaData: List[CreativeMediaDataItem] = Field(..., description='Файловые медиаданные элемента фида')
+    textData: List[CreativeTextDataItemWebApiDto] = Field(..., description='Текстовые медиаданные элемента фида')
 
 
 class GetFeedElementsWebApiDto(BaseModel):
@@ -215,55 +338,70 @@ class GetFeedElementsWebApiDto(BaseModel):
     status: Optional[str] = None
 
 
-class ResponseGetFeedElementsWebApiDto(BaseModel):
+class DelayedAdvertisementMedia(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
-    status: Optional[str] = None
+    srcUrl: str = Field(..., description='Путь до внешнего файла')
+    fileName: str = Field(..., description='Имя файла')
+    mediaDownloadError: Optional[str] = Field(None, description='Ошибка загруки внешнего файла')
+
+
+class DelayedFeedElement(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedElementId: Optional[str] = Field(None, description='Id созданного элемента фида')
+    feedElementNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
     erirValidationError: Optional[ErirValidationError] = None
-    clickId: Optional[str] = None
+    status: ElementFeedStatusEnum = Field(..., description='Статус заявки')
+    failedDownloadAttemptCount: Optional[int] = Field(None, description='Количество неудачных попыток скачивания')
+    feedElementCreatingErrors: List[str] = Field(
+        None, description='Ошибки создания элемента фида (ФЛК, неверные идентификаторы договора и пр)'
+    )
+    feedElementMedias: List[DelayedAdvertisementMedia] = Field(
+        ..., description='Медиа-файлы, необходимые для создания элемента фида'
+    )
 
 
-class CreateFeedElementsBulkWebApiDto(BaseModel):
+class CreateDelayedFeedElement(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    feedElements: Optional[List[FeedElementWebApiDto]] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id элемента фида')
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    advertiserUrls: List[str] = Field(
+        ..., description='Целевые ссылки (сайты рекламодателя, на который осуществляется переход по клику на рекламе)'
+    )
+    mediaData: Optional[List[CreateCreativeMediaDataItem]] = Field(
+        None, description='Медиаданные элемента фида (массив)'
+    )
+    textData: Optional[List[CreateCreativeTextDataItem]] = Field(
+        None, description='Текстовые медиаданные элемента фида (массив)'
+    )
+    feedId: Optional[str] = Field(None, description='Id фида (не заполняется, если фид еще только предстоит создать)')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    feedName: Optional[str] = Field(
+        None,
+        description='Наименование фида для его создания, а если фид уже существует, и имеет другое наименование, оно будет заменено этим значением',
+    )
 
 
-class ResponseCreateFeedElementsBulkWebApiDto(BaseModel):
+class CreateDelayedFeedElementsBulkRequest(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
-
-
-class ElementFeedStatusEnum(Enum):
-    Pending = 'Pending'  # Добавлен в очередь и ожидает загрузки внешних файлов
-    Downloading = 'Downloading'  # Внешние файлы скачиваются
-    Downloaded = 'Downloaded'  # Добавление медиаданных к элементам фидов в ОРД
-    Failed = 'Failed'  # Ошибка создания
-    WaitingForRetry = 'WaitingForRetry'  # Ожидает повторной отправки
-    RegistrationRequired = 'RegistrationRequired'  # ожидает регистрации в ЕРИР
-    Registering = 'Registering'  # в процессе регистрации в ЕРИР
-    Active = 'Active'  # активный. Зарегистрирован в ЕРИР
-    RegistrationError = 'RegistrationError'  # ошибка регистрации в ЕРИР
+    feedElements: List[CreateDelayedFeedElement]
 
 
 class GetFeedElementsBulkInfo(BaseModel):
@@ -272,54 +410,16 @@ class GetFeedElementsBulkInfo(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = None
-    status: Optional[ElementFeedStatusEnum] = None
+    Id: Optional[str] = None
+    Status: Optional[ElementFeedStatusEnum] = None
 
 
-class FeedElementMediaWebApiDto(BaseModel):
+class DelayedFeedElementsBatchInfoResponse(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    fileName: Optional[str] = None
-    srcUrl: Optional[str] = None
-    mediaDownloadError: Optional[str] = None
-
-
-class FeedElementDto(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    feedName: Optional[str] = None
-    nativeCustomerId: Optional[str] = None
-    description: Optional[str] = None
-    advertiserUrls: Optional[List[str]] = None
-    mediaData: Optional[List[FeedElementMediaDataItem]] = None
-    textData: Optional[List[FeedElementTextDataItem]] = None
-
-
-class BulkFeedElementWebApiDto(FeedElementWebApiDto):
-    feedElementId: Optional[str] = None
-    feedElementNativeCustomerId: Optional[str] = None
-    feedId: Optional[str] = None
-    feedNativeCustomerId: Optional[str] = None
-    erirValidationError: Optional[ErirValidationError] = None
-    feedElementDto: Optional[FeedElementDto] = None
-    status: Optional[ElementFeedStatusEnum] = None
-    failedDownloadAttemptCount: Optional[int] = None
-    feedElementCreatingErrors: Optional[List[str]] = None
-    feedElementMedias: Optional[List[FeedElementMediaWebApiDto]] = None
-
-
-class ResponseGetFeedElementsBulkInfo(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    feedElements: Optional[List[BulkFeedElementWebApiDto]] = None
+    feedElements: List[DelayedFeedElement] = Field(
+        ..., description='Список заявок на отложенное создание элементов фидов'
+    )

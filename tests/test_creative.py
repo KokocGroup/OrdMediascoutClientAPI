@@ -1,5 +1,7 @@
 import pytest
 
+from conftest import _setup_test_data
+
 from ord_mediascout_client import (
     CreateCreativeRequest,
     GetCreativeGroupsRequest,
@@ -57,6 +59,15 @@ def test__get_creative_status(client, create_mediadata_creative):
 
 def test__get_creatives(client):
     request_data = GetCreativesWebApiDto(status=CreativeStatus.Active)
+
+    response_data = client.get_creatives(request_data)
+
+    for creative in response_data:
+        assert creative.id is not None
+
+
+def test__get_one_creative(client):
+    request_data = GetCreativesWebApiDto(ids=_setup_test_data['creative']['ids'])
 
     response_data = client.get_creatives(request_data)
 

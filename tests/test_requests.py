@@ -3,23 +3,25 @@ from unittest.mock import patch
 import pytest
 from pydantic import ValidationError
 
-from ord_mediascout_client.client import BadResponseError, TemporaryResponseError, UnexpectedResponseError
+from ord_mediascout_client.client import CreatePlatformRequest, BadResponseError, TemporaryResponseError, UnexpectedResponseError
 
 
-def test__requests__200_ok(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__200_ok(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 201
         mock_post.return_value.text = '{"id": "string"}'
 
-        response = client.create_platform(platform)
+        response = client.create_platform(request_data)
 
     assert response.id == 'string'
 
 
-def test__requests__400_bad_request(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__400_bad_request(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 400
@@ -43,7 +45,7 @@ def test__requests__400_bad_request(client, create_platform_data):
         }'''
 
         with pytest.raises(BadResponseError) as exc_info:
-            client.create_platform(platform)
+            client.create_platform(request_data)
 
         e = exc_info.value
         assert e.error.errorType == 'errorType_string'
@@ -51,8 +53,9 @@ def test__requests__400_bad_request(client, create_platform_data):
         assert e.error.errorItems[0].propertyName == 'string'
 
 
-def test__requests__400_problem_detail(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__400_problem_detail(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 400
@@ -65,7 +68,7 @@ def test__requests__400_problem_detail(client, create_platform_data):
             }'''
 
         with pytest.raises(BadResponseError) as exc_info:
-            client.create_platform(platform)
+            client.create_platform(request_data)
 
         e = exc_info.value
         assert e.response.status_code == 400
@@ -79,8 +82,9 @@ def test__requests__400_problem_detail(client, create_platform_data):
         )
 
 
-def test__requests__400_unexpected_response(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__400_unexpected_response(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 400
@@ -89,37 +93,39 @@ def test__requests__400_unexpected_response(client, create_platform_data):
         }'''
 
         with pytest.raises(UnexpectedResponseError) as exc_info:
-            client.create_platform(platform)
+            client.create_platform(request_data)
 
         e = exc_info.value
         assert e.response.status_code == 400
         assert isinstance(e.__cause__, ValidationError)
 
 
-def test__requests__500_internal_error(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__500_internal_error(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 500
         mock_post.return_value.text = '''bla-bla-bla'''
 
         with pytest.raises(TemporaryResponseError) as exc_info:
-            client.create_platform(platform)
+            client.create_platform(request_data)
 
         e = exc_info.value
         assert e.response.status_code == 500
         assert e.response.text == mock_post.return_value.text
 
 
-def test__requests__502_bad_gateway(client, create_platform_data):
-    platform = create_platform_data()
+def test__requests__502_bad_gateway(client, platform_data):
+    data = platform_data()
+    request_data = CreatePlatformRequest(**data)
 
     with patch('requests.request') as mock_post:
         mock_post.return_value.status_code = 502
         mock_post.return_value.text = '''bla-bla-2'''
 
         with pytest.raises(TemporaryResponseError) as exc_info:
-            client.create_platform(platform)
+            client.create_platform(request_data)
 
         e = exc_info.value
         assert e.response.status_code == 502
