@@ -1469,7 +1469,7 @@ class InvoicelessStatisticsByPlatforms(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    erid: Optional[str] = Field(None, description='Маркер креатива', example='Pb3MmBtzsrbL19RgOqsipS1ANueaCUzJSdpiY5g')
+    erid: str = Field(..., description='Маркер креатива', example='Pb3MmBtzsrbL19RgOqsipS1ANueaCUzJSdpiY5g')
     platformUrl: Optional[str] = Field(None, description='URL площадки', example='https://example.ru')
     platformName: Optional[str] = Field(None, description='Наименование площадки', example='test')
     platformType: Optional[PlatformType] = Field(
@@ -1477,18 +1477,14 @@ class InvoicelessStatisticsByPlatforms(BaseModel):
     )
     platformOwnedByAgency: Optional[bool] = Field(None, description='Принадлежит ли площадка агентству', example=False)
     type: Optional[CampaignType] = Field(None, description='Тип рекламной кампании', example='CPM')
-    impsPlan: Optional[int] = Field(None, description='Количество показов по акту', example=100)
-    impsFact: Optional[int] = Field(None, description='Количество показов фактическое', example=100)
-    startDatePlan: Optional[date] = Field(None, description='Дата начала показов по акту', example='2022-12-01')
-    startDateFact: Optional[date] = Field(None, description='Дата начала показов фактическая', example='2022-12-01')
-    endDatePlan: Optional[date] = Field(None, description='Дата окончания показов по акту', example='2022-12-31')
-    endDateFact: Optional[date] = Field(None, description='Дата окончания показов фактическая', example='2022-12-31')
-    amount: Optional[float] = Field(
-        None, description='Стоимость услуг по показу креатива на данной площадке в руб.', example=100
-    )
-    price: Optional[float] = Field(
-        None, description='Стоимость единицы оказания услуг на данной площадке в руб.', example=10
-    )
+    impsPlan: int = Field(..., description='Количество показов по акту', example=100)
+    impsFact: int = Field(..., description='Количество показов фактическое', example=100)
+    startDatePlan: date = Field(..., description='Дата начала показов по акту', example='2022-12-01')
+    startDateFact: date = Field(..., description='Дата начала показов фактическая', example='2022-12-01')
+    endDatePlan: date = Field(..., description='Дата окончания показов по акту', example='2022-12-31')
+    endDateFact: date = Field(..., description='Дата окончания показов фактическая', example='2022-12-31')
+    amount: float = Field(..., description='Стоимость услуг по показу креатива на данной площадке в руб.', example=100)
+    price: float = Field(..., description='Стоимость единицы оказания услуг на данной площадке в руб.', example=10)
 
 
 class InvoicelessStatisticsResponse(BaseModel):

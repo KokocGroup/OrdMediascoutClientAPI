@@ -19,6 +19,8 @@ from ord_mediascout_client import (
     ORDMediascoutConfig,
     PlatformType,
     TargetAudienceParamType,
+    ClientRelationshipType,
+    LegalForm,
 )
 
 
@@ -77,6 +79,26 @@ def faker_session_locale():
 @pytest.fixture(scope='session', autouse=True)
 def faker_seed():
     return int(time.time())
+
+
+# Client
+@pytest.fixture(scope="module")
+def client_data():
+    def _client_data(**kwargs):
+        data = {
+            'createMode': ClientRelationshipType.DirectClient,
+            'legalForm': LegalForm.JuridicalPerson,
+            'inn': '7720805643',
+            'name': 'Тест клиент2',
+            'mobilePhone': '+79161234567',
+            'epayNumber': '12333',
+            'regNumber': '54556',
+            'oksmNumber': '44563',
+        }
+        data.update(kwargs)
+        return data
+
+    return _client_data
 
 
 # Contract
@@ -410,7 +432,6 @@ def edit_feed_elements_data():
     return _edit_feed_elements_data
 
 
-
 @pytest.fixture(scope="module")
 def container_data():
     def _container_data(**kwargs):
@@ -438,6 +459,34 @@ def container_data():
         return data
 
     return _container_data
+
+
+# Statistics
+@pytest.fixture(scope="module")
+def statistics_data():
+    def _statistics_data(**kwargs):
+        data = {
+            'statistics': [{
+                'erid': 'Kra23f3QL',
+                'platformUrl': 'http://www.testplatform.ru',
+                'platformName': 'Test Platform 1',
+                'platformType': 'Site',
+                'platformOwnedByAgency': False,
+                'type': 'CPM',
+                'impsPlan': 10000,
+                'impsFact': 100,
+                'startDatePlan': '2023-06-01',
+                'startDateFact': '2023-06-01',
+                'endDatePlan': '2023-06-20',
+                'endDateFact': '2023-06-20',
+                'amount': 50000,
+                'price': 5,
+            },]
+        }
+        data.update(kwargs)
+        return data
+
+    return _statistics_data
 
 
 # Utils

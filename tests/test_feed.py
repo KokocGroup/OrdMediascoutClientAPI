@@ -13,13 +13,6 @@ from ord_mediascout_client import (
     GetFeedElementsWebApiDto,
 )
 
-# Заранее созданный фид с элементами и не пустыми полями feedElementId и feedId.
-# После создания фида методом client.create_feed_elements_bulk(), запрос методом
-# client.get_feed_elements_bulk_info() возвращает элементы с еще пустыми feedElementId и feedId.
-# По этому выполнить редактирование client.edit_feed_elements_bulk() нельзя.
-_bulk_created_feed_elements_id = 'EBqse5W9zFnk6AvI-uDgUTLA'
-_bulk_created_feed_id = 'FDY0Ch8r9KQEKumudZwVfHCw'
-# EBtZHnILcSe0qN_b1YV5DYBQ
 
 @pytest.fixture(scope="module")
 def create_container(client, feed_elements_data, container_data):
@@ -120,6 +113,11 @@ def test__create_feed_elements_bulk(create_feed_elements_bulk):
     assert response_data.id is not None
 
 
+# Используется заранее созданный фид с элементами и не пустыми полями feedElementId и feedId.
+# После создания фида методом client.create_feed_elements_bulk(), запрос методом
+# client.get_feed_elements_bulk_info() возвращает элементы с еще пустыми feedElementId и feedId.
+# По этому выполнить редактирование client.edit_feed_elements_bulk() сразу нельзя.
+# Так же нужно дождаться изменения статуса элементов с "ReadyToDownload" и появления загруженных данных в feedElementMedias
 def test__edit_feed_elements_bulk(client, bulk_edit_feed_elements_data):
     edit_data = bulk_edit_feed_elements_data()
     request_data = EditDelayedFeedElementsBulkRequest(**edit_data)

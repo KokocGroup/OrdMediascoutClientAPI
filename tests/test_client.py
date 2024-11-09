@@ -1,23 +1,13 @@
 from ord_mediascout_client import (
-    ClientRelationshipType,
     CounterpartyStatus,
     CreateClientRequest,
     GetClientRequest,
-    LegalForm,
 )
 
 
-def test__create_client(client):
-    request_data = CreateClientRequest(
-        createMode=ClientRelationshipType.DirectClient,
-        legalForm=LegalForm.JuridicalPerson,
-        inn='7720805643',
-        name='Тест клиент2',
-        mobilePhone='+79161234567',
-        epayNumber='12333',
-        regNumber='54556',
-        oksmNumber='44563',
-    )
+def test__create_client(client, client_data):
+    data = client_data()
+    request_data = CreateClientRequest(**data)
 
     response_data = client.create_client(request_data)
 
