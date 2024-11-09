@@ -1,6 +1,6 @@
 [project]
 name = "ord_mediascout_client"
-version = "0.0.43"
+version = "0.0.45"
 authors = [
   { name="Alexey Ruzin", email="ruzin@me.com" },
   { name="Ilya Chegodayev", email="lighter97@gmail.com" },
