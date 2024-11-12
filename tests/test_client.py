@@ -1,3 +1,5 @@
+import pytest
+
 from ord_mediascout_client import (
     CounterpartyStatus,
     CreateClientRequest,
@@ -5,11 +7,17 @@ from ord_mediascout_client import (
 )
 
 
-def test__create_client(client, client_data):
+@pytest.fixture(scope="module")
+def create_client(client, client_data):
     data = client_data()
     request_data = CreateClientRequest(**data)
 
     response_data = client.create_client(request_data)
+    return response_data, request_data
+
+
+def test__create_client(client, create_client):
+    response_data, request_data = create_client
 
     assert request_data.name == response_data.name
     assert request_data.inn == response_data.inn
@@ -34,24 +42,26 @@ def test__get_clients(client):
         assert participant.status == CounterpartyStatus.Active
 
 
-def test__get_client__by_id(client):
-    client_id = 'CLGk5Rgt3AHk6er6qXR1T4mA'
-    request_data = GetClientRequest(id=client_id)
+def test__get_client__by_id(client, create_client):
+    data, _ = create_client
+
+    request_data = GetClientRequest(id=data.id)
 
     response_data = client.get_clients(request_data)
 
     assert len(response_data) == 1
     for participant in response_data:
-        assert participant.id == client_id
+        assert participant.id == data.id
 
 
-def test__get_client__by_inn(client):
-    inn = '7740000076'
-    request_data = GetClientRequest(inn=inn)
+def test__get_client__by_inn(client, create_client):
+    _, data = create_client
+
+    request_data = GetClientRequest(inn=data.inn)
 
     response_data = client.get_clients(request_data)
 
     assert len(response_data) == 1
     for participant in response_data:
         assert participant.id is not None
-        assert participant.inn == inn
+        assert participant.inn == data.inn

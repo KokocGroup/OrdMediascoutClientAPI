@@ -1,7 +1,7 @@
 import pytest
 
 from tests.conftest import print_obj
-from conftest import _setup_test_data
+from conftest import FEED__ELEMENTS
 
 from ord_mediascout_client import (
     CreateFeedElementsRequest,
@@ -76,7 +76,7 @@ def test__get_containers(client):
 
 def test__get_feed_elements(client):
     # Прописал вручную ids, так как сервис возвращает слишком много активных элементов
-    request_data = GetFeedElementsWebApiDto(ids=_setup_test_data['feed']['elements'], status='Active')
+    request_data = GetFeedElementsWebApiDto(ids=FEED__ELEMENTS, status='Active')
 
     response_data = client.get_feed_elements(request_data)
 

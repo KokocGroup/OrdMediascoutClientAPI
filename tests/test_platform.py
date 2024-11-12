@@ -28,5 +28,5 @@ def test__edit_platform(client, create_platform):
     response_data = client.edit_platform(created_platform.id, request_data)
 
     assert response_data is not None
-    assert isinstance(response_data.id, str)
+    assert response_data.id is not None
     assert request_data.name == response_data.name

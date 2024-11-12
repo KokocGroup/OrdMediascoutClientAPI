@@ -31,38 +31,18 @@ logging.getLogger('urllib3').setLevel(logging.WARNING)
 load_dotenv()
 faker = Faker()
 
-
-_setup_test_data = {
-    # Setup Contract test data
-    'contract': {
-        'clientId': os.getenv('CLIENT_ID'),
-        'initial_contract_clientId': os.getenv('INITIAL_CONTRACT_CLIENT_ID'),
-        'contractorId': os.getenv('CONTRACTOR_ID'),
-        'finalContractId': os.getenv('FINAL_CONTRACT_ID'),
-    },
-    # Setup Invoice test data
-    'invoice': {
-        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
-        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
-        'erId': os.getenv('ER_ID'),
-    },
-    # Setup Creative test data
-    'creative': {
-        'ids': os.getenv('CREATIVE_IDS').split(','),
-        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
-        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
-        'srcUrl': os.getenv('SRC_URL'),
-    },
-    # Setup Feed test data
-    'feed': {
-        'finalContractId': os.getenv('FINAL_CONTRACT_ID_INVOICE'),
-        'initialContractId': os.getenv('INITIAL_CONTRACT_ID_INVOICE'),
-        'srcUrl': os.getenv('SRC_URL'),
-        'feedId': os.getenv('FEED_ID'),
-        'elements': os.getenv('ELEMENTS').split(','),
-        'media_ids': os.getenv('MEDIA_IDS').split(','),
-    },
-}
+# Setup Tests Data
+CONTRACT__CLIENT_ID =  os.getenv('CLIENT_ID')
+CONTRACT__INITIAL_CONTRACT__CLIENT_ID = os.getenv('INITIAL_CONTRACT_CLIENT_ID')
+CONTRACT__CONTRACTOR_ID = os.getenv('CONTRACTOR_ID')
+FINAL_CONTRACT_ID = os.getenv('FINAL_CONTRACT_ID')
+INITIAL_CONTRACT_ID = os.getenv('INITIAL_CONTRACT_ID')
+ER_ID = os.getenv('ER_ID')
+CREATIVE_IDS = os.getenv('CREATIVE_IDS').split(',')
+IMAGE_SRC_URL = os.getenv('IMAGE_SRC_URL')
+FEED_ID = os.getenv('FEED_ID')
+FEED__ELEMENTS = os.getenv('FEED_ELEMENTS').split(',')
+FEED__MEDIA_IDS = os.getenv('FEED_MEDIA_IDS').split(',')
 
 
 @pytest.fixture(scope='module')
@@ -114,7 +94,7 @@ def final_contract_data():
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
             'parentMainContractId': '',
-            'clientId': _setup_test_data['contract']['clientId'],
+            'clientId': CONTRACT__CLIENT_ID,
         }
         data.update(kwargs)
         return data
@@ -133,9 +113,9 @@ def initial_contract_data():
             'type': ContractType.ServiceAgreement,
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
-            'contractorId': _setup_test_data['contract']['contractorId'],
-            'clientId': _setup_test_data['contract']['initial_contract_clientId'],
-            'finalContractId': _setup_test_data['contract']['finalContractId'],
+            'contractorId': CONTRACT__CONTRACTOR_ID,
+            'clientId': CONTRACT__INITIAL_CONTRACT__CLIENT_ID,
+            'finalContractId': FINAL_CONTRACT_ID,
         }
         data.update(kwargs)
         return data
@@ -154,7 +134,7 @@ def outer_contract_data():
             'type': ContractType.ServiceAgreement,
             'subjectType': ContractSubjectType.Distribution,
             # 'actionType': MediationActionType.Contracting,
-            'contractorId': _setup_test_data['contract']['clientId'],
+            'contractorId': CONTRACT__CLIENT_ID,
             'isRegReport': True,
         }
         data.update(kwargs)
@@ -182,17 +162,17 @@ def invoice_data():
             'amount': random.randrange(10000, 50000),
             'startDate': start_date,
             'endDate': end_date,
-            'finalContractId': _setup_test_data['invoice']['finalContractId'],
+            'finalContractId': FINAL_CONTRACT_ID,
             'initialContractsData': [
                 {
-                    'initialContractId': _setup_test_data['invoice']['initialContractId'],
+                    'initialContractId': INITIAL_CONTRACT_ID,
                     'amount': 1000.00
                 }
             ],
             'statisticsByPlatforms': [
                 {
-                    'initialContractId': _setup_test_data['invoice']['initialContractId'],
-                    'erid': _setup_test_data['invoice']['erId'],
+                    'initialContractId': INITIAL_CONTRACT_ID,
+                    'erid': ER_ID,
                     'platformUrl': 'http://www.testplatform.ru',
                     'platformName': 'Test Platform 1',
                     'platformType': PlatformType.Site,
@@ -221,12 +201,12 @@ def creative_data():
     def _creative_data(**kwargs):
         rnd = random.randrange(111, 9999)
         data = {
-                'finalContractId': _setup_test_data['creative']['finalContractId'],
-                'initialContractId': _setup_test_data['creative']['initialContractId'],
+                'finalContractId': FINAL_CONTRACT_ID,
+                'initialContractId': INITIAL_CONTRACT_ID,
                 'creativeGroupName': f'_generated_creative_group_name_{random.randint(1000, 99999)}',
                 'type': CampaignType.CPM,
                 'form': CreativeForm.Banner,
-                'advertiserUrls': ['https://clisite1.ru/', 'https://clisite2.ru/'],
+                'advertiserUrls': ['https://clisite1.ru', 'https://clisite2.ru'],
                 'description': f'Test mediadata creative {rnd}',
                 'targetAudienceParams': [],
                 'isSelfPromotion': False,
@@ -237,7 +217,7 @@ def creative_data():
                         'fileName': 'logo.svg',
                         'fileType': FileType.Image,
                         # fileContentBase64="string",
-                        'srcUrl': _setup_test_data['creative']['srcUrl'],
+                        'srcUrl': IMAGE_SRC_URL,
                         'description': f'Тестовый баннер {rnd}',
                         'isArchive': False,
                     }],
@@ -305,7 +285,7 @@ def bulk_feed_elements_data():
                     'mediaData': [{
                         'fileName': 'logo.svg',
                         'fileType': FileType.Image,
-                        'srcUrl': _setup_test_data['creative']['srcUrl'],
+                        'srcUrl': IMAGE_SRC_URL,
                         'description': f'Тестовый баннер {rnd}',
                         'isArchive': False,
                         },
@@ -340,7 +320,7 @@ def bulk_edit_feed_elements_data():
             'feedElements': [
                 {
                     "id": feed_id,
-                    "feedId": _setup_test_data['feed']['feedId'],
+                    "feedId": FEED_ID,
                     'feedName': f'bulk_test_feed Edit {rnd}',
                     'feedNativeCustomerId': f'feedNativeCustomerId__{rnd}',
                     'nativeCustomerId': customer_id,
@@ -352,32 +332,32 @@ def bulk_edit_feed_elements_data():
                         'id': media_id,
                         'fileName': f'logo{rnd}.svg',
                         'fileType': FileType.Image,
-                        'srcUrl': _setup_test_data['creative']['srcUrl'],
+                        'srcUrl': IMAGE_SRC_URL,
                         'description': f'Тестовый баннер {rnd}',
                         'isArchive': False,
                     }],
                 }
                 for feed_id, customer_id, url, overwrite, media_id in [
                     (
-                     _setup_test_data['feed']['elements'][0],
+                     FEED__ELEMENTS[0],
                      "60e2932f-85ae-44fe-885f-70086e2d957d",
                      "https://www.haley-salazar.com",
                      True,
-                     _setup_test_data['feed']['media_ids'][0]
+                     FEED__MEDIA_IDS[0]
                      ),
                     (
-                     _setup_test_data['feed']['elements'][1],
+                     FEED__ELEMENTS[1],
                      "79608f17-29ab-4ae6-950b-1dc2c249d56c",
                      "http://www.friedman.com",
                      True,
-                     _setup_test_data['feed']['media_ids'][1]
+                     FEED__MEDIA_IDS[1]
                     ),
                     (
-                     _setup_test_data['feed']['elements'][2],
+                     FEED__ELEMENTS[2],
                      "489c3bcb-f6fc-40ac-97a2-a7725a674f86",
                      "http://smith.com",
                      False,
-                     _setup_test_data['feed']['media_ids'][2]
+                     FEED__MEDIA_IDS[2]
                     )
                 ]
             ]
@@ -437,8 +417,8 @@ def container_data():
     def _container_data(**kwargs):
         data = {
             'feedNativeCustomerId': 'string',
-            'finalContractId': _setup_test_data['feed']['finalContractId'],
-            'initialContractId': _setup_test_data['feed']['initialContractId'],
+            'finalContractId': FINAL_CONTRACT_ID,
+            'initialContractId': INITIAL_CONTRACT_ID,
             'name': f'Тестовый контейнер {random.randrange(10000, 999999)}',
             'nativeCustomerId': 'string',
             'type': CampaignType.CPM,
