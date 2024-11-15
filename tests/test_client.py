@@ -2,23 +2,26 @@ import pytest
 
 from ord_mediascout_client import (
     CounterpartyStatus,
-    CreateClientRequest,
     GetClientRequest,
 )
 
 
 @pytest.fixture(scope="module")
-def create_client(client, client_data):
-    data = client_data()
-    request_data = CreateClientRequest(**data)
+def create_client(client, get__client_data__dto):
+    def _create_client():
+        request_data = get__client_data__dto()
+
+        response_data = client.create_client(request_data)
+        return response_data
+    return _create_client
+
+
+def test__create_client(client, get__client_data__dto):
+    request_data = get__client_data__dto()
 
     response_data = client.create_client(request_data)
-    return response_data, request_data
 
-
-def test__create_client(client, create_client):
-    response_data, request_data = create_client
-
+    assert response_data.id is not None
     assert request_data.name == response_data.name
     assert request_data.inn == response_data.inn
     # assert request_data.mobilePhone == response_data.mobilePhone
@@ -27,7 +30,6 @@ def test__create_client(client, create_client):
     # assert request_data.oksmNumber == response_data.oksmNumber
     # assert request_data.createMode == response_data.createMode
     assert request_data.legalForm == response_data.legalForm
-    assert response_data.id is not None
     assert response_data.status == CounterpartyStatus.Active
 
 
@@ -43,8 +45,7 @@ def test__get_clients(client):
 
 
 def test__get_client__by_id(client, create_client):
-    data, _ = create_client
-
+    data = create_client()
     request_data = GetClientRequest(id=data.id)
 
     response_data = client.get_clients(request_data)
@@ -54,9 +55,8 @@ def test__get_client__by_id(client, create_client):
         assert participant.id == data.id
 
 
-def test__get_client__by_inn(client, create_client):
-    _, data = create_client
-
+def test__get_client__by_inn(client, get__client_data__dto):
+    data = get__client_data__dto()
     request_data = GetClientRequest(inn=data.inn)
 
     response_data = client.get_clients(request_data)

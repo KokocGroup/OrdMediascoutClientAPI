@@ -169,20 +169,6 @@ class GetContainerWebApiDto(BaseModel):
     status: Optional[FeedStatus] = None
 
 
-class FeedElementMediaDataItem(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    id: Optional[str] = None
-    fileName: Optional[str] = None
-    fileContentBase64: Optional[str] = None
-    srcUrl: Optional[str] = None
-    description: Optional[str] = None
-    isArchive: Optional[bool] = None
-
-
 class FeedElementTextDataItem(BaseModel):
     class Config:
         extra = Extra.forbid

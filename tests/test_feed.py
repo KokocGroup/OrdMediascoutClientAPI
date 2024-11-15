@@ -4,65 +4,58 @@ from tests.conftest import print_obj
 from conftest import FEED__ELEMENTS
 
 from ord_mediascout_client import (
-    CreateFeedElementsRequest,
-    CreateAdvertisingContainerRequest,
-    CreateDelayedFeedElementsBulkRequest,
-    EditFeedElementsRequest,
-    EditDelayedFeedElementsBulkRequest,
     GetContainerWebApiDto,
     GetFeedElementsWebApiDto,
 )
 
 
 @pytest.fixture(scope="module")
-def create_container(client, feed_elements_data, container_data):
-    feed_data = feed_elements_data()
-    data = container_data(
-        feedNativeCustomerId=feed_data['feedNativeCustomerId'],
-        nativeCustomerId=feed_data['feedElements'][0]['nativeCustomerId']
-    )
-    request_data = CreateAdvertisingContainerRequest(**data)
+def create_feed_element(client, get__feed_elements_data__dto):
+    def _create_feed_element():
+        request_data = get__feed_elements_data__dto()
 
-    response_data = client.create_container(request_data)
-    return response_data
+        response_data = client.create_feed_elements(request_data)
+        return response_data
+    return _create_feed_element
 
 
 @pytest.fixture(scope="module")
-def create_feed_element(client, feed_elements_data):
-    data = feed_elements_data()
-    request_data = CreateFeedElementsRequest(**data)
+def create_feed_elements_bulk(client, get__bulk_feed_elements_data__dto):
+    def _create_feed_elements_bulk():
+        request_data = get__bulk_feed_elements_data__dto()
+
+        response_data = client.create_feed_elements_bulk(request_data)
+        return response_data
+    return _create_feed_elements_bulk
+
+
+def test__create_feed_element(client, get__feed_elements_data__dto):
+    request_data = get__feed_elements_data__dto()
 
     response_data = client.create_feed_elements(request_data)
-    return response_data, data
+
+    assert len(response_data) > 0
+    assert response_data[0].id is not None
+    assert response_data[0].feedId is not None
+    assert response_data[0].status is not None
+    assert response_data[0].feedName == request_data.feedName
+    assert response_data[0].feedNativeCustomerId == request_data.feedNativeCustomerId
+    assert response_data[0].nativeCustomerId == request_data.feedElements[0].nativeCustomerId
+    assert response_data[0].description == request_data.feedElements[0].description
+    assert response_data[0].advertiserUrls == request_data.feedElements[0].advertiserUrls
 
 
-@pytest.fixture(scope="module")
-def create_feed_elements_bulk(client, bulk_feed_elements_data):
-    data = bulk_feed_elements_data()
-    request_data = CreateDelayedFeedElementsBulkRequest(**data)
+def test__create_container(client, get__feed_elements_data__dto, get__container_data__dto):
+    feed_data = get__feed_elements_data__dto()
+    request_data = get__container_data__dto(
+        feedNativeCustomerId=feed_data.feedNativeCustomerId,
+        nativeCustomerId=feed_data.feedElements[0].nativeCustomerId
+    )
 
-    response_data = client.create_feed_elements_bulk(request_data)
-    return response_data
+    response_data = client.create_container(request_data)
 
-
-def test__create_feed_element(create_feed_element):
-    created_element, request_data = create_feed_element
-
-    assert len(created_element) == 1
-    assert created_element[0].feedId is not None
-    assert created_element[0].feedName == request_data['feedName']
-    assert created_element[0].feedNativeCustomerId == request_data['feedNativeCustomerId']
-    assert created_element[0].status is not None
-    assert created_element[0].id is not None
-    assert created_element[0].nativeCustomerId == request_data['feedElements'][0]['nativeCustomerId']
-    assert created_element[0].description == request_data['feedElements'][0]['description']
-    assert created_element[0].advertiserUrls == request_data['feedElements'][0]['advertiserUrls']
-
-
-def test__create_container(create_container):
-    created_container = create_container
-    assert created_container is not None
-    assert created_container.id is not None
+    assert response_data is not None
+    assert response_data.id is not None
 
 
 def test__get_containers(client):
@@ -84,9 +77,9 @@ def test__get_feed_elements(client):
         assert feed_element is not None
 
 
-def test__edit_feed_element(client, create_feed_element, edit_feed_elements_data):
-    created_element, request_data = create_feed_element
-    edit_data = edit_feed_elements_data(feedElements=[
+def test__edit_feed_element(client, create_feed_element, get__edit_feed_elements_data__dto):
+    created_element = create_feed_element()
+    request_data = get__edit_feed_elements_data__dto(feedElements=[
         {
             'id': created_element[0].id,
             'textData': [
@@ -98,7 +91,6 @@ def test__edit_feed_element(client, create_feed_element, edit_feed_elements_data
             ],
         },
     ])
-    request_data = EditFeedElementsRequest(**edit_data)
 
     response_data = client.edit_feed_element(request_data)
 
@@ -106,8 +98,10 @@ def test__edit_feed_element(client, create_feed_element, edit_feed_elements_data
         assert element is not None
 
 
-def test__create_feed_elements_bulk(create_feed_elements_bulk):
-    response_data = create_feed_elements_bulk
+def test__create_feed_elements_bulk(client, get__bulk_feed_elements_data__dto):
+    request_data = get__bulk_feed_elements_data__dto()
+
+    response_data = client.create_feed_elements_bulk(request_data)
 
     assert response_data is not None
     assert response_data.id is not None
@@ -118,9 +112,8 @@ def test__create_feed_elements_bulk(create_feed_elements_bulk):
 # client.get_feed_elements_bulk_info() возвращает элементы с еще пустыми feedElementId и feedId.
 # По этому выполнить редактирование client.edit_feed_elements_bulk() сразу нельзя.
 # Так же нужно дождаться изменения статуса элементов с "ReadyToDownload" и появления загруженных данных в feedElementMedias
-def test__edit_feed_elements_bulk(client, bulk_edit_feed_elements_data):
-    edit_data = bulk_edit_feed_elements_data()
-    request_data = EditDelayedFeedElementsBulkRequest(**edit_data)
+def test__edit_feed_elements_bulk(client, get__bulk_edit_feed_elements_data__dto):
+    request_data = get__bulk_edit_feed_elements_data__dto()
 
     response_data = client.edit_feed_elements_bulk(request_data)
 

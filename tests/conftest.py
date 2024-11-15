@@ -9,12 +9,34 @@ from dotenv import load_dotenv
 import os
 
 from ord_mediascout_client import (
+    CreateAdvertisingContainerRequest,
+    CreateDelayedFeedElementsBulkRequest,
+    CreateFeedElementsRequest,
+    CreateFeedElement,
     CreativeForm,
+    CreateCreativeRequest,
+    CreateCreativeMediaDataItem,
+    CreateCreativeTextDataItem,
+    CreateClientRequest,
+    CreateFinalContractRequest,
+    CreateInitialContractRequest,
+    CreateInvoiceRequest,
+    CreateInvoicelessStatisticsRequest,
+    CreateOuterContractRequest,
+    CreatePlatformRequest,
     CampaignType,
     ContractType,
     ContractSubjectType,
+    EditCreativeMediaDataItem,
+    EditCreativeTextDataItem,
+    EditDelayedFeedElementsBulkRequest,
+    EditFeedElementsRequest,
+    EditFeedElementWebApiDto,
     FileType,
     InvoicePartyRole,
+    InvoiceInitialContractItem,
+    InvoiceStatisticsByPlatformsItem,
+    InvoicelessStatisticsByPlatforms,
     ORDMediascoutClient,
     ORDMediascoutConfig,
     PlatformType,
@@ -63,7 +85,7 @@ def faker_seed():
 
 # Client
 @pytest.fixture(scope="module")
-def client_data():
+def get__client_data__dto():
     def _client_data(**kwargs):
         data = {
             'createMode': ClientRelationshipType.DirectClient,
@@ -76,14 +98,14 @@ def client_data():
             'oksmNumber': '44563',
         }
         data.update(kwargs)
-        return data
+        return CreateClientRequest(**data)
 
     return _client_data
 
 
 # Contract
 @pytest.fixture(scope="module")
-def final_contract_data():
+def get__final_contract_data__dto():
     def _final_contract_data(**kwargs):
         data = {
             'number': f'{random_string()}-{random.randrange(111, 9999)}',
@@ -97,13 +119,13 @@ def final_contract_data():
             'clientId': CONTRACT__CLIENT_ID,
         }
         data.update(kwargs)
-        return data
+        return CreateFinalContractRequest(**data)
 
     return _final_contract_data
 
 
 @pytest.fixture(scope="module")
-def initial_contract_data():
+def get__initial_contract_data__dto():
     def _initial_contract_data(**kwargs):
         data = {
             'number': f'{random_string()}-{random.randrange(111, 9999)}',
@@ -118,13 +140,13 @@ def initial_contract_data():
             'finalContractId': FINAL_CONTRACT_ID,
         }
         data.update(kwargs)
-        return data
+        return CreateInitialContractRequest(**data)
 
     return _initial_contract_data
 
 
 @pytest.fixture(scope="module")
-def outer_contract_data():
+def get__outer_contract_data__dto():
     def _outer_contract_data(**kwargs):
         data = {
             'number': f'{random_string()}-{random.randrange(111, 9999)}',
@@ -138,22 +160,73 @@ def outer_contract_data():
             'isRegReport': True,
         }
         data.update(kwargs)
-        return data
+        return CreateOuterContractRequest(**data)
 
     return _outer_contract_data
 
 
 # Invoice
 @pytest.fixture(scope="module")
-def invoice_data():
-    def _invoice_data(**kwargs):
-        start_date = random_date(year='2024', month='10')
+def get__invoice_randoms():
+    def _get__invoice_randoms(**kwargs):
+        start_date = random_date(year=kwargs.get('year') or '2024', month=kwargs.get('month') or '10')
         start_date_fact = random_date(start_date=start_date)
         end_date_plan = random_date(start_date=start_date_fact)
         end_date_fact = random_date(start_date=end_date_plan)
         end_date = random_date(start_date=end_date_fact)
         imps_plan = random.randrange(1000, 100000)
 
+        return start_date, start_date_fact, end_date_plan, end_date_fact, end_date, imps_plan
+    return _get__invoice_randoms
+
+
+@pytest.fixture(scope="module")
+def get__initial_contracts_data__dto():
+    def _initial_contracts_data(**kwargs):
+        data = {
+            'initialContractId': INITIAL_CONTRACT_ID,
+            'amount': 1000.00,
+        }
+        data.update(kwargs)
+        return InvoiceInitialContractItem(**data)
+
+    return _initial_contracts_data
+
+
+@pytest.fixture(scope="module")
+def get__statistics_by_platforms__dto(get__invoice_randoms):
+    def _statistics_by_platforms(**kwargs):
+        start_date, start_date_fact, end_date_plan, end_date_fact, end_date, imps_plan = get__invoice_randoms(
+            year='2024', month='10'
+        )
+        data = {
+                'initialContractId': INITIAL_CONTRACT_ID,
+                'erid': ER_ID,
+                'platformUrl': 'http://www.testplatform.ru',
+                'platformName': 'Test Platform 1',
+                'platformType': PlatformType.Site,
+                'platformOwnedByAgency': False,
+                'impsPlan': imps_plan,
+                'impsFact': imps_plan,
+                'startDatePlan': start_date,
+                'startDateFact': start_date_fact,
+                'endDatePlan': end_date_plan,
+                'endDateFact': end_date_fact,
+                'amount': random.randrange(100, 1000),
+                'price': 0.5,
+        }
+        data.update(kwargs)
+        return InvoiceStatisticsByPlatformsItem(**data)
+
+    return _statistics_by_platforms
+
+
+@pytest.fixture(scope="module")
+def get__invoice_data__dto(get__invoice_randoms, get__initial_contracts_data__dto, get__statistics_by_platforms__dto):
+    def _invoice_data(**kwargs):
+        start_date, start_date_fact, end_date_plan, end_date_fact, end_date, imps_plan = get__invoice_randoms(
+            year='2024', month='10'
+        )
         data = {
             'number': 'INV-{}'.format(random.randrange(11111111, 99999999)),
             'date': start_date,
@@ -163,41 +236,46 @@ def invoice_data():
             'startDate': start_date,
             'endDate': end_date,
             'finalContractId': FINAL_CONTRACT_ID,
-            'initialContractsData': [
-                {
-                    'initialContractId': INITIAL_CONTRACT_ID,
-                    'amount': 1000.00
-                }
-            ],
-            'statisticsByPlatforms': [
-                {
-                    'initialContractId': INITIAL_CONTRACT_ID,
-                    'erid': ER_ID,
-                    'platformUrl': 'http://www.testplatform.ru',
-                    'platformName': 'Test Platform 1',
-                    'platformType': PlatformType.Site,
-                    'platformOwnedByAgency': False,
-                    'impsPlan': imps_plan,
-                    'impsFact': imps_plan,
-                    'startDatePlan': start_date,
-                    'startDateFact': start_date_fact,
-                    'endDatePlan': end_date_plan,
-                    'endDateFact': end_date_fact,
-                    'amount': random.randrange(100, 1000),
-                    'price': 0.5,
-                }
-            ]
+            'initialContractsData': [get__initial_contracts_data__dto(), ],
+            'statisticsByPlatforms': [get__statistics_by_platforms__dto(), ]
         }
-
         data.update(kwargs)
-        return data
+
+        return CreateInvoiceRequest(**data)
 
     return _invoice_data
 
 
 # Creative
 @pytest.fixture(scope="module")
-def creative_data():
+def get__creative_media_data__dto():
+    def _creative_media_data(**kwargs):
+        rnd = random.randrange(111, 9999)
+        data = {
+            'fileName': 'logo.svg',
+            'fileType': FileType.Image,
+            # fileContentBase64="string",
+            'srcUrl': IMAGE_SRC_URL,
+            'description': f'Тестовый баннер {rnd}',
+            'isArchive': False,
+        }
+        data.update(kwargs)
+        return CreateCreativeMediaDataItem(**data)
+    return _creative_media_data
+
+
+@pytest.fixture(scope="module")
+def get__creative_text_data__dto():
+    def _creative_text_data(**kwargs):
+        rnd = random.randrange(111, 9999)
+        data = {'textData': f'Creative {rnd} text data test'}
+        data.update(kwargs)
+        return CreateCreativeTextDataItem(**data)
+    return _creative_text_data
+
+
+@pytest.fixture(scope="module")
+def get__creative_data__dto():
     def _creative_data(**kwargs):
         rnd = random.randrange(111, 9999)
         data = {
@@ -212,26 +290,18 @@ def creative_data():
                 'isSelfPromotion': False,
                 'isNative': False,
                 'isSocial': False,
-                'mediaData': [
-                    {
-                        'fileName': 'logo.svg',
-                        'fileType': FileType.Image,
-                        # fileContentBase64="string",
-                        'srcUrl': IMAGE_SRC_URL,
-                        'description': f'Тестовый баннер {rnd}',
-                        'isArchive': False,
-                    }],
-                'textData': [{'textData': f'Creative {rnd} text data test'}],
+                'mediaData': [],
+                'textData': [],
         }
         data.update(kwargs)
-        return data
+        return CreateCreativeRequest(**data)
 
     return _creative_data
 
 
 # Platform
 @pytest.fixture(scope="module")
-def platform_data():
+def get__platform_data__dto():
     def _platform_data(**kwargs):
         rnd = random.randrange(100000, 999999)
         data = {
@@ -241,36 +311,42 @@ def platform_data():
             'isOwner': True,
         }
         data.update(kwargs)
-        return data
+        return CreatePlatformRequest(**data)
 
     return _platform_data
 
 
 # Feed
 @pytest.fixture(scope="module")
-def feed_elements_data():
+def get__feed_element__dto(get__creative_text_data__dto):
+    def _feed_element(**kwargs):
+        data = {
+            'nativeCustomerId': faker.uuid4(),
+            'description': faker.text(30),
+            'advertiserUrls': [faker.url()[:-1]],
+            'textData': [get__creative_text_data__dto(), ],
+        }
+        data.update(kwargs)
+        return CreateFeedElement(**data)
+
+    return _feed_element
+
+@pytest.fixture(scope="module")
+def get__feed_elements_data__dto(get__feed_element__dto):
     def _feed_elements_data(**kwargs):
         data = {
             'feedName': 'test_feed',
             'feedNativeCustomerId': 'test_feed_id',
-            'feedElements': [
-                {
-                    'nativeCustomerId': faker.uuid4(),
-                    'description': faker.text(30),
-                    'advertiserUrls': [faker.url()[:-1]],
-                    'textData': [{'textData': faker.text()},],
-                }
-            ],
+            'feedElements': [get__feed_element__dto()],
         }
         data.update(kwargs)
-
-        return data
+        return CreateFeedElementsRequest(**data)
 
     return _feed_elements_data
 
 
 @pytest.fixture(scope="module")
-def bulk_feed_elements_data():
+def get__bulk_feed_elements_data__dto(get__creative_media_data__dto):
     def _bulk_feed_elements_data(**kwargs):
         rnd = random.randrange(100000, 999999)
         data = {
@@ -282,14 +358,7 @@ def bulk_feed_elements_data():
                     'nativeCustomerId': faker.uuid4(),
                     'description': faker.text(30),
                     'advertiserUrls': [faker.url()[:-1]],
-                    'mediaData': [{
-                        'fileName': 'logo.svg',
-                        'fileType': FileType.Image,
-                        'srcUrl': IMAGE_SRC_URL,
-                        'description': f'Тестовый баннер {rnd}',
-                        'isArchive': False,
-                        },
-                    ],
+                    'mediaData': [get__creative_media_data__dto(), ],
                 }
                 for _ in range(3)
             ],
@@ -307,13 +376,40 @@ def bulk_feed_elements_data():
 
         data.update(kwargs)
 
-        return data
+        return CreateDelayedFeedElementsBulkRequest(**data)
 
     return _bulk_feed_elements_data
 
 
 @pytest.fixture(scope="module")
-def bulk_edit_feed_elements_data():
+def get__edit_creative_media_data__dto():
+    def _edit_creative_media_data(**kwargs):
+        rnd = random.randrange(111, 9999)
+        data = {
+            'fileName': 'logo.svg',
+            'fileType': FileType.Image,
+            # fileContentBase64="string",
+            'srcUrl': IMAGE_SRC_URL,
+            'description': f'Тестовый баннер {rnd}',
+            'isArchive': False,
+        }
+        data.update(kwargs)
+        return EditCreativeMediaDataItem(**data)
+    return _edit_creative_media_data
+
+
+@pytest.fixture(scope="module")
+def get__edit_creative_text_data__dto():
+    def _edit_creative_text_data(**kwargs):
+        rnd = random.randrange(111, 9999)
+        data = {'textData': f'Creative {rnd} text data test'}
+        data.update(kwargs)
+        return EditCreativeTextDataItem(**data)
+    return _edit_creative_text_data
+
+
+@pytest.fixture(scope="module")
+def get__bulk_edit_feed_elements_data__dto(get__edit_creative_media_data__dto):
     def _bulk_edit_feed_elements_data(**kwargs):
         rnd = random.randrange(100000, 999999)
         data = {
@@ -327,15 +423,12 @@ def bulk_edit_feed_elements_data():
                     'description': faker.text(30),
                     'advertiserUrls': [url],
                     'OverwriteExistingCreativeMedia': overwrite,
-                    'mediaData': [{
-                        'actionType': 'Edit',
-                        'id': media_id,
-                        'fileName': f'logo{rnd}.svg',
-                        'fileType': FileType.Image,
-                        'srcUrl': IMAGE_SRC_URL,
-                        'description': f'Тестовый баннер {rnd}',
-                        'isArchive': False,
-                    }],
+                    'mediaData': [get__edit_creative_media_data__dto(
+                        id=media_id,
+                        fileName=f'logo{rnd}.svg',
+                        actionType='Edit',
+                        description=f'Тестовый баннер {rnd}'
+                    )],
                 }
                 for feed_id, customer_id, url, overwrite, media_id in [
                     (
@@ -375,45 +468,51 @@ def bulk_edit_feed_elements_data():
 
         data.update(kwargs)
 
-        return data
+        return EditDelayedFeedElementsBulkRequest(**data)
 
     return _bulk_edit_feed_elements_data
 
 
 @pytest.fixture(scope="module")
-def edit_feed_elements_data():
+def get__edit_feed_element__dto(get__creative_text_data__dto):
+    def _edit_feed_element(**kwargs):
+        data = {
+            'id': 'string',
+            'description': faker.text(30),
+            'advertiserUrls': [faker.url()[:-1]],
+            'overwriteExistingCreativeMedia': False,
+            'textData': [get__creative_text_data__dto(), ],
+        }
+        data.update(kwargs)
+        return EditFeedElementWebApiDto(**data)
+
+    return _edit_feed_element
+
+
+@pytest.fixture(scope="module")
+def get__edit_feed_elements_data__dto(get__edit_feed_element__dto):
     def _edit_feed_elements_data(**kwargs):
+        # Если в kwargs передан feedElements, собираем его поля со значениями в feed_elements
+        feed_elements = {}
+        if 'feedElements' in kwargs:
+            for key, value in kwargs['feedElements'][0].items():
+                feed_elements[key] = value
+            kwargs.pop('feedElements')
         data = {
             'feedName': 'edit_test_feed',
             'feedNativeCustomerId': 'test_feed_id',
-            'feedElements': [
-                {
-                    'id': 'string',
-                    # 'nativeCustomerId': faker.uuid4(),
-                    'description': faker.text(30),
-                    'advertiserUrls': [faker.url()[:-1]],
-                    'overwriteExistingCreativeMedia': False,
-                    'textData': [{'textData': faker.text()}, ],
-                }
-            ],
+            'feedElements': [get__edit_feed_element__dto(**feed_elements)],
         }
-
-        # Если в kwargs передан feedElements, обновляем поля в первом элементе data['feedElements']
-        if 'feedElements' in kwargs:
-            for key, value in kwargs['feedElements'][0].items():
-
-                data['feedElements'][0][key] = value
-            kwargs.pop('feedElements')
 
         data.update(kwargs)
 
-        return data
+        return EditFeedElementsRequest(**data)
 
     return _edit_feed_elements_data
 
 
 @pytest.fixture(scope="module")
-def container_data():
+def get__container_data__dto():
     def _container_data(**kwargs):
         data = {
             'feedNativeCustomerId': 'string',
@@ -436,17 +535,16 @@ def container_data():
             'isSocial': True
         }
         data.update(kwargs)
-        return data
+        return CreateAdvertisingContainerRequest(**data)
 
     return _container_data
 
 
 # Statistics
 @pytest.fixture(scope="module")
-def statistics_data():
-    def _statistics_data(**kwargs):
+def get__invoiceless_statistics_by_platforms__dto():
+    def _invoiceless_statistics_by_platforms(**kwargs):
         data = {
-            'statistics': [{
                 'erid': 'Kra23f3QL',
                 'platformUrl': 'http://www.testplatform.ru',
                 'platformName': 'Test Platform 1',
@@ -461,10 +559,18 @@ def statistics_data():
                 'endDateFact': '2023-06-20',
                 'amount': 50000,
                 'price': 5,
-            },]
-        }
+            }
         data.update(kwargs)
-        return data
+        return InvoicelessStatisticsByPlatforms(**data)
+    return _invoiceless_statistics_by_platforms
+
+
+@pytest.fixture(scope="module")
+def get__statistics_data__dto(get__invoiceless_statistics_by_platforms__dto):
+    def _statistics_data(**kwargs):
+        data = {'statistics': [get__invoiceless_statistics_by_platforms__dto()]}
+        data.update(kwargs)
+        return CreateInvoicelessStatisticsRequest(**data)
 
     return _statistics_data
 

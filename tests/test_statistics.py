@@ -1,12 +1,10 @@
 from ord_mediascout_client import (
-    CreateInvoicelessStatisticsRequest,
     GetInvoicelessPeriodsRequest,
 )
 
 
-def test_create_statistics(client, statistics_data):
-    data = statistics_data()
-    request_data = CreateInvoicelessStatisticsRequest(**data)
+def test_create_statistics(client, get__statistics_data__dto):
+    request_data = get__statistics_data__dto()
 
     response_data = client.create_statistics(request_data)
 
