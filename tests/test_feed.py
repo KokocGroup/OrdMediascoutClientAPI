@@ -1,7 +1,7 @@
 import pytest
 
-from tests.conftest import print_obj
-from conftest import FEED__ELEMENTS
+# from tests.conftest import print_obj
+from .conftest import FEED__ELEMENTS
 
 from ord_mediascout_client import (
     GetContainerWebApiDto,

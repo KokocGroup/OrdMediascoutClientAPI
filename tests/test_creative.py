@@ -1,6 +1,6 @@
 import pytest
 
-from conftest import CREATIVE_IDS
+from .conftest import CREATIVE_IDS
 
 from ord_mediascout_client import (
     GetCreativeGroupsRequest,
