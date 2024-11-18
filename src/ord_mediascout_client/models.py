@@ -1867,6 +1867,11 @@ class CreateCreativeRequest(BaseModel):
     isSocial: Optional[bool] = Field(
         None, description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\".\r\nВ настоящий момент список не может содержать более одного значения. Указание нескольких значений станет доступно после введения функционала кобрендинга\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
+        example = '["30.1.2", "12.2.3"]'
+    )
     mediaData: Optional[List[CreateCreativeMediaDataItem]] = Field(
         None,
         description='Медиаданные креатива (массив)\n\r\n'
@@ -2026,6 +2031,11 @@ class CreativeGroupResponse(BaseModel):
     )
     isNative: Optional[bool] = Field(
         ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    )
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description="Список кодов ККТУ\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
+        example = '["30.1.2", "12.2.3"]'
     )
     targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
         None, description='Параметры целевой аудитории\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
@@ -2192,6 +2202,11 @@ class CreativeResponse(BaseModel):
     isSocial: Optional[bool] = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
+    kktuCodes: List[str] = Field(
+        ...,
+        description="Список кодов ККТУ\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
+        example = '["30.1.2", "12.2.3"]'
+    )
     mediaData: Optional[List[CreativeMediaDataItem]] = Field(
         ...,
         description='Медиаданные креатива (массив)\n\r\n'
@@ -2345,6 +2360,11 @@ class SimpleEditCreativeRequest(BaseModel):
     )
     isSocial: Optional[bool] = Field(
         None, description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    )
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\".\r\nВ настоящий момент список не может содержать более одного значения. Указание нескольких значений станет доступно после введения функционала кобрендинга\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
+        example = '["30.1.2", "12.2.3"]'
     )
     mediaData: Optional[List[EditCreativeMediaDataItem]] = Field(
         None,

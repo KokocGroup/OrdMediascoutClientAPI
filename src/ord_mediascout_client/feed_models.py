@@ -111,6 +111,11 @@ class CreateAdvertisingContainerRequest(BaseModel):
     description: str = Field(..., description='Общее описание объекта рекламирования')
     isNative: bool = Field(..., description='Признак нативной рекламы')
     isSocial: bool = Field(..., description='Признак социальной рекламы')
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\"",
+        example=['30.1.2', '12.2.3']
+    )
 
 
 class AdvertisingContainerResponse(BaseModel):
@@ -141,7 +146,12 @@ class AdvertisingContainerResponse(BaseModel):
     )
     description: str = Field(..., description='Общее описание объекта рекламирования')
     isNative: bool = Field(..., description='Признак нативной рекламы')
-    isSocial: bool = Field(..., description='Признак социальной рекламы')
+    isSocial: bool = Field(None, description='Признак социальной рекламы')
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\"",
+        example=['30.1.2', '12.2.3']
+    )
     id: str = Field(..., description='Id контейнера')
     erid: str = Field(..., description='Erid контейнера')
     status: FeedStatus = Field(
@@ -167,6 +177,44 @@ class GetContainerWebApiDto(BaseModel):
     finalContractId: Optional[str] = None
     finalContractNumber: Optional[str] = None
     status: Optional[FeedStatus] = None
+
+
+class EditAdvertisingContainerRequest(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    feedId: Optional[str] = Field(None, description='Id фида')
+    feedNativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id фида')
+    finalContractId: str = Field(..., description='Id доходного договора')
+    initialContractId: Optional[str] = Field(
+        None,
+        description='Id или Cid изначального договора. В случае, если контейнер добавляется только к доходному договору, должно быть NULL.',
+    )
+    name: str = Field(..., description='Наименование контейнера')
+    nativeCustomerId: Optional[str] = Field(None, description='Пользовательский Id контейнера')
+    type: CampaignType = Field(
+        ...,
+        description='Тип рекламной кампании<p>Members:</p><ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li><li><i>CPC</i> - Cost Per Click, оплата за клик баннера</li><li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li><li><i>Other</i> - Иное</li></ul>',
+    )
+    form: CreativeForm = Field(
+        ...,
+        description='Форма распространения рекламы<p>Members:</p><ul><li><i>Banner</i> - Баннер</li><li><i>Text</i> - Текстовый блок</li><li><i>TextGraphic</i> - Текстово-графический блок</li><li><i>Video</i> - Видеоролик</li><li><i>Audio</i> - Аудиозапись</li><li><i>AudioBroadcast</i> - Аудиотрансляции в прямом эфире</li><li><i>VideoBroadcast</i> - Видеотрансляции в прямом эфире</li><li><i>TextVideoBlock</i> - Текстовый блок с видео</li><li><i>TextAudioBlock</i> - Текстовый блок с аудио</li><li><i>TextAudioVideoBlock</i> - Текстовый блок с аудио и видео</li><li><i>TextGraphicVideoBlock</i> - Текстово-графический блок с видео</li><li><i>TextGraphicAudioBlock</i> - Текстово-графический блок с аудио</li><li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li><li><i>BannerHtml5</i> - HTML5-баннер</li></ul>',
+    )
+    targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
+        None, description='Параметры целевой аудитории рекламы'
+    )
+    description: str = Field(..., description='Общее описание объекта рекламирования')
+    isNative: bool = Field(..., description='Признак нативной рекламы')
+    isSocial: bool = Field(..., description='Признак социальной рекламы')
+    kktuCodes: Optional[List[str]] = Field(
+        None,
+        description='Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - "X.X.X"',
+        example=['30.1.2', '12.2.3'],
+    )
+    id: Optional[str] = Field(None, description='Id контейнера')
+    erid: Optional[str] = Field(None, description='Erid контейнера')
 
 
 class FeedElementTextDataItem(BaseModel):

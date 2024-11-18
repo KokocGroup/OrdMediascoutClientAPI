@@ -14,6 +14,7 @@ from .feed_models import (
     CreateAdvertisingContainerRequest,
     CreateFeedElementsRequest,
     CreateDelayedFeedElementsBulkRequest,
+    EditAdvertisingContainerRequest,
     EditFeedElementsRequest,
     GetContainerWebApiDto,
     GetFeedElementsBulkInfo,
@@ -353,6 +354,12 @@ class ORDMediascoutClient:
         params = self._prepare_params(parameters)
         containers: list[AdvertisingContainerResponse] = self._call(
             'get', '/webapi/v3/feeds/containers', None, list[AdvertisingContainerResponse], params=params
+        )
+        return containers
+
+    def edit_container(self, container: EditAdvertisingContainerRequest) -> AdvertisingContainerResponse:
+        containers: AdvertisingContainerResponse = self._call(
+            'patch', '/webapi/v3/feeds/containers', container, AdvertisingContainerResponse
         )
         return containers
 

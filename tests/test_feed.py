@@ -6,7 +6,22 @@ from conftest import FEED__ELEMENTS
 from ord_mediascout_client import (
     GetContainerWebApiDto,
     GetFeedElementsWebApiDto,
+    EditAdvertisingContainerRequest,
 )
+
+
+@pytest.fixture(scope="module")
+def create_container(client, get__feed_elements_data__dto, get__container_data__dto):
+    def _create_container():
+        feed_data = get__feed_elements_data__dto()
+        request_data = get__container_data__dto(
+            feedNativeCustomerId=feed_data.feedNativeCustomerId,
+            nativeCustomerId=feed_data.feedElements[0].nativeCustomerId
+        )
+
+        response_data = client.create_container(request_data)
+        return response_data
+    return _create_container
 
 
 @pytest.fixture(scope="module")
@@ -65,6 +80,20 @@ def test__get_containers(client):
 
     for container in response_data:
         assert container is not None
+
+
+def test__edit_container(client, create_container):
+    container_data = create_container().dict()
+    for key in ["feedName", "nativeCustomerId", "feedNativeCustomerId", "erid", "status", "erirValidationError"]:
+        container_data.pop(key, None)
+    container_data['description'] += '__IS_EDITED__'
+    request_data = EditAdvertisingContainerRequest(**container_data)
+
+    response_data = client.edit_container(request_data)
+
+    assert response_data is not None
+    assert response_data.id is not None
+    assert response_data.description == container_data['description']
 
 
 def test__get_feed_elements(client):
