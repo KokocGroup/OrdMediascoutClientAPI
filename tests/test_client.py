@@ -1,26 +1,27 @@
+import pytest
+
 from ord_mediascout_client import (
-    ClientRelationshipType,
     CounterpartyStatus,
-    CreateClientRequest,
     GetClientRequest,
-    LegalForm,
 )
 
 
-def test__create_client(client):
-    request_data = CreateClientRequest(
-        createMode=ClientRelationshipType.DirectClient,
-        legalForm=LegalForm.JuridicalPerson,
-        inn='7720805643',
-        name='Тест клиент2',
-        mobilePhone='+79161234567',
-        epayNumber='12333',
-        regNumber='54556',
-        oksmNumber='44563',
-    )
+@pytest.fixture(scope="module")
+def create_client(client, get__client_data__dto):
+    def _create_client():
+        request_data = get__client_data__dto()
+
+        response_data = client.create_client(request_data)
+        return response_data
+    return _create_client
+
+
+def test__create_client(client, get__client_data__dto):
+    request_data = get__client_data__dto()
 
     response_data = client.create_client(request_data)
 
+    assert response_data.id is not None
     assert request_data.name == response_data.name
     assert request_data.inn == response_data.inn
     # assert request_data.mobilePhone == response_data.mobilePhone
@@ -29,7 +30,6 @@ def test__create_client(client):
     # assert request_data.oksmNumber == response_data.oksmNumber
     # assert request_data.createMode == response_data.createMode
     assert request_data.legalForm == response_data.legalForm
-    assert response_data.id is not None
     assert response_data.status == CounterpartyStatus.Active
 
 
@@ -44,24 +44,24 @@ def test__get_clients(client):
         assert participant.status == CounterpartyStatus.Active
 
 
-def test__get_client__by_id(client):
-    client_id = 'CLGk5Rgt3AHk6er6qXR1T4mA'
-    request_data = GetClientRequest(id=client_id)
+def test__get_client__by_id(client, create_client):
+    data = create_client()
+    request_data = GetClientRequest(id=data.id)
 
     response_data = client.get_clients(request_data)
 
     assert len(response_data) == 1
     for participant in response_data:
-        assert participant.id == client_id
+        assert participant.id == data.id
 
 
-def test__get_client__by_inn(client):
-    inn = '7740000076'
-    request_data = GetClientRequest(inn=inn)
+def test__get_client__by_inn(client, get__client_data__dto):
+    data = get__client_data__dto()
+    request_data = GetClientRequest(inn=data.inn)
 
     response_data = client.get_clients(request_data)
 
     assert len(response_data) == 1
     for participant in response_data:
         assert participant.id is not None
-        assert participant.inn == inn
+        assert participant.inn == data.inn
