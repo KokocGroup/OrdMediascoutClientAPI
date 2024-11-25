@@ -32,6 +32,9 @@ from .models import (
     CreateCreativeRequest,
     CreatedCreativeResponse,
     CreateFinalContractRequest,
+    CreatedInitialContractResponse,
+    CreatedFinalContractResponse,
+    CreatedOuterContractResponse,
     CreateInitialContractRequest,
     CreateInvoicelessStatisticsRequest,
     CreateInvoiceRequest,
@@ -236,10 +239,9 @@ class ORDMediascoutClient:
         clients: list[ClientResponse] = self._call('get', '/webapi/v3/clients', None, list[ClientResponse], params=params)
         return clients
 
-    # Contracts
-    def create_initial_contract(self, contract: CreateInitialContractRequest) -> InitialContractResponse:
-        contract: InitialContractResponse = self._call(
-            'post', '/webapi/v3/contracts/initial', contract, InitialContractResponse
+    def create_initial_contract(self, contract: CreateInitialContractRequest) -> CreatedInitialContractResponse:
+        contract: CreatedInitialContractResponse = self._call(
+            'post', '/webapi/v3/contracts/initial', contract, CreatedInitialContractResponse
         )
         return contract
 
@@ -256,9 +258,9 @@ class ORDMediascoutClient:
         )
         return contracts
 
-    def create_final_contract(self, contract: CreateFinalContractRequest) -> FinalContractResponse:
-        contract: FinalContractResponse = self._call(
-            'post', '/webapi/v3/contracts/final', contract, FinalContractResponse
+    def create_final_contract(self, contract: CreateFinalContractRequest) -> CreatedFinalContractResponse:
+        contract: CreatedFinalContractResponse = self._call(
+            'post', '/webapi/v3/contracts/final', contract, CreatedFinalContractResponse
         )
         return contract
 
@@ -275,9 +277,9 @@ class ORDMediascoutClient:
         )
         return contracts
 
-    def create_outer_contract(self, contract: CreateOuterContractRequest) -> OuterContractResponse:
-        contract: OuterContractResponse = self._call(
-            'post', '/webapi/v3/contracts/outer', contract, OuterContractResponse
+    def create_outer_contract(self, contract: CreateOuterContractRequest) -> CreatedOuterContractResponse:
+        contract: CreatedOuterContractResponse = self._call(
+            'post', '/webapi/v3/contracts/outer', contract, CreatedOuterContractResponse
         )
         return contract
 
