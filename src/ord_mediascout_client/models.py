@@ -16,6 +16,179 @@ def capitalize(s: str) -> str:
     return s[0].upper() + s[1:]
 
 
+class Severity(Enum):
+    Error = 'Error'
+    Warning = 'Warning'
+    Info = 'Info'
+
+
+class ClientRelationshipType(Enum):
+    DirectClient = 'DirectClient'
+    InitialContractClient = 'InitialContractClient'
+
+
+class LegalForm(Enum):
+    JuridicalPerson = 'JuridicalPerson'
+    IndividualEntrepreneur = 'IndividualEntrepreneur'
+    PhysicalPerson = 'PhysicalPerson'
+    InternationalJuridicalPerson = 'InternationalJuridicalPerson'
+    InternationalPhysicalPerson = 'InternationalPhysicalPerson'
+
+
+class CounterpartyStatus(Enum):
+    Created = 'Created'
+    RegistrationRequired = 'RegistrationRequired'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+    Blocked = 'Blocked'
+
+
+class PlatformType(Enum):
+    Site = 'Site'
+    Application = 'Application'
+    InformationSystem = 'InformationSystem'
+
+
+class TargetAudienceParamType(Enum):
+    Geo = 'geo'
+    Sex = 'sex'
+    Age = 'age'
+
+
+class CampaignType(Enum):
+    CPM = 'CPM'
+    CPC = 'CPC'
+    CPA = 'CPA'
+    Other = 'Other'
+
+
+class FileType(Enum):
+    Image = 'Image'
+    Video = 'Video'
+    Audio = 'Audio'
+    Zip = 'Zip'
+    Other = 'Other'
+    # временная заглушка для подавления бага в АПИ МС
+    Zero = 0
+
+
+class ActionType(Enum):
+    Add = 'Add'
+    Edit = 'Edit'
+    Delete = 'Delete'
+
+
+class Stage(Enum):
+    EntityHeader = 'EntityHeader'
+    First = 'First'
+    Second = 'Second'
+
+
+class CreativeForm(Enum):
+    Banner = 'Banner'
+    Text = 'Text'
+    TextGraphic = 'TextGraphic'
+    Video = 'Video'
+    Audio = 'Audio'
+    AudioBroadcast = 'AudioBroadcast'
+    VideoBroadcast = 'VideoBroadcast'
+    Other = 'Other'
+    TextVideoBlock = 'TextVideoBlock'
+    TextAudioBlock = 'TextAudioBlock'
+    TextAudioVideoBlock = 'TextAudioVideoBlock'
+    TextGraphicVideoBlock = 'TextGraphicVideoBlock'
+    TextGraphicAudioBlock = 'TextGraphicAudioBlock'
+    TextGraphicAudioVideoBlock = 'TextGraphicAudioVideoBlock'
+    BannerHtml5 = 'BannerHtml5'
+
+
+class ContractStatus(Enum):
+    Created = 'Created'
+    RegistrationRequired = 'RegistrationRequired'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+    Testing = 'Testing'
+    DeletionRequired = 'DeletionRequired'
+    Deleting = 'Deleting'
+    DeletionError = 'DeletionError'
+    Deleted = 'Deleted'
+
+
+class ContractType(Enum):
+    ServiceAgreement = 'ServiceAgreement'
+    MediationContract = 'MediationContract'
+    AdditionalAgreement = 'AdditionalAgreement'
+    SelfPromotionContract = 'SelfPromotionContract'
+    VirtualFinalContract = 'VirtualFinalContract'
+    EcidContract = 'EcidContract'
+
+
+class ContractSubjectType(Enum):
+    Distribution = 'Distribution'
+    OrgDistribution = 'OrgDistribution'
+    Representation = 'Representation'
+    Mediation = 'Mediation'
+    Other = 'Other'
+
+
+class DeleteContractKind(Enum):
+    FinalContract = 'FinalContract'
+    InitialContract = 'InitialContract'
+    OuterContract = 'OuterContract'
+
+
+class MediationActionType(Enum):
+    Contracting = 'Contracting'
+    Distribution = 'Distribution'
+    CommercialRepresentation = 'CommercialRepresentation'
+    Other = 'Other'
+
+
+class CreativeStatus(Enum):
+    Creating = 'Creating'
+    Created = 'Created'
+    RegistrationRequired = 'RegistrationRequired'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+    DeletionRequired = 'DeletionRequired'
+    Deleting = 'Deleting'
+    DeletionError = 'DeletionError'
+    Deleted = 'Deleted'
+
+
+class InvoicePartyRole(Enum):
+    Rr = 'Rr'
+    Ors = 'Ors'
+    Rd = 'Rd'
+    Ra = 'Ra'
+
+
+class InvoicelessPeriodStatus(Enum):
+    Creating = 'Creating'
+    RegistrationRequired = 'RegistrationRequired'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+
+
+class InvoiceStatus(Enum):
+    Creating = 'Creating'
+    Created = 'Created'
+    RegistrationRequired = 'RegistrationRequired'
+    Transferring = 'Transferring'
+    Registering = 'Registering'
+    Active = 'Active'
+    RegistrationError = 'RegistrationError'
+    DeletionRequired = 'DeletionRequired'
+    DeletionTransferring = 'DeletionTransferring'
+    Deleting = 'Deleting'
+    DeletionError = 'DeletionError'
+    Deleted = 'Deleted'
+
+
 class ProblemDetails(BaseModel):
     type: Optional[str] = Field(
         None,
@@ -47,12 +220,6 @@ class ProblemDetails(BaseModel):
     )
 
 
-class Severity(Enum):
-    Error = 'Error'
-    Warning = 'Warning'
-    Info = 'Info'
-
-
 class ValidationFailure(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -74,14 +241,14 @@ class BadRequestResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    errorType: Optional[str] = Field(None, description='Тип ошибки.', example='Unauthorized')
+    errorType: str = Field(..., description='Тип ошибки.', example='Unauthorized')
     traceId: Optional[str] = Field(
         None,
         description='Идентификатор запроса. Значение атрибута TraceId необходимо использовать при взаимодействии с '
         'техподдержкой ОРД Медиаскаут. Данное поле содержит в себе идентификатор логов текущего процесса.',
         example='00-982607166a542147b435be3a847ddd71-fc75498eb9f09d48-00',
     )
-    errorItems: Optional[List[ValidationFailure]] = Field(None, description='Список ошибок.', example=['Unauthorized'])
+    errorItems: List[ValidationFailure] = Field(..., description='Список ошибок.', example=['Unauthorized'])
 
 
 class ClearInvoiceDataWebApiDto(BaseModel):
@@ -93,28 +260,6 @@ class ClearInvoiceDataWebApiDto(BaseModel):
     id: Optional[str] = Field(None, description='Идентификатор акта')
 
 
-class ClientRelationshipType(Enum):
-    DirectClient = 'DirectClient'
-    InitialContractClient = 'InitialContractClient'
-
-
-class LegalForm(Enum):
-    JuridicalPerson = 'JuridicalPerson'
-    IndividualEntrepreneur = 'IndividualEntrepreneur'
-    PhysicalPerson = 'PhysicalPerson'
-    InternationalJuridicalPerson = 'InternationalJuridicalPerson'
-    InternationalPhysicalPerson = 'InternationalPhysicalPerson'
-
-
-class CounterpartyStatus(Enum):
-    Created = 'Created'
-    RegistrationRequired = 'RegistrationRequired'
-    Registering = 'Registering'
-    Active = 'Active'
-    RegistrationError = 'RegistrationError'
-    Blocked = 'Blocked'
-
-
 class CreateClientRequest(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -122,8 +267,8 @@ class CreateClientRequest(BaseModel):
         allow_population_by_field_name = True
 
     createMode: Optional[ClientRelationshipType] = Field(None, description='Тип отношения заказчика к агентству')
-    legalForm: Optional[LegalForm] = Field(
-        None,
+    legalForm: LegalForm = Field(
+        ...,
         description='Юридическая форма заказчика<p>Members:</p>'
         '<ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li>'
         '<li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li>'
@@ -131,59 +276,17 @@ class CreateClientRequest(BaseModel):
         '<li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li>'
         '<li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
     )
-    inn: Optional[str] = Field(
-        None,
+    inn: str = Field(
+        ...,
         description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика '
         'либо его аналог в стране регистрации',
         example='1234567890',
     )
-    name: Optional[str] = Field(None, description='Наименование контрагента', example='Наименование контрагента')
+    name: str = Field(..., description='Наименование контрагента', example='Наименование контрагента')
     mobilePhone: Optional[str] = Field(None, description='Номер мобильного телефона', example='79999999999')
     epayNumber: Optional[str] = Field(None, description='Номер электронного средства платежа')
     regNumber: Optional[str] = Field(None, description='Регистрационный номер либо его аналог')
     oksmNumber: Optional[str] = Field(None, description='Код страны регистрации юр. лица в соответствии с ОКСМ')
-
-
-class CreativeForm(Enum):
-    Banner = 'Banner'
-    Text = 'Text'
-    TextGraphic = 'TextGraphic'
-    Video = 'Video'
-    Audio = 'Audio'
-    AudioBroadcast = 'AudioBroadcast'
-    VideoBroadcast = 'VideoBroadcast'
-    Other = 'Other'
-    TextVideoBlock = 'TextVideoBlock'
-    TextAudioBlock = 'TextAudioBlock'
-    TextAudioVideoBlock = 'TextAudioVideoBlock'
-    TextGraphicVideoBlock = 'TextGraphicVideoBlock'
-    TextGraphicAudioBlock = 'TextGraphicAudioBlock'
-    TextGraphicAudioVideoBlock = 'TextGraphicAudioVideoBlock'
-    BannerHtml5 = 'BannerHtml5'
-
-
-class ContractType(Enum):
-    ServiceAgreement = 'ServiceAgreement'
-    MediationContract = 'MediationContract'
-    AdditionalAgreement = 'AdditionalAgreement'
-    SelfPromotionContract = 'SelfPromotionContract'
-    VirtualFinalContract = 'VirtualFinalContract'
-    EcidContract = 'EcidContract'
-
-
-class ContractSubjectType(Enum):
-    Distribution = 'Distribution'
-    OrgDistribution = 'OrgDistribution'
-    Representation = 'Representation'
-    Mediation = 'Mediation'
-    Other = 'Other'
-
-
-class MediationActionType(Enum):
-    Contracting = 'Contracting'
-    Distribution = 'Distribution'
-    CommercialRepresentation = 'CommercialRepresentation'
-    Other = 'Other'
 
 
 class CreateFinalContractRequest(BaseModel):
@@ -245,7 +348,7 @@ class CreateInitialContractRequest(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -266,23 +369,16 @@ class CreateInitialContractRequest(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    contractorId: Optional[str] = Field(
+    contractorId: str = Field(
         ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
-    clientId: Optional[str] = Field(
+    clientId: str = Field(
         ..., description='Id контрагента-заказчика по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
-    finalContractId: Optional[str] = Field(
+    finalContractId: str = Field(
         ..., description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
-
-
-class InvoicePartyRole(Enum):
-    Rr = 'Rr'
-    Ors = 'Ors'
-    Rd = 'Rd'
-    Ra = 'Ra'
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
 
 
 class CreateOuterContractRequest(BaseModel):
@@ -304,7 +400,7 @@ class CreateOuterContractRequest(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -325,22 +421,16 @@ class CreateOuterContractRequest(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    contractorId: Optional[str] = Field(
+    contractorId: str = Field(
         ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    isRegReport: Optional[bool] = Field(
+    isRegReport: bool = Field(
         ...,
         description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
         'регистрировать креативы и предоставлять разаллокацию по ним в актах',
     )
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
-
-
-class PlatformType(Enum):
-    Site = 'Site'
-    Application = 'Application'
-    InformationSystem = 'InformationSystem'
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
 
 
 class CreatePlatformRequest(BaseModel):
@@ -358,40 +448,17 @@ class CreatePlatformRequest(BaseModel):
     isOwner: bool = Field(..., description='Признак принадлежности агентству')
 
 
-class CampaignType(Enum):
-    CPM = 'CPM'
-    CPC = 'CPC'
-    CPA = 'CPA'
-    Other = 'Other'
-
-
-class FileType(Enum):
-    Image = 'Image'
-    Video = 'Video'
-    Audio = 'Audio'
-    Zip = 'Zip'
-    Other = 'Other'
-    # временная заглушка для подавления бага в АПИ МС
-    Zero = 0
-
-
-class ActionType(Enum):
-    Add = 'Add'
-    Edit = 'Edit'
-    Delete = 'Delete'
-
-
 class CreativeMediaDataItem(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(..., description='Идентификатор медиаданных')
+    id: str = Field(..., description='Идентификатор медиаданных')
     fileName: Optional[str] = Field(
         None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
-    fileType: Optional[FileType] = Field(
+    fileType: FileType = Field(
         ...,
         description='Тип файла медиаданных креатива<p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
         example='image',
@@ -411,10 +478,10 @@ class CreateCreativeMediaDataItem(BaseModel):
         allow_population_by_field_name = True
 
     id: Optional[str] = Field(None, description='Идентификатор медиаданных')
-    fileName: Optional[str] = Field(
+    fileName: str = Field(
         ..., description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
-    fileType: Optional[FileType] = Field(
+    fileType: FileType = Field(
         ...,
         description='Тип файла медиаданных креатива\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:'
@@ -504,15 +571,6 @@ class EditCreativeMediaDataItem(BaseModel):
     )
 
 
-class CreativeTextDataItem(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        alias_generator = capitalize
-        allow_population_by_field_name = True
-
-    textData: Optional[str] = Field(None, description='Текстовые данные креатива', example='Некий текст')
-
-
 class EditCreativeTextDataItem(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -543,31 +601,11 @@ class CreateCreativeTextDataItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Идентификатор медиаданных')
-    textData: Optional[str] = Field(
-        None,
+    textData: str = Field(
+        ...,
         description='Текстовые данные креатива\r\n<p style="color: blue">Поле обязательно для заполнения</p>',
         example='Некий текст',
     )
-
-
-class CreativeStatus(Enum):
-    Creating = 'Creating'
-    Created = 'Created'
-    RegistrationRequired = 'RegistrationRequired'
-    Registering = 'Registering'
-    Active = 'Active'
-    RegistrationError = 'RegistrationError'
-    DeletionRequired = 'DeletionRequired'
-    Deleting = 'Deleting'
-    DeletionError = 'DeletionError'
-    Deleted = 'Deleted'
-
-
-class DeleteContractKind(Enum):
-    FinalContract = 'FinalContract'
-    InitialContract = 'InitialContract'
-    OuterContract = 'OuterContract'
 
 
 class CreativeTextDataItemWebApiDto(BaseModel):
@@ -576,8 +614,8 @@ class CreativeTextDataItemWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Идентификатор медиаданных')
-    textData: Optional[str] = Field(None, description='Текстовые данные креатива')
+    id: str = Field(..., description='Идентификатор медиаданных')
+    textData: str = Field(..., description='Текстовые данные креатива')
 
 
 class CreatedCreativeResponse(BaseModel):
@@ -601,11 +639,11 @@ class DeleteContractWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    contractId: Optional[str] = Field(..., description='Id удаляемого договора')
+    contractId: str = Field(..., description='Id удаляемого договора')
     finalContractId: Optional[str] = Field(
         None, description='Идентификатор доходного договора. Заполняется только при удалении изначального договора.'
     )
-    contractKind: Optional[DeleteContractKind] = Field(
+    contractKind: DeleteContractKind = Field(
         ...,
         description='Вид удаляемой связи (т.е. чем этот договор был - конечным, изначальным, внешним для агентства)'
         '<p>Members:</p>'
@@ -700,7 +738,7 @@ class EditFinalContractWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
     number: Optional[str] = Field(
         None,
         description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, '
@@ -714,7 +752,7 @@ class EditFinalContractWebApiDto(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -735,7 +773,7 @@ class EditFinalContractWebApiDto(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    clientId: Optional[str] = Field(
+    clientId: str = Field(
         ..., description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
@@ -823,7 +861,7 @@ class EditOuterContractWebApiDto(BaseModel):
         'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
     expirationDate: Optional[date] = Field(
         None, description='Дата окончания срока действия договора', example='2023-05-01'
     )
@@ -831,7 +869,7 @@ class EditOuterContractWebApiDto(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -852,11 +890,11 @@ class EditOuterContractWebApiDto(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    contractorId: Optional[str] = Field(
+    contractorId: str = Field(
         ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    isRegReport: Optional[bool] = Field(
+    isRegReport: bool = Field(
         ...,
         description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
         'регистрировать креативы и предоставлять разаллокацию по ним в актах',
@@ -870,8 +908,8 @@ class EditPlatformWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    name: Optional[str] = Field(..., description='Наименование площадки', example='Тестовая площадка')
-    type: Optional[PlatformType] = Field(
+    name: str = Field(..., description='Наименование площадки', example='Тестовая площадка')
+    type: PlatformType = Field(
         ...,
         description='Тип площадки<p>Members:</p>'
         '<ul><li><i>Site</i> - Сайт</li>'
@@ -880,7 +918,7 @@ class EditPlatformWebApiDto(BaseModel):
         'не поддерживается начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
-    isOwner: Optional[bool] = Field(..., description='Признак принадлежности агентству')
+    isOwner: bool = Field(..., description='Признак принадлежности агентству')
 
 
 class EntityIdResponse(BaseModel):
@@ -892,30 +930,24 @@ class EntityIdResponse(BaseModel):
     id: str = Field(..., description='Идентификатор акта', example='INUFNs1ibfg0erF1PNpTOAyg')
 
 
-class Stage(Enum):
-    EntityHeader = 'EntityHeader'
-    First = 'First'
-    Second = 'Second'
-
-
 class ErirValidationError(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    stage: Optional[Stage] = Field(
+    stage: Stage = Field(
         ...,
         description='Тип запроса ЕРИР-интеграции<p>Members:</p><ul><li><i>EntityHeader</i> - Отправлена заголовочная '
         'информация (например шапка акта)</li><li><i>First</i> - Первоначальный быстрый запрос, '
         'проверяются лишь атрибуты сущности</li><li><i>Second</i> - Запрос на получение уточненных '
         'результатов логической проверки</li></ul>',
     )
-    code: Optional[str] = Field(..., description='Код ошибки от ЕРИР', example='I_82')
-    message: Optional[str] = Field(
+    code: str = Field(..., description='Код ошибки от ЕРИР', example='I_82')
+    message: str = Field(
         ..., description='Подробный текст ошибки от ЕРИР', example='В разаллокации присутствует более одного договора'
     )
-    responseDt: Optional[datetime] = Field(..., description='Дата-время ответа, полученного от ЕРИР')
+    responseDt: datetime = Field(..., description='Дата-время ответа, полученного от ЕРИР')
 
 
 class FiasResponse(BaseModel):
@@ -924,30 +956,17 @@ class FiasResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(..., description='Идентификатор адресного объекта')
+    id: str = Field(..., description='Идентификатор адресного объекта')
     parentId: Optional[str] = Field(None, description='Идентификатор родительского объекта')
-    objectGuid: Optional[UUID] = Field(
+    objectGuid: UUID = Field(
         ...,
         description='Глобальный уникальный идентификатор адресного объекта типа UUID',
         example='3fa85f64-5717-4562-b3fc-2c963f66afa6',
     )
-    name: Optional[str] = Field(..., description='Краткое наименование типа объекта', example='город')
-    fullName: Optional[str] = Field(
+    name: str = Field(..., description='Краткое наименование типа объекта', example='город')
+    fullName: str = Field(
         ..., description='Полное наименование адресного объекта', example='Нижний Новгород'
     )
-
-
-class ContractStatus(Enum):
-    Created = 'Created'
-    RegistrationRequired = 'RegistrationRequired'
-    Registering = 'Registering'
-    Active = 'Active'
-    RegistrationError = 'RegistrationError'
-    Testing = 'Testing'
-    DeletionRequired = 'DeletionRequired'
-    Deleting = 'Deleting'
-    DeletionError = 'DeletionError'
-    Deleted = 'Deleted'
 
 
 class CreatedFinalContractResponse(BaseModel):
@@ -969,14 +988,14 @@ class CreatedFinalContractResponse(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Type7 = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
     )
-    subjectType: Optional[SubjectType] = Field(
+    subjectType: Optional[ContractSubjectType] = Field(
         None, description='Значение из справочника "Сведения о предмете договора"'
     )
-    actionType: Optional[ActionType] = Field(
+    actionType: Optional[MediationActionType] = Field(
         None, description='Значение из справочника "Типы взаимодействия сторон посреднического договора"'
     )
     parentMainContractId: Optional[str] = Field(
@@ -987,13 +1006,18 @@ class CreatedFinalContractResponse(BaseModel):
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
     id: str = Field(..., description='Id доходного договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
-    status: Status3 = Field(
+    status: ContractStatus = Field(
         ...,
         description='Статус доходного договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
-    contractorId: str = Field(..., description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
-    contractorName: str = Field(..., description='Наименование исполнителя', example='ООО "Ромашка"')
+    # TODO: вернуть, когда МС починит возврат этих полей
+    # contractorId: str = Field(..., description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    # contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
+    # contractorName: str = Field(..., description='Наименование исполнителя', example='ООО "Ромашка"')
+    #
+    contractorId: Optional[str] = Field(None, description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
+    contractorName: Optional[str] = Field(None, description='Наименование исполнителя', example='ООО "Ромашка"')
 
 
 class FinalContractResponse(BaseModel):
@@ -1009,7 +1033,7 @@ class FinalContractResponse(BaseModel):
         'договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
     expirationDate: Optional[date] = Field(
         None, description='Дата окончания срока действия договора', example='2023-05-01'
     )
@@ -1017,7 +1041,7 @@ class FinalContractResponse(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -1038,11 +1062,11 @@ class FinalContractResponse(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    clientId: Optional[str] = Field(
+    clientId: str = Field(
         ..., description='Id контрагента-заказчика по доходному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
     partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    status: Optional[ContractStatus] = Field(
+    status: ContractStatus = Field(
         ...,
         description='Статус доходного договора в ОРД<p>Members:</p>'
         '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, '
@@ -1059,9 +1083,12 @@ class FinalContractResponse(BaseModel):
         '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
         '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
-    contractorId: Optional[str] = Field(..., description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    contractorInn: Optional[str] = Field(..., description='ИНН исполнителя', example='7722643959')
-    contractorName: Optional[str] = Field(..., description='Наименование исполнителя', example='ООО "Ромашка"')
+    contractorId: str = Field(..., description='Id исполнителя', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    # TODO: вернуть, когда МС починит возврат этих полей
+    # contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
+    # contractorName: str = Field(..., description='Наименование исполнителя', example='ООО "Ромашка"')
+    contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
+    contractorName: Optional[str] = Field(None, description='Наименование исполнителя', example='ООО "Ромашка"')
     cid: Optional[str] = Field(
         None, description='Cid доходного договора', example='763acd99-687b-46cd-8f40-45eced77413c'
     )
@@ -1136,7 +1163,7 @@ class GetCreativeStatusWebApiDto(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    creativeId: Optional[str] = Field(..., description='Идентификатор креатива в ОРД')
+    creativeId: str = Field(..., description='Идентификатор креатива в ОРД')
 
 
 class GetFinalContractsRequest(BaseModel):
@@ -1179,14 +1206,6 @@ class GetInitialContractRequest(BaseModel):
     status: Optional[ContractStatus] = Field(None, description='Фильтр по статусу изначального договора')
 
 
-class InvoicelessPeriodStatus(Enum):
-    Creating = 'Creating'
-    RegistrationRequired = 'RegistrationRequired'
-    Registering = 'Registering'
-    Active = 'Active'
-    RegistrationError = 'RegistrationError'
-
-
 class GetInvoicelessPeriodsRequest(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -1196,21 +1215,6 @@ class GetInvoicelessPeriodsRequest(BaseModel):
     dateStart: Optional[date] = Field(None, description='Начало диапазона дат периодов статистики')
     dateEnd: Optional[date] = Field(None, description='Конец диапазона дат периодов статистики')
     status: Optional[InvoicelessPeriodStatus] = Field(None, description='Фильтр по статусу акта')
-
-
-class InvoiceStatus(Enum):
-    Creating = 'Creating'
-    Created = 'Created'
-    RegistrationRequired = 'RegistrationRequired'
-    Transferring = 'Transferring'
-    Registering = 'Registering'
-    Active = 'Active'
-    RegistrationError = 'RegistrationError'
-    DeletionRequired = 'DeletionRequired'
-    DeletionTransferring = 'DeletionTransferring'
-    Deleting = 'Deleting'
-    DeletionError = 'DeletionError'
-    Deleted = 'Deleted'
 
 
 class GetInvoicesWebApiDto(BaseModel):
@@ -1241,6 +1245,61 @@ class GetOuterContractsRequest(BaseModel):
     clientId: Optional[str] = Field(None, description='Фильтр по Id контрагента-заказчика по расходному договору в ОРД')
 
 
+class CreatedInitialContractResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    number: Optional[str] = Field(
+        None,
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        example='Тест',
+    )
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
+    amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
+    isAgentActingForPublisher: Optional[bool] = Field(
+        None, description='Направление денежных средств в сторону заказчика', example=True
+    )
+    type: ContractType = Field(
+        ...,
+        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+    )
+    subjectType: Optional[ContractSubjectType] = Field(
+        None, description='Значение из справочника "Сведения о предмете договора"'
+    )
+    actionType: Optional[MediationActionType] = Field(
+        None, description='Значение из справочника "Типы взаимодействия сторон посреднического договора"'
+    )
+    parentMainContractId: Optional[str] = Field(
+        None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
+    )
+    contractorId: str = Field(
+        ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    )
+    clientId: str = Field(
+        ..., description='Id контрагента-заказчика по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    )
+    finalContractId: str = Field(..., description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    id: str = Field(..., description='Id изначального договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    status: ContractStatus = Field(
+        ...,
+        description='Статус изначального договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
+    # TODO: вернуть, когда МС починит возврат этих полей
+    # contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
+    # contractorName: str = Field(..., description='Наименование исполнителя', example='ООО «Ромашка»')
+    # clientInn: str = Field(..., description='ИНН заказчика', example='7722643959')
+    # clientName: str = Field(..., description='Наименование заказчика', example='ООО «Ромашка»')
+    contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
+    contractorName: Optional[str] = Field(None, description='Наименование исполнителя', example='ООО «Ромашка»')
+    clientInn: Optional[str] = Field(None, description='ИНН заказчика', example='7722643959')
+    clientName: Optional[str] = Field(None, description='Наименование заказчика', example='ООО «Ромашка»')
+
+
 class InitialContractResponse(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -1260,8 +1319,8 @@ class InitialContractResponse(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
-        None,
+    type: ContractType = Field(
+        ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
         '<li><i>MediationContract</i> - Посреднический договор</li>'
@@ -1281,18 +1340,18 @@ class InitialContractResponse(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    contractorId: Optional[str] = Field(
-        None, description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    contractorId: str = Field(
+        ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
-    clientId: Optional[str] = Field(
-        None, description='Id контрагента-заказчика по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    clientId: str = Field(
+        ..., description='Id контрагента-заказчика по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
-    finalContractId: Optional[str] = Field(
-        None, description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA'
+    finalContractId: str = Field(
+        ..., description='Id или Cid доходного договора', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    id: Optional[str] = Field(None, description='Id изначального договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
-    status: Optional[ContractStatus] = Field(
-        None,
+    id: str = Field(..., description='Id изначального договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    status: ContractStatus = Field(
+        ...,
         description='Статус изначального договора в ОРД<p>Members:</p>'
         '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, '
         'сущность сразу переходит в статус [Ожидает регистрации].</li>'
@@ -1307,6 +1366,11 @@ class InitialContractResponse(BaseModel):
         '<li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li>'
         '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
+    # TODO: вернуть, когда МС починит возврат этих полей
+    # contractorInn: str = Field(..., description='ИНН исполнителя', example='7722643959')
+    # contractorName: str = Field(..., description='Наименование исполнителя', example='ООО «Ромашка»')
+    # clientInn: str = Field(..., description='ИНН заказчика', example='7722643959')
+    # clientName: str = Field(..., description='Наименование заказчика', example='ООО «Ромашка»')
     contractorInn: Optional[str] = Field(None, description='ИНН исполнителя', example='7722643959')
     contractorName: Optional[str] = Field(None, description='Наименование исполнителя', example='ООО «Ромашка»')
     clientInn: Optional[str] = Field(None, description='ИНН заказчика', example='7722643959')
@@ -1315,7 +1379,7 @@ class InitialContractResponse(BaseModel):
         None, description='Cid изначального договора', example='763acd99-687b-46cd-8f40-45eced77413c'
     )
     erirValidationError: Optional[ErirValidationError] = None
-    date: Optional[date] = Field(None, description='Дата заключения договора', example='2023-04-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
 
 
 class InvoiceInitialContractItem(BaseModel):
@@ -1324,11 +1388,11 @@ class InvoiceInitialContractItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    initialContractId: Optional[str] = Field(
-        None, description='Id или Cid изначального договора', example='CT7ae_PK9R0hCdAb-NfHH2fN'
+    initialContractId: str = Field(
+        ..., description='Id или Cid изначального договора', example='CT7ae_PK9R0hCdAb-NfHH2fN'
     )
-    amount: Optional[float] = Field(
-        None, description='Стоимость услуг по изначальному договору в составе акта в руб.', example=1500
+    amount: float = Field(
+        ..., description='Стоимость услуг по изначальному договору в составе акта в руб.', example=1500
     )
 
 
@@ -1341,8 +1405,8 @@ class InvoiceResponse(BaseModel):
     number: Optional[str] = Field(
         None, description='Номер акта. Допускается null, в таком случае считаем, что акт без номера', example='Тест'
     )
-    contractorRole: Optional[InvoicePartyRole] = Field(
-        None,
+    contractorRole: InvoicePartyRole = Field(
+        ...,
         description='Роль исполнителя в акте<p>Members:</p>'
         '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
         '<li><i>Ors</i> - Оператор рекламной системы</li>'
@@ -1350,8 +1414,8 @@ class InvoiceResponse(BaseModel):
         '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Ra',
     )
-    clientRole: Optional[InvoicePartyRole] = Field(
-        None,
+    clientRole: InvoicePartyRole = Field(
+        ...,
         description='Роль заказчика в акте<p>Members:</p>'
         '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
         '<li><i>Ors</i> - Оператор рекламной системы</li>'
@@ -1359,17 +1423,17 @@ class InvoiceResponse(BaseModel):
         '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Rd',
     )
-    amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.', example=100)
-    startDate: Optional[date] = Field(None, description='Дата начала оказания услуг по акту', example='2022-12-01')
-    endDate: Optional[date] = Field(
-        None, description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
+    amount: float = Field(..., description='Общая стоимость по акту в руб.', example=100)
+    startDate: date = Field(..., description='Дата начала оказания услуг по акту', example='2022-12-01')
+    endDate: date = Field(
+        ..., description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
     )
-    finalContractId: Optional[str] = Field(
-        None, description='Id доходного договора в ОРД', example='CT3at_SU7y3ECdCb-AfHV3sA'
+    finalContractId: str = Field(
+        ..., description='Id доходного договора в ОРД', example='CT3at_SU7y3ECdCb-AfHV3sA'
     )
-    id: Optional[str] = Field(None, description='Идентификатор акта', example='INUFNs1ibfg0erF1PNpTOAyg')
-    status: Optional[InvoiceStatus] = Field(
-        None,
+    id: str = Field(..., description='Идентификатор акта', example='INUFNs1ibfg0erF1PNpTOAyg')
+    status: InvoiceStatus = Field(
+        ...,
         description='Статус акта в ОРД<p>Members:</p>'
         '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
         '<li><i>Created</i> - Черновик (загрузка в ОРД завершена), нужно послать в ЕРИР</li>'
@@ -1390,7 +1454,7 @@ class InvoiceResponse(BaseModel):
         '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
-    date: Optional[date] = Field(None, description='Дата акта', example='2022-12-31')
+    date: date = Field(..., description='Дата акта', example='2022-12-31')
 
 
 class InvoiceStatisticsByPlatformsItem(BaseModel):
@@ -1399,27 +1463,24 @@ class InvoiceStatisticsByPlatformsItem(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    erid: Optional[str] = Field(None, description='Маркер креатива', example='Pb3MmBtzsrbL19RgOqsipS1ANueaCUzJSdpiY5g')
+    erid: str = Field(..., description='Маркер креатива', example='Pb3MmBtzsrbL19RgOqsipS1ANueaCUzJSdpiY5g')
     platformUrl: Optional[str] = Field(None, description='URL площадки', example='https://example.ru')
     platformName: Optional[str] = Field(None, description='Наименование площадки', example='test')
     platformType: Optional[PlatformType] = Field(
         None, description='Значение из справочника "Типы площадок"', example='Site'
     )
     platformOwnedByAgency: Optional[bool] = Field(None, description='Принадлежит ли площадка агентству', example=False)
-    impsPlan: Optional[int] = Field(None, description='Количество показов по акту', example=100)
-    impsFact: Optional[int] = Field(None, description='Количество показов фактическое', example=100)
-    startDatePlan: Optional[date] = Field(None, description='Дата начала показов по акту', example='2022-12-01')
-    startDateFact: Optional[date] = Field(None, description='Дата начала показов фактическая', example='2022-12-01')
-    endDatePlan: Optional[date] = Field(None, description='Дата окончания показов по акту', example='2022-12-31')
-    endDateFact: Optional[date] = Field(None, description='Дата окончания показов фактическая', example='2022-12-31')
-    amount: Optional[float] = Field(
-        None, description='Стоимость услуг по показу креатива на данной площадке в руб.', example=100
-    )
-    price: Optional[float] = Field(
-        None, description='Стоимость единицы оказания услуг на данной площадке в руб.', example=10
-    )
-    initialContractId: Optional[str] = Field(
-        None, description='Id или Cid изначального договора', example='CT7ae_PK9R0hCdAb-NfHH2fN'
+    type: Optional[Type19] = Field(None, description='Тип рекламной кампании', example='CPM')
+    impsPlan: int = Field(..., description='Количество показов по акту', example=100)
+    impsFact: int = Field(..., description='Количество показов фактическое', example=100)
+    startDatePlan: date = Field(..., description='Дата начала показов по акту', example='2022-12-01')
+    startDateFact: date = Field(..., description='Дата начала показов фактическая', example='2022-12-01')
+    endDatePlan: date = Field(..., description='Дата окончания показов по акту', example='2022-12-31')
+    endDateFact: date = Field(..., description='Дата окончания показов фактическая', example='2022-12-31')
+    amount: float = Field(..., description='Стоимость услуг по показу креатива на данной площадке в руб.', example=100)
+    price: float = Field(..., description='Стоимость единицы оказания услуг на данной площадке в руб.', example=10)
+    initialContractId: str = Field(
+        ..., description='Id или Cid изначального договора', example='CT7ae_PK9R0hCdAb-NfHH2fN'
     )
 
 
@@ -1429,8 +1490,8 @@ class InvoiceSummaryResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(..., description='Id акта в ОРД', example='INUFNs1ibfg0erF1PNpTOAyg')
-    status: Optional[InvoiceStatus] = Field(
+    id: str = Field(..., description='Id акта в ОРД', example='INUFNs1ibfg0erF1PNpTOAyg')
+    status: InvoiceStatus = Field(
         ...,
         description='Статус акта в ОРД<p>Members:</p>'
         '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
@@ -1451,16 +1512,16 @@ class InvoiceSummaryResponse(BaseModel):
         '<li><i>DeletionError</i>List[ - Ошибка удаления в ЕРИР (любого этапа)</li>'
         '<li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
     )
-    amount: Optional[float] = Field(..., description='Общая стоимость по акту в руб.', example=100)
-    initialContractsCount: Optional[int] = Field(..., description='Кол-во изначальных договоров в акте', example=12)
-    initialContractsAmount: Optional[float] = Field(
+    amount: float = Field(..., description='Общая стоимость по акту в руб.', example=100)
+    initialContractsCount: int = Field(..., description='Кол-во изначальных договоров в акте', example=12)
+    initialContractsAmount: float = Field(
         ..., description='Сумма стоимостей услуг по всем изначальным договорам в составе акта в руб.', example=1000
     )
-    creativesCount: Optional[int] = Field(..., description='Кол-во креативов в акте', example=50)
-    platformsCount: Optional[int] = Field(..., description='Кол-во уникальных площадок в акте', example=500)
-    impsFactCount: Optional[int] = Field(..., description='Общее число фактических показов', example=1500)
-    impsPlanCount: Optional[int] = Field(..., description='Общее число показов по акту', example=1400)
-    impsAmount: Optional[float] = Field(..., description='Общая стоимость показов по акту', example=2000)
+    creativesCount: int = Field(..., description='Кол-во креативов в акте', example=50)
+    platformsCount: int = Field(..., description='Кол-во уникальных площадок в акте', example=500)
+    impsFactCount: int = Field(..., description='Общее число фактических показов', example=1500)
+    impsPlanCount: int = Field(..., description='Общее число показов по акту', example=1400)
+    impsAmount: float = Field(..., description='Общая стоимость показов по акту', example=2000)
 
 
 class InvoicelessStatisticsByPlatforms(BaseModel):
@@ -1493,9 +1554,9 @@ class InvoicelessStatisticsResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    id: Optional[str] = Field(None, description='Id акта в ОРД')
-    status: Optional[InvoicelessPeriodStatus] = Field(
-        None,
+    id: str = Field(..., description='Id акта в ОРД')
+    status: InvoicelessPeriodStatus = Field(
+        ...,
         description='Статус периода в ОРД<p>Members:</p>'
         '<ul><li><i>Creating</i> - Идет загрузка в ОРД (технический статус)</li>'
         '<li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li>'
@@ -1505,13 +1566,60 @@ class InvoicelessStatisticsResponse(BaseModel):
         '<li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li></ul>',
     )
     erirValidationError: Optional[ErirValidationError] = None
-    year: Optional[int] = Field(None, description='Год периода')
-    month: Optional[int] = Field(None, description='Месяц периода')
-    amount: Optional[float] = Field(None, description='Общая стоимость по акту в руб.')
-    creativesCount: Optional[int] = Field(None, description='Кол-во креативов в акте')
-    platformsCount: Optional[int] = Field(None, description='Кол-во уникальных площадок в акте')
-    impsFactCount: Optional[int] = Field(None, description='Общее число фактических показов')
-    impsPlanCount: Optional[int] = Field(None, description='Общее число показов по акту')
+    year: int = Field(..., description='Год периода')
+    month: int = Field(..., description='Месяц периода')
+    amount: float = Field(..., description='Общая стоимость по акту в руб.')
+    creativesCount: int = Field(..., description='Кол-во креативов в акте')
+    platformsCount: int = Field(..., description='Кол-во уникальных площадок в акте')
+    impsFactCount: int = Field(..., description='Общее число фактических показов')
+    impsPlanCount: int = Field(..., description='Общее число показов по акту')
+
+
+class CreatedOuterContractResponse(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        alias_generator = capitalize
+        allow_population_by_field_name = True
+
+    number: Optional[str] = Field(
+        None,
+        description='Номер договора, без начального символа № и т.п. Допускается null, в таком случае считаем, что договор без номера',
+        example='Тест',
+    )
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
+    expirationDate: Optional[date] = Field(
+        None, description='Дата окончания срока действия договора', example='2023-05-01'
+    )
+    amount: Optional[float] = Field(None, description='Стоимость услуг по договору в руб.', example=100)
+    isAgentActingForPublisher: Optional[bool] = Field(
+        None, description='Направление денежных средств в сторону заказчика', example=True
+    )
+    type: ContractType = Field(
+        ...,
+        description='Значение из справочника "Типы договоров"<p>Members:</p><ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li><li><i>MediationContract</i> - Посреднический договор</li><li><i>AdditionalAgreement</i> - Дополнительное соглашение к основному договору</li><li><i>SelfPromotionContract</i> - Самореклама</li><li><i>VirtualFinalContract</i> - Служебный договор, не доступен для создания ни через интерфейсе, ни через WebApi, не передается в ЕРИР</li><li><i>EcidContract</i> - Договор, про который мы знаем только его ecid; не может быть родительским договором, дополнительным соглашением и т.д.; не регистрируется в ЕРИР</li></ul>',
+    )
+    subjectType: Optional[ContractSubjectType] = Field(
+        None, description='Значение из справочника "Сведения о предмете договора"'
+    )
+    actionType: Optional[MediationActionType] = Field(
+        None, description='Значение из справочника "Типы взаимодействия сторон посреднического договора"'
+    )
+    parentMainContractId: Optional[str] = Field(
+        None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
+    )
+    contractorId: str = Field(
+        ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
+    )
+    partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    isRegReport: bool = Field(
+        ...,
+        description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен регистрировать креативы и предоставлять разаллокацию по ним в актах',
+    )
+    id: str = Field(..., description='Id договора в ОРД', example='CT0N4ufC76TEu1xBEIwJ3CaA')
+    status: ContractStatus = Field(
+        ...,
+        description='Статус договора в ОРД<p>Members:</p><ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность сразу переходит в статус [Ожидает регистрации].</li><li><i>RegistrationRequired</i> - Ожидает регистрации в ЕРИР</li><li><i>Registering</i> - Идет регистрация, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>Active</i> - Активный</li><li><i>RegistrationError</i> - Ошибка регистрации ЕРИР (любого этапа)</li><li><i>Testing</i> - Тестирование - для тестирования массовой загрузки креативов на продовом контуре</li><li><i>DeletionRequired</i> - Ожидает удаления в ЕРИР</li><li><i>Deleting</i> - Идет удаление, быстрый контроль ЕРИР пройден, ждем уточненного ответа</li><li><i>DeletionError</i> - Ошибка удаления в ЕРИР (любого этапа)</li><li><i>Deleted</i> - Удален в ЕРИР</li></ul>',
+    )
 
 
 class OuterContractResponse(BaseModel):
@@ -1527,7 +1635,7 @@ class OuterContractResponse(BaseModel):
         'что договор без номера',
         example='Тест',
     )
-    date: Optional[date] = Field(..., description='Дата заключения договора', example='2023-04-01')
+    date: date = Field(..., description='Дата заключения договора', example='2023-04-01')
     expirationDate: Optional[date] = Field(
         None, description='Дата окончания срока действия договора', example='2023-05-01'
     )
@@ -1535,7 +1643,7 @@ class OuterContractResponse(BaseModel):
     isAgentActingForPublisher: Optional[bool] = Field(
         None, description='Направление денежных средств в сторону заказчика', example=True
     )
-    type: Optional[ContractType] = Field(
+    type: ContractType = Field(
         ...,
         description='Значение из справочника "Типы договоров"<p>Members:</p>'
         '<ul><li><i>ServiceAgreement</i> - Договор оказания услуг</li>'
@@ -1556,16 +1664,16 @@ class OuterContractResponse(BaseModel):
     parentMainContractId: Optional[str] = Field(
         None, description='Id основного договора для доп.соглашения', example='CT0N4ufC76TEu1xBEIwJ3CaA'
     )
-    contractorId: Optional[str] = Field(
+    contractorId: str = Field(
         ..., description='Id контрагента-исполнителя по изначальному договору', example='CLhOO5UT6sIk-fIRu-QEsEuQ'
     )
-    partnerId: Optional[str] = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
-    isRegReport: Optional[bool] = Field(
+    partnerId: str = Field(None, description='Id партнера', example='CLhOO5UT6sIk-fIRu-QEsEuQ')
+    isRegReport: bool = Field(
         ...,
         description='Признак того, что исполнитель по договору (Агентство, к которому относится договор) должен '
         'регистрировать креативы и предоставлять разаллокацию по ним в актах',
     )
-    status: Optional[ContractStatus] = Field(
+    status: ContractStatus = Field(
         ...,
         description='Статус договора в ОРД<p>Members:</p>'
         '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность '
@@ -1649,9 +1757,9 @@ class PlatformResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    name: Optional[str] = Field(None, description='Наименование площадки', example='Тестовая площадка')
-    type: Optional[PlatformType] = Field(
-        None,
+    name: str = Field(..., description='Наименование площадки', example='Тестовая площадка')
+    type: PlatformType = Field(
+        ...,
         description='Тип площадки<p>Members:</p>'
         '<ul><li><i>Site</i> - Сайт</li>'
         '<li><i>Application</i> - Приложение</li>'
@@ -1659,8 +1767,8 @@ class PlatformResponse(BaseModel):
         'начиная с ЕРИР v.5</li></ul>',
     )
     url: Optional[str] = Field(None, description='Url площадки', example='https://example.com')
-    isOwner: Optional[bool] = Field(None, description='Признак принадлежности агентству')
-    id: Optional[str] = Field(None, description='Идентификатор площадки', example='PLCqwqXBhLMk6eTsIQoUT48A')
+    isOwner: bool = Field(..., description='Признак принадлежности агентству')
+    id: str = Field(..., description='Идентификатор площадки', example='PLCqwqXBhLMk6eTsIQoUT48A')
 
 # SupplementInvoiceRequest
 class SupplementInvoiceWebApiDto(BaseModel):
@@ -1678,27 +1786,21 @@ class SupplementInvoiceWebApiDto(BaseModel):
     )
 
 
-class TargetAudienceParamType(Enum):
-    Geo = 'geo'
-    Sex = 'sex'
-    Age = 'age'
-
-
 class TargetAudienceParam(BaseModel):
     class Config:
         extra = Extra.forbid
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    type: Optional[TargetAudienceParamType] = Field(
-        None,
+    type: TargetAudienceParamType = Field(
+        ...,
         description='Тип параметра: регион, пол, возраст<p>Members:</p>'
         '<ul><li><i>Geo</i> - Код региона</li>'
         '<li><i>Sex</i> - Пол</li>'
         '<li><i>Age</i> - Возраст</li></ul>',
     )
-    values: Optional[List[str]] = Field(
-        None,
+    values: List[str] = Field(
+        ...,
         description='Коллекция значений\n'
         '<ul><li>Для типа "geo":\r\n<ul><li>Максимальная длина: 2</li>'
         '<li>Длина строки 2, может содержать цифры 0-9</li>'
@@ -1722,8 +1824,8 @@ class ClientResponse(BaseModel):
         allow_population_by_field_name = True
 
     createMode: Optional[ClientRelationshipType] = Field(None, description='Тип отношения заказчика к агентству')
-    legalForm: Optional[LegalForm] = Field(
-        None,
+    legalForm: LegalForm = Field(
+        ...,
         description='Юридическая форма заказчика<p>Members:</p>'
         '<ul><li><i>JuridicalPerson</i> - Юрлицо РФ</li>'
         '<li><i>IndividualEntrepreneur</i> - Индивидуальный предприниматель РФ</li>'
@@ -1731,20 +1833,20 @@ class ClientResponse(BaseModel):
         '<li><i>InternationalJuridicalPerson</i> - Иностранное юрлицо</li>'
         '<li><i>InternationalPhysicalPerson</i> - Иностранное физлицо</li></ul>',
     )
-    inn: Optional[str] = Field(
-        None,
+    inn: str = Field(
+        ...,
         description='Для РФ-контрагентов - ИНН. Для иностранных физ.и юр.лиц - номер налогоплательщика либо его '
         'аналог в стране регистрации',
         example='1234567890',
     )
-    name: Optional[str] = Field(None, description='Наименование контрагента', example='Наименование контрагента')
+    name: str = Field(..., description='Наименование контрагента', example='Наименование контрагента')
     mobilePhone: Optional[str] = Field(None, description='Номер мобильного телефона', example='79999999999')
     epayNumber: Optional[str] = Field(None, description='Номер электронного средства платежа')
     regNumber: Optional[str] = Field(None, description='Регистрационный номер либо его аналог')
     oksmNumber: Optional[str] = Field(None, description='Код страны регистрации юр. лица в соответствии с ОКСМ')
-    id: Optional[str] = Field(None, description='Id контрагента в ОРД', example='CLfFpx6Ee4qkawO6JwEDJqFQ')
-    status: Optional[CounterpartyStatus] = Field(
-        None,
+    id: str = Field(..., description='Id контрагента в ОРД', example='CLfFpx6Ee4qkawO6JwEDJqFQ')
+    status: CounterpartyStatus = Field(
+        ...,
         description='Статус контрагента в ОРД<p>Members:</p>'
         '<ul><li><i>Created</i> - Создан в БД (наша валидация пройдена). Пока не используется, сущность '
         'сразу переходит в статус [Ожидает регистрации].</li>'
@@ -1806,11 +1908,11 @@ class CreateCreativeRequest(BaseModel):
         'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='AAADgMygKIOkyGuPfl83W1ow',
     )
-    isSelfPromotion: Optional[bool] = Field(
-        None, description='Является креативом саморекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    isSelfPromotion: bool = Field(
+        ..., description='Является креативом саморекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    type: Optional[CampaignType] = Field(
-        None,
+    type: CampaignType = Field(
+        ...,
         description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
         '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
@@ -1818,8 +1920,8 @@ class CreateCreativeRequest(BaseModel):
         '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
         '<li><i>Other</i> - Иное</li></ul>',
     )
-    form: Optional[CreativeForm] = Field(
-        None,
+    form: CreativeForm = Field(
+        ...,
         description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
         '<ul><li><i>Banner</i> - Баннер</li>'
@@ -1846,8 +1948,8 @@ class CreateCreativeRequest(BaseModel):
         '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test.ru'],
     )
-    description: Optional[str] = Field(
-        None,
+    description: str = Field(
+        ...,
         description='Общее описание объекта рекламирования\r\n'
         '<ul><li>Минимальная длина: 1</li>'
         '<li>Максимальная длина: 1000</li>'
@@ -1861,11 +1963,11 @@ class CreateCreativeRequest(BaseModel):
         description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно '
         'для заполнения</p>',
     )
-    isNative: Optional[bool] = Field(
-        None, description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    isNative: bool = Field(
+        ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    isSocial: Optional[bool] = Field(
-        None, description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    isSocial: bool = Field(
+        ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     kktuCodes: Optional[List[str]] = Field(
         None,
@@ -1916,7 +2018,7 @@ class CreateInvoiceRequest(BaseModel):
     number: Optional[str] = Field(
         None, description='Номер акта. Допускается null, в таком случае считаем, что акт без номера', example='Тест'
     )
-    contractorRole: Optional[InvoicePartyRole] = Field(
+    contractorRole: InvoicePartyRole = Field(
         ...,
         description='Роль исполнителя в акте<p>Members:</p>'
         '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
@@ -1925,7 +2027,7 @@ class CreateInvoiceRequest(BaseModel):
         '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Ra',
     )
-    clientRole: Optional[InvoicePartyRole] = Field(
+    clientRole: InvoicePartyRole = Field(
         ...,
         description='Роль заказчика в акте<p>Members:</p>'
         '<ul><li><i>Rr</i> - Рекламораспространитель</li>'
@@ -1934,12 +2036,12 @@ class CreateInvoiceRequest(BaseModel):
         '<li><i>Ra</i> - Рекламное агентство</li></ul>',
         example='Rd',
     )
-    amount: Optional[float] = Field(..., description='Общая стоимость по акту в руб.', example=100)
-    startDate: Optional[date] = Field(..., description='Дата начала оказания услуг по акту', example='2022-12-01')
-    endDate: Optional[date] = Field(
+    amount: float = Field(..., description='Общая стоимость по акту в руб.', example=100)
+    startDate: date = Field(..., description='Дата начала оказания услуг по акту', example='2022-12-01')
+    endDate: date = Field(
         ..., description='Дата окончания оказания услуг по акту (включительно)', example='2022-12-31'
     )
-    finalContractId: Optional[str] = Field(
+    finalContractId: str = Field(
         ..., description='Id доходного договора в ОРД', example='CT3at_SU7y3ECdCb-AfHV3sA'
     )
     initialContractsData: Optional[List[InvoiceInitialContractItem]] = Field(
@@ -1948,7 +2050,7 @@ class CreateInvoiceRequest(BaseModel):
     statisticsByPlatforms: Optional[List[InvoiceStatisticsByPlatformsItem]] = Field(
         None, description='Статистика по площадкам (массив)'
     )
-    date: Optional[date] = Field(..., description='Дата акта', example='2022-12-31')
+    date: date = Field(..., description='Дата акта', example='2022-12-31')
 
 
 class CreateInvoicelessStatisticsRequest(BaseModel):
@@ -1968,7 +2070,7 @@ class CreativeGroupResponse(BaseModel):
         alias_generator = capitalize
         allow_population_by_field_name = True
 
-    creativeGroupId: Optional[str] = Field(
+    creativeGroupId: str = Field(
         ..., description='Id группы креативов\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     finalContractId: Optional[str] = Field(
@@ -1983,11 +2085,11 @@ class CreativeGroupResponse(BaseModel):
         '<p style="color: blue">Поле условно-обязательно для заполнения. '
         'Для креатива саморекламы не должно заполняться</p>',
     )
-    isSelfPromotion: Optional[bool] = Field(
+    isSelfPromotion: bool = Field(
         ...,
         description='Креативы относятся к саморекламе\r\n<p style="color: blue">Поле обязательно для заполнения</p>',
     )
-    creativeGroupName: Optional[str] = Field(
+    creativeGroupName: str = Field(
         ..., description='Наименование\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     startDate: Optional[date] = Field(
@@ -1997,7 +2099,7 @@ class CreativeGroupResponse(BaseModel):
         None,
         description='Дата окончания рекламной компании\r\n<p style="color: blue">Поле обязательно для заполнения</p>',
     )
-    type: Optional[CampaignType] = Field(
+    type: CampaignType = Field(
         ...,
         description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
@@ -2006,7 +2108,7 @@ class CreativeGroupResponse(BaseModel):
         '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
         '<li><i>Other</i> - Иное</li></ul>',
     )
-    form: Optional[CreativeForm] = Field(
+    form: CreativeForm = Field(
         ...,
         description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
@@ -2026,10 +2128,10 @@ class CreativeGroupResponse(BaseModel):
         '<li><i>TextGraphicAudioVideoBlock</i> - Текстово-графический блок с аудио и видео</li>'
         '<li><i>BannerHtml5</i> - </li></ul>',
     )
-    isSocial: Optional[bool] = Field(
+    isSocial: bool = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    isNative: Optional[bool] = Field(
+    isNative: bool = Field(
         ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     kktuCodes: Optional[List[str]] = Field(
@@ -2040,7 +2142,7 @@ class CreativeGroupResponse(BaseModel):
     targetAudienceParams: Optional[List[TargetAudienceParam]] = Field(
         None, description='Параметры целевой аудитории\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    description: Optional[str] = Field(
+    description: str = Field(
         ...,
         description='Общее описание объекта рекламирования\r\n'
         '<ul><li>Минимальная длина: 1</li>'
@@ -2071,13 +2173,13 @@ class CreativeResponse(BaseModel):
         allow_population_by_field_name = True
 
     id: str = Field(..., description='Id креатива в ОРД')
-    erid: Optional[str] = Field(
+    erid: str = Field(
         ...,
         description='Маркер креатива для добавления в кликовые ссылки. Формируется '
         'в момент регистрации креатива в ЕРИР, в дальнейшем передаётся '
         'Агентствам',
     )
-    status: Optional[CreativeStatus] = Field(
+    status: CreativeStatus = Field(
         ...,
         description='Статус креатива<p>Members:</p>'
         '<ul><li><i>Creating</i> - Идет загрузка в ОРД (элемент фида создан, но медиа-данные '
@@ -2136,10 +2238,10 @@ class CreativeResponse(BaseModel):
         'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='AAADgMygKIOkyGuPfl83W1ow',
     )
-    isSelfPromotion: Optional[bool] = Field(
+    isSelfPromotion: bool = Field(
         ..., description='Является креативом саморекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    type: Optional[CampaignType] = Field(
+    type: CampaignType = Field(
         ...,
         description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
@@ -2148,7 +2250,7 @@ class CreativeResponse(BaseModel):
         '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
         '<li><i>Other</i> - Иное</li></ul>',
     )
-    form: Optional[CreativeForm] = Field(
+    form: CreativeForm = Field(
         ...,
         description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
@@ -2181,7 +2283,7 @@ class CreativeResponse(BaseModel):
         description='Целевая ссылка (не использовать, присутствует для обратной совместимости API)',
         example='http://test.ru',
     )
-    description: Optional[str] = Field(
+    description: str = Field(
         ...,
         description='Общее описание объекта рекламирования\r\n'
         '<ul><li>Минимальная длина: 1</li>'
@@ -2196,10 +2298,10 @@ class CreativeResponse(BaseModel):
         description='Параметры целевой аудитории рекламы\r\n<p style="color: lightblue">Поле не обязательно '
         'для заполнения</p>',
     )
-    isNative: Optional[bool] = Field(
+    isNative: bool = Field(
         ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
-    isSocial: Optional[bool] = Field(
+    isSocial: bool = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     kktuCodes: List[str] = Field(
@@ -2207,7 +2309,7 @@ class CreativeResponse(BaseModel):
         description="Список кодов ККТУ\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
         example = '["30.1.2", "12.2.3"]'
     )
-    mediaData: Optional[List[CreativeMediaDataItem]] = Field(
+    mediaData: List[CreativeMediaDataItem] = Field(
         ...,
         description='Медиаданные креатива (массив)\n\r\n'
         'Должен быть добавлен хотя бы один элемент при значениях поля form:\r\n'
@@ -2226,7 +2328,7 @@ class CreativeResponse(BaseModel):
         '<li>VideoBroadcast</li></ul>'
         '<p style="color: blue">Поле условно-обязательно для заполнения</p>',
     )
-    textData: Optional[List[CreativeTextDataItemWebApiDto]] = Field(
+    textData: List[CreativeTextDataItemWebApiDto] = Field(
         ...,
         description='Текстовые медиаданные креатива (массив)\n\r\n'
         'Должен быть добавлен хотя бы один элемент при значениях поля form:\r\n'
@@ -2300,12 +2402,12 @@ class SimpleEditCreativeRequest(BaseModel):
         'для заполнения. Для креатива саморекламы не должно заполняться</p>',
         example='CTRl8rP7sBCU6KfyeCWdYBcw',
     )
-    isSelfPromotion: Optional[bool] = Field(
-        None,
+    isSelfPromotion: bool = Field(
+        ...,
         description='Креативы относятся к саморекламе\r\n<p style="color: blue">Поле обязательно для заполнения</p>',
     )
-    type: Optional[CampaignType] = Field(
-        None,
+    type: CampaignType = Field(
+        ...,
         description='Тип рекламной кампании\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
         '<ul><li><i>CPM</i> - Cost Per Millennium, оплата за тысячу показов</li>'
@@ -2313,8 +2415,8 @@ class SimpleEditCreativeRequest(BaseModel):
         '<li><i>CPA</i> - Cost Per Action, оплата за совершенное целевое действие</li>'
         '<li><i>Other</i> - Иное</li></ul>',
     )
-    form: Optional[CreativeForm] = Field(
-        None,
+    form: CreativeForm = Field(
+        ...,
         description='Форма распространения рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
         '<p>Members:</p>'
         '<ul><li><i>Banner</i> - Баннер</li>'
@@ -2341,8 +2443,8 @@ class SimpleEditCreativeRequest(BaseModel):
         '<p style="color: lightblue">Поле не обязательно для заполнения</p>',
         example=['http://test1.ru', 'http://test2.ru'],
     )
-    description: Optional[str] = Field(
-        None,
+    description: str = Field(
+        ...,
         description='Общее описание объекта рекламирования\r\n'
         '<ul><li>Минимальная длина: 1</li>'
         '<li>Максимальная длина: 1000</li>'
@@ -2356,10 +2458,14 @@ class SimpleEditCreativeRequest(BaseModel):
         description='Параметры целевой аудитории\r\n<p style="color: lightblue">Поле не обязательно для заполнения</p>',
     )
     isNative: Optional[bool] = Field(
-        None, description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
     isSocial: Optional[bool] = Field(
-        None, description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+        ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    )
+    overwriteExistingCreativeMedia: bool = Field(
+        ...,
+        description='Перезаписать все предыдущие медиаданные креатива (файловые и текстовые). Токен останется прежним, существующие медиаданные удалятся, переданные медиаданые запишутся.\r\n<p style="color: lightblue">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>',
     )
     kktuCodes: Optional[List[str]] = Field(
         None,
