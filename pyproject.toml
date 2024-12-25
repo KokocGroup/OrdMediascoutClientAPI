@@ -28,19 +28,6 @@ dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-#[tool.hatch.build]
-#include = ["src/ord_mediascout_client/**"]
-
-#[tool.hatch.build.targets.sdist]
-#include = ["src/**", "pyproject.toml"]
-
-#[tool.hatch.build.targets.wheel]
-#packages = ["src/ord_mediascout_client"]
-
-#[build-system]
-#requires = ["setuptools", "wheel"]
-#build-backend = "setuptools.build_meta"
-
 [tool.black]
 line-length = 120
 target-version = ['py311']
