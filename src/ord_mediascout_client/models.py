@@ -1470,7 +1470,7 @@ class InvoiceStatisticsByPlatformsItem(BaseModel):
         None, description='Значение из справочника "Типы площадок"', example='Site'
     )
     platformOwnedByAgency: Optional[bool] = Field(None, description='Принадлежит ли площадка агентству', example=False)
-    type: Optional[Type19] = Field(None, description='Тип рекламной кампании', example='CPM')
+    type: Optional[CampaignType] = Field(None, description='Тип рекламной кампании', example='CPM')
     impsPlan: int = Field(..., description='Количество показов по акту', example=100)
     impsFact: int = Field(..., description='Количество показов фактическое', example=100)
     startDatePlan: date = Field(..., description='Дата начала показов по акту', example='2022-12-01')
