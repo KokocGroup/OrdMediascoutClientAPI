@@ -8,7 +8,7 @@ requests = "*"
 pydantic = ">=1.0, <2.0"
 python-dotenv = "*"
 rich = "*"
-ord-mediascout-client = {file = ".", editable = true}
+twine = "*"
 
 [dev-packages]
 pre-commit = "*"
