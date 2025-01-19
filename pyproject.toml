@@ -28,6 +28,23 @@ dependencies = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+
+[tool.hatch.build]
+include = ["**"]
+exclude = [
+    "*.pyc",
+    "docs/",
+    "dist/",
+    "examples/",
+    "Pipfile",
+    "Pipfile.lock",
+    "*.log",
+    ".env",
+    ".gitignore",
+    ".idea/",
+    ".*",
+]
+
 [tool.black]
 line-length = 120
 target-version = ['py311']
