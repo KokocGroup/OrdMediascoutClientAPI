@@ -22,6 +22,7 @@ from .models import (
 
 class FeedStatus(Enum):
     Creating = 'Creating'
+    MediaDownloadError = 'MediaDownloadError'
     Created = 'Created'
     RegistrationRequired = 'RegistrationRequired'
     Registering = 'Registering'
