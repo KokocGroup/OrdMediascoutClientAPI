@@ -1,6 +1,6 @@
 [project]
 name = "ord_mediascout_client"
-version = "0.0.51"
+version = "0.0.53"
 authors = [
   { name="Alexey Ruzin", email="ruzin@me.com" },
   { name="Ilya Chegodayev", email="lighter97@gmail.com" },
@@ -29,21 +29,27 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 
-[tool.hatch.build]
-include = ["**"]
-exclude = [
-    "*.pyc",
-    "docs/",
-    "dist/",
-    "examples/",
-    "Pipfile",
-    "Pipfile.lock",
-    "*.log",
-    ".env",
-    ".gitignore",
-    ".idea/",
-    ".*",
-]
+[tool.hatch.build.targets.sdist]
+include = ["src/**"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/ord_mediascout_client"]
+
+#[tool.hatch.build]
+#include = ["src/**"]
+#include = ["**"]
+#exclude = [
+#    "*.pyc",
+#    "docs/",
+#    "dist/",
+#    "examples/",
+#    "Pipfile",
+#    "Pipfile.lock",
+#    "*.log",
+#    ".env",
+#    ".gitignore",
+#    ".idea/",
+#    ".*",
+#]
 
 [tool.black]
 line-length = 120

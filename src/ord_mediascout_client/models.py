@@ -455,11 +455,12 @@ class CreativeMediaDataItem(BaseModel):
         allow_population_by_field_name = True
 
     id: str = Field(..., description='Идентификатор медиаданных')
-    fileName: Optional[str] = Field(
-        None, description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
-    )
-    fileType: FileType = Field(
+    fileName: str = Field(
         ...,
+        description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
+    )
+    fileType: Optional[FileType] = Field(
+        None,
         description='Тип файла медиаданных креатива<p>Members:</p><ul><li><i>Image</i> - Изображение</li><li><i>Video</i> - Видео</li><li><i>Audio</i> - Аудио</li><li><i>Zip</i> - Архив</li><li><i>Other</i> - Иное</li></ul>',
         example='image',
     )
