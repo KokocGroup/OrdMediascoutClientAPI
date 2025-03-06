@@ -1977,6 +1977,9 @@ class CreateCreativeRequest(BaseModel):
     isSocial: bool = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
+    )
     kktuCodes: Optional[List[str]] = Field(
         None,
         description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\".\r\nВ настоящий момент список не может содержать более одного значения. Указание нескольких значений станет доступно после введения функционала кобрендинга\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
@@ -2141,6 +2144,9 @@ class CreativeGroupResponse(BaseModel):
     )
     isNative: bool = Field(
         ..., description='Признак нативной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    )
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
     )
     kktuCodes: Optional[List[str]] = Field(
         None,
@@ -2312,6 +2318,9 @@ class CreativeResponse(BaseModel):
     isSocial: bool = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
     )
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
+    )
     kktuCodes: List[str] = Field(
         ...,
         description="Список кодов ККТУ\r\n<p style=\"color: lightblue\">Поле не обязательно для заполнения</p>",
@@ -2470,6 +2479,9 @@ class SimpleEditCreativeRequest(BaseModel):
     )
     isSocial: Optional[bool] = Field(
         ..., description='Признак социальной рекламы\r\n<p style="color: blue">Поле обязательно для заполнения</p>'
+    )
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
     )
     overwriteExistingCreativeMedia: bool = Field(
         ...,

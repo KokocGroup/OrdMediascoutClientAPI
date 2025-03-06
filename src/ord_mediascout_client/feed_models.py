@@ -112,6 +112,9 @@ class CreateAdvertisingContainerRequest(BaseModel):
     description: str = Field(..., description='Общее описание объекта рекламирования')
     isNative: bool = Field(..., description='Признак нативной рекламы')
     isSocial: bool = Field(..., description='Признак социальной рекламы')
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
+    )
     kktuCodes: Optional[List[str]] = Field(
         None,
         description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\"",
@@ -148,6 +151,9 @@ class AdvertisingContainerResponse(BaseModel):
     description: str = Field(..., description='Общее описание объекта рекламирования')
     isNative: bool = Field(..., description='Признак нативной рекламы')
     isSocial: bool = Field(None, description='Признак социальной рекламы')
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
+    )
     kktuCodes: Optional[List[str]] = Field(
         None,
         description="Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - \"X.X.X\"",
@@ -209,6 +215,9 @@ class EditAdvertisingContainerRequest(BaseModel):
     description: str = Field(..., description='Общее описание объекта рекламирования')
     isNative: bool = Field(..., description='Признак нативной рекламы')
     isSocial: bool = Field(..., description='Признак социальной рекламы')
+    isSocialQuota: bool = Field(
+        ..., description='Признак социальной рекламы по квоте\r\n           <p style=\"color: lightblue\">Поле не обязательно для заполнения. Если не заполнено, устанавливается значение `false`</p>'
+    )
     kktuCodes: Optional[List[str]] = Field(
         None,
         description='Список кодов ККТУ. Возможные значения кодов ККТУ можно получить через метод `/webapi/v3/dictionaries/kktu`.\r\nДопускаются только коды 3 уровня - "X.X.X"',
