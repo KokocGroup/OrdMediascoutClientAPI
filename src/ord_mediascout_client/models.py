@@ -455,8 +455,15 @@ class CreativeMediaDataItem(BaseModel):
         allow_population_by_field_name = True
 
     id: str = Field(..., description='Идентификатор медиаданных')
-    fileName: str = Field(
-        ...,
+    # Пока закомментирован вариант по swagger.json МС
+    # так как оказалось у нас есть креативы с медиаданными, но в МС поле fileName пустое
+    # из-за чего запрос такого креатива падает на обработке ответа в pydantic
+    # fileName: str = Field(
+    #     ...,
+    #     description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
+    # )
+    fileName: Optional[str] = Field(
+        None,
         description='Имя файла\r\n<p style="color: blue">Поле обязательно для заполнения</p>', example='file.txt'
     )
     fileType: Optional[FileType] = Field(
